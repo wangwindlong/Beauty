@@ -5,12 +5,15 @@ import android.support.design.widget.FloatingActionButton;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 
 import com.dante.girls.base.BaseActivity;
+import com.dante.girls.base.Constants;
 import com.dante.girls.ui.SettingsActivity;
 import com.dante.girls.utils.Share;
 
 import butterknife.BindView;
+import moe.feng.alipay.zerosdk.AlipayZeroSdk;
 
 public class MainActivity extends BaseActivity {
     public static final String MAIN_FRAGMENT_TAG = "main";
@@ -30,6 +33,14 @@ public class MainActivity extends BaseActivity {
             getSupportActionBar().setDisplayHomeAsUpEnabled(false);
         }
         replaceFragment(new MainActivityFragment(), MAIN_FRAGMENT_TAG);
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (AlipayZeroSdk.hasInstalledAlipayClient(getApplicationContext())) {
+                    AlipayZeroSdk.startAlipayClient(MainActivity.this, Constants.ALI_PAY);
+                }
+            }
+        });
     }
 
 
@@ -55,7 +66,7 @@ public class MainActivity extends BaseActivity {
         if (id == R.id.action_settings) {
             startActivity(new Intent(getApplicationContext(), SettingsActivity.class));
             return true;
-        }  else if (id == R.id.action_share) {
+        } else if (id == R.id.action_share) {
             Share.shareText(this, getString(R.string.share_app_description));
 
         }

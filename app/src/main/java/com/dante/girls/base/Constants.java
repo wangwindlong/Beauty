@@ -13,4 +13,6 @@ public class Constants {
     public static final String URL = "url";
     public static final String DATA = "data";
     public static final String HAS_HINT = "first_hint";
+    public static final String ALI_PAY = "aex00371u7j5qknwdj0yu11";
+
 }
