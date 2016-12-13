@@ -1,7 +1,8 @@
 # Girls
-Girls是[Knowledge](https://github.com/DanteAndroid/Knowledge)的Rxjava&精简版
+Girls 是一款看妹子的app。
 
 ## Feature
+0. 它是我另一个库[Knowledge](https://github.com/DanteAndroid/Knowledge)的Rxjava&精简版
 1. Retrofit + Rxjava，让网络请求和解析数据更轻松、直观
 2. **NO MVP**，**没有mvp**架构，没有大量绕人的接口
 3. 只保留了Knowledge中的美图功能，结构清晰更适合新手学习
