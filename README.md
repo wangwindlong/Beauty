@@ -1,6 +1,5 @@
 # Girls
-Girls 是一款看妹子的app。
-
+Girls 是一款看妹子的APP
 ## Feature
 0. 它是我另一个库[Knowledge](https://github.com/DanteAndroid/Knowledge)的Rxjava&精简版
 1. Retrofit + Rxjava，让网络请求和解析数据更轻松、直观
