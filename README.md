@@ -1,6 +1,8 @@
 
 Girls 是一款看妹子的APP
 ---
+## 截图
+<a href="./screenshot.png"><img src="./screenshot.png" width="40%"/></a>
 
 ## Feature
 0. 它是我另一个库[Knowledge](https://github.com/DanteAndroid/Knowledge)的Rxjava&精简版
