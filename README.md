@@ -1,5 +1,5 @@
 
-Girls 是一款看妹子的APP（ [APK](https://github.com/DanteAndroid/Girls/blob/master/app/app-release.apk)）
+Girls 是一款看妹子的APP（ [apk](https://github.com/DanteAndroid/Girls/blob/master/app/app-release.apk)）
 ---
 
 ## Feature
