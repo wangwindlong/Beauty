@@ -15,6 +15,7 @@
 #-keepclassmembers class fqcn.of.javascript.interface.for.webview {
 #   public *;
 #}
+
 ## bugtags
   -keepattributes LineNumberTable,SourceFile
   -keep class com.bugtags.library.** {*;}
@@ -44,7 +45,6 @@
 -keep class retrofit2.** { *; }
 -keepattributes Signature
 -keepattributes Exceptions
-
 -keepclasseswithmembers class * {
     @retrofit2.http.* <methods>;
 }
@@ -60,6 +60,28 @@
 -dontwarn com.squareup.haha.perflib.**
 -dontwarn com.squareup.haha.trove.**
 -dontwarn com.squareup.leakcanary.**
-
 -dontwarn sun.misc.Unsafe
 -dontwarn org.w3c.dom.bootstrap.DOMImplementationRegistry
+
+## event bus
+-keepattributes *Annotation*
+-keepclassmembers class ** {
+    @org.greenrobot.eventbus.Subscribe <methods>;
+}
+-keep enum org.greenrobot.eventbus.ThreadMode { *; }
+
+## configuration for Gson
+-keepattributes Signature
+-keepattributes *Annotation*
+-keep class sun.misc.Unsafe { *; }
+#-keep class com.google.gson.stream.** { *; }
+-keep class com.google.gson.examples.android.model.** { *; }
+-keep class * implements com.google.gson.TypeAdapterFactory
+-keep class * implements com.google.gson.JsonSerializer
+-keep class * implements com.google.gson.JsonDeserializer
+##End: configuration for Gson
+
+##Solove NullPointerException by Gson
+-keep class com.dante.girls.model.** { *; }
+-keep class android.support.v7.widget.ShareActionProvider { *; }
+-keep class com.dante.girls.net.** { *; }
