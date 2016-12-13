@@ -11,6 +11,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.listener.OnItemClickListener;
@@ -23,7 +24,6 @@ import com.dante.girls.model.Image;
 import com.dante.girls.net.API;
 import com.dante.girls.net.DataFetcher;
 import com.dante.girls.utils.SPUtil;
-import com.dante.girls.utils.UI;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -196,7 +196,7 @@ public class PictureFragment extends RecyclerFragment {
                     @Override
                     public void onError(Throwable e) {
                         changeState(false);
-                        UI.showSnack(rootView, R.string.load_fail);
+                        Toast.makeText(context.getApplicationContext(), R.string.load_fail, Toast.LENGTH_SHORT).show();
                         e.printStackTrace();
                     }
 
