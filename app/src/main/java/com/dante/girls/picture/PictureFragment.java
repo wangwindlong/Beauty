@@ -17,11 +17,11 @@ import com.chad.library.adapter.base.listener.OnItemClickListener;
 import com.dante.girls.MainActivity;
 import com.dante.girls.R;
 import com.dante.girls.base.BaseActivity;
+import com.dante.girls.base.Constants;
+import com.dante.girls.model.DB;
 import com.dante.girls.model.Image;
 import com.dante.girls.net.API;
-import com.dante.girls.model.DB;
 import com.dante.girls.net.DataFetcher;
-import com.dante.girls.base.Constants;
 import com.dante.girls.utils.SPUtil;
 import com.dante.girls.utils.UI;
 
@@ -187,7 +187,9 @@ public class PictureFragment extends RecyclerFragment {
                     @Override
                     public void onCompleted() {
                         page++;
-                        changeState(false);
+                        if (!isFetching) {
+                            changeState(false);
+                        }
                         adapter.dataAdded();
                     }
 
