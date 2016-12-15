@@ -8,10 +8,7 @@ import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SimpleItemAnimator;
 import android.support.v7.widget.StaggeredGridLayoutManager;
-import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.listener.OnItemClickListener;
@@ -36,7 +33,6 @@ import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Func1;
 import rx.schedulers.Schedulers;
 
-import static com.bumptech.glide.gifdecoder.GifHeaderParser.TAG;
 import static com.dante.girls.net.API.TYPE_DB_BREAST;
 import static com.dante.girls.net.API.TYPE_DB_BUTT;
 import static com.dante.girls.net.API.TYPE_DB_LEG;
@@ -58,7 +54,7 @@ public class PictureFragment extends RecyclerFragment {
     private StaggeredGridLayoutManager layoutManager;
     private PictureAdapter adapter;
     private BaseActivity context;
-    private RealmResults<Image> datas;
+    private RealmResults<Image> images;
     private boolean isFetching;
 
     public static PictureFragment newInstance(int type) {
@@ -96,7 +92,6 @@ public class PictureFragment extends RecyclerFragment {
         layoutManager = new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL);
         recyclerView.setLayoutManager(layoutManager);
         adapter = new PictureAdapter();
-        adapter.setLoadingView(LayoutInflater.from(context).inflate(R.layout.empty, (ViewGroup) rootView, false));
         adapter.openLoadAnimation(BaseQuickAdapter.SCALEIN);
         recyclerView.setAdapter(adapter);
         RecyclerView.ItemAnimator animator = recyclerView.getItemAnimator();
@@ -105,13 +100,11 @@ public class PictureFragment extends RecyclerFragment {
         }
         recyclerView.addOnItemTouchListener(new OnItemClickListener() {
             @Override
-            public void SimpleOnItemClick(BaseQuickAdapter baseQuickAdapter, View view, int i) {
+            public void onSimpleItemClick(BaseQuickAdapter baseQuickAdapter, View view, int i) {
                 startViewer(view, i);
             }
         });
         type = getArguments().getInt(Constants.TYPE);
-        page = SPUtil.getInt(type + Constants.PAGE);
-        page = page == 0 ? 1 : page;
     }
 
     private void startViewer(View view, int position) {
@@ -129,7 +122,7 @@ public class PictureFragment extends RecyclerFragment {
         if (isFetching) {
             return;
         }
-        if (fresh) {
+        if (fresh || images.isEmpty()) {
             page = 1;
         }
         switch (type) {
@@ -142,7 +135,7 @@ public class PictureFragment extends RecyclerFragment {
                 break;
             default://type = 0, 代表GANK
                 url = API.GANK;
-                if (fresh) {
+                if (page <= 1) {
                     LOAD_COUNT = LOAD_COUNT_LARGE;
                 }
                 break;
@@ -150,11 +143,10 @@ public class PictureFragment extends RecyclerFragment {
         DataFetcher fetcher = new DataFetcher(url, type, page);
         Observable<List<Image>> source = (type == 0) ? fetcher.getGankObservable() : fetcher.getDBObservable();
         fetchImages(source);
-
     }
 
     private void fetchImages(final Observable<List<Image>> observable) {
-        subscription =observable
+        subscription = observable
                 .flatMap(new Func1<List<Image>, Observable<Image>>() {
                     @Override
                     public Observable<Image> call(List<Image> images) {
@@ -179,16 +171,16 @@ public class PictureFragment extends RecyclerFragment {
 
                     @Override
                     public void onStart() {
-                        changeState(true);
-                        oldSize = datas.size();
+                        isFetching = true;
+                        oldSize = images.size();
                     }
 
                     @Override
                     public void onCompleted() {
                         page++;
                         changeState(false);
-                        adapter.hiedLoadingMore();
-                        adapter.notifyItemRangeChanged(oldSize  , datas.size());
+                        adapter.loadMoreComplete();
+                        adapter.notifyItemRangeChanged(oldSize, images.size());
                     }
 
                     @Override
@@ -213,25 +205,22 @@ public class PictureFragment extends RecyclerFragment {
     @Override
     protected void AlwaysInit() {
         super.AlwaysInit();
-        Log.i(TAG, "AlwaysInit: ");
-        adapter.setOnLoadMoreListener(new BaseQuickAdapter.RequestLoadMoreListener() {
-            @Override
-            public void onLoadMoreRequested() {
-                if (datas == null) {
-                    fetch(true);
-                } else {
-                    fetch(datas.isEmpty());
-                }
-                Log.i(TAG, "onLoadMoreRequested: " + page);
-            }
-        });
+        page = SPUtil.getInt(type + Constants.PAGE, 1);
     }
 
     @Override
     protected void initData() {
-        datas = DB.getImages(context.realm, type);
-        adapter.setNewData(datas);
+        images = DB.getImages(context.realm, type);
+        adapter.setNewData(images);
+        adapter.setOnLoadMoreListener(new BaseQuickAdapter.RequestLoadMoreListener() {
+            @Override
+            public void onLoadMoreRequested() {
+                fetch(false);
+            }
+        });
         initFab();
+        onRefresh();
+        changeState(true);
     }
 
     private void initFab() {
@@ -240,11 +229,11 @@ public class PictureFragment extends RecyclerFragment {
             @Override
             public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
                 if (button.isShown()) {
-                    if (dy > 0) {
+                    if (dy > 20) {
                         button.hide();
                     }
                 } else {
-                    if (dy < 0) {
+                    if (dy < -20) {
                         button.show();
                     }
                 }

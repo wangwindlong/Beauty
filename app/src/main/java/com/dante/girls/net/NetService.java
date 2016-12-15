@@ -1,5 +1,7 @@
 package com.dante.girls.net;
 
+import com.dante.girls.BuildConfig;
+
 import okhttp3.OkHttpClient;
 import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Retrofit;
@@ -21,9 +23,9 @@ public class NetService {
     public static NetService getInstance(String baseUrl) {
         if (instance == null) {
             instance = new NetService();
-
             HttpLoggingInterceptor logging = new HttpLoggingInterceptor();
-            logging.setLevel(HttpLoggingInterceptor.Level.BASIC);
+            logging.setLevel(BuildConfig.DEBUG ?
+                    HttpLoggingInterceptor.Level.BASIC : HttpLoggingInterceptor.Level.NONE);
             instance.client = new OkHttpClient.Builder().addInterceptor(logging).build();
         }
         instance.baseUrl = baseUrl;
@@ -53,7 +55,6 @@ public class NetService {
             return retrofit.create(DBApi.class);
         }
         return dbApi;
-
     }
 
 

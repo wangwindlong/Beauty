@@ -5,16 +5,15 @@ import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.appcompat.R.anim;
 import android.view.View;
 import android.widget.ImageView;
 
 import com.bumptech.glide.Glide;
 import com.dante.girls.MainActivity;
 import com.dante.girls.R;
+import com.dante.girls.base.Constants;
 import com.dante.girls.net.API;
 import com.dante.girls.net.NetService;
-import com.dante.girls.base.Constants;
 import com.dante.girls.utils.DateUtil;
 import com.dante.girls.utils.Imager;
 import com.dante.girls.utils.SPUtil;
@@ -32,7 +31,7 @@ import rx.schedulers.Schedulers;
 
 public class SplashActivity extends AppCompatActivity {
 
-    private static final int SPLASH_DURATION = 2500;
+    private static final int SPLASH_DURATION = 2000;
     private static final String SPLASH = "splash";
     private ImageView splash;
     private String today;
@@ -97,7 +96,7 @@ public class SplashActivity extends AppCompatActivity {
     private void loadImage() {
         String url = SPUtil.get(SPLASH, "");
         if ("".equals(url)) {
-            Glide.with(this).load(R.drawable.splash).crossFade(SPLASH_DURATION).into(splash);
+            Imager.load(this, R.drawable.splash, splash);
         } else {
             Imager.load(url, R.anim.splash_anim, splash);
         }
@@ -109,7 +108,7 @@ public class SplashActivity extends AppCompatActivity {
             @Override
             public void run() {
                 startActivity(new Intent(getApplicationContext(), MainActivity.class));
-                overridePendingTransition(anim.abc_grow_fade_in_from_bottom, anim.abc_shrink_fade_out_from_bottom);
+                overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
                 finish();
             }
         }, SPLASH_DURATION);

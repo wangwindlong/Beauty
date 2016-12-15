@@ -45,6 +45,7 @@ public class ViewerFragment extends BaseFragment implements View.OnLongClickList
     TouchImageView imageView;
     private ViewerActivity context;
     private Bitmap bitmap;
+    private String url;
 
     public static ViewerFragment newInstance(String url) {
         ViewerFragment fragment = new ViewerFragment();
@@ -62,9 +63,13 @@ public class ViewerFragment extends BaseFragment implements View.OnLongClickList
     @Override
     protected void initViews() {
         context = (ViewerActivity) getActivity();
-        String url = getArguments().getString(Constants.URL);
+        url = getArguments().getString(Constants.URL);
         ViewCompat.setTransitionName(imageView, url);
-        Imager.loadDefer(context, url, new SimpleTarget<Bitmap>() {
+        load(url);
+    }
+
+    private void load(String url) {
+        Imager.loadDefer(this, url, new SimpleTarget<Bitmap>() {
             @Override
             public void onResourceReady(Bitmap b, GlideAnimation<? super Bitmap> arg1) {
                 bitmap = b;
@@ -86,6 +91,7 @@ public class ViewerFragment extends BaseFragment implements View.OnLongClickList
                 }).
                 create().show();
     }
+
 
     @Override
     protected void initData() {
@@ -164,7 +170,7 @@ public class ViewerFragment extends BaseFragment implements View.OnLongClickList
     }
 
     private void share(final Bitmap bitmap) {
-        RxPermissions permissions = new RxPermissions(context);
+        final RxPermissions permissions = new RxPermissions(context);
         permissions.request(Manifest.permission.WRITE_EXTERNAL_STORAGE)
                 .map(new Func1<Boolean, Uri>() {
                     @Override

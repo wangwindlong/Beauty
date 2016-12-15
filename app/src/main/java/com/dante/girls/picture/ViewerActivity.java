@@ -54,7 +54,7 @@ public class ViewerActivity extends BaseActivity implements RealmChangeListener 
         return R.layout.activity_detail;
     }
 
-    @SuppressWarnings("unchecked")
+    @TargetApi(Build.VERSION_CODES.LOLLIPOP)
     @Override
     protected void initViews() {
         super.initViews();
@@ -71,7 +71,6 @@ public class ViewerActivity extends BaseActivity implements RealmChangeListener 
         }
         adapter = new DetailPagerAdapter(getSupportFragmentManager(), fragments);
         pager.setAdapter(adapter);
-        pager.setOffscreenPageLimit(2);
         pager.setCurrentItem(position);
         pager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
@@ -90,10 +89,7 @@ public class ViewerActivity extends BaseActivity implements RealmChangeListener 
             }
         });
 
-        // 避免图片在进行 Shared Element Transition 时盖过 Toolbar
-        if (Build.VERSION.SDK_INT >= 21) {
-            getWindow().setSharedElementsUseOverlay(false);
-        }
+        getWindow().setSharedElementsUseOverlay(false);
     }
 
 
@@ -108,6 +104,7 @@ public class ViewerActivity extends BaseActivity implements RealmChangeListener 
 //        EventBus.getDefault().post(new MessageEvent(currentPosition));
         if (isPositionChanged()) {
             setShareElement();
+            overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
             finish();
         } else {
             super.supportFinishAfterTransition();
@@ -160,7 +157,7 @@ public class ViewerActivity extends BaseActivity implements RealmChangeListener 
     }
 
 
-    private class DetailPagerAdapter extends FragmentStatePagerAdapter {
+    private static class DetailPagerAdapter extends FragmentStatePagerAdapter {
         private List<Fragment> fragments;
 
         DetailPagerAdapter(FragmentManager fm, List<Fragment> fragments) {
@@ -177,9 +174,9 @@ public class ViewerActivity extends BaseActivity implements RealmChangeListener 
         public int getCount() {
             return fragments.size();
         }
-
-        ViewerFragment getCurrent() {
-            return (ViewerFragment) adapter.instantiateItem(pager, pager.getCurrentItem());
-        }
+//
+//        ViewerFragment getCurrent() {
+//            return (ViewerFragment) adapter.instantiateItem(pager, pager.getCurrentItem());
+//        }
     }
 }

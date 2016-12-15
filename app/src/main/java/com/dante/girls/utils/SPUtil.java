@@ -39,6 +39,9 @@ public class SPUtil {
     public static int getInt(String key) {
         return sp.getInt(key, 0);
     }
+    public static int getInt(String key, int def) {
+        return sp.getInt(key, def);
+    }
 
     public static boolean getBoolean(String key) {
         return sp.getBoolean(key, false);

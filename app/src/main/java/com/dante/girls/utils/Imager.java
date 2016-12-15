@@ -2,7 +2,7 @@ package com.dante.girls.utils;
 
 import android.content.Context;
 import android.graphics.Bitmap;
-import android.support.v4.app.FragmentActivity;
+import android.support.v4.app.Fragment;
 import android.widget.ImageView;
 
 import com.bumptech.glide.Glide;
@@ -23,7 +23,7 @@ public class Imager {
                 .into(view);
     }
 
-    public static void loadDefer(final FragmentActivity context, String url, SimpleTarget<Bitmap> target) {
+    public static void loadDefer(final Fragment context, String url, SimpleTarget<Bitmap> target) {
         Glide.with(context)
                 .load(url)
                 .asBitmap()

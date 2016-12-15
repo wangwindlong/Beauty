@@ -14,18 +14,24 @@ import io.realm.Sort;
 public class DB {
 
     public static <T extends RealmObject> void save(Realm realm, List<T> realmObjects) {
-        if (realm.isClosed()) {
-            return;
-        }
+        realm = initRealm(realm);
         realm.beginTransaction();
         realm.copyToRealmOrUpdate(realmObjects);
         realm.commitTransaction();
     }
 
-    public static void save(Realm realm, RealmObject realmObject) {
+    public static Realm initRealm(Realm realm) {
         if (realm.isClosed()) {
+            realm = Realm.getDefaultInstance();
+        }
+        return realm;
+    }
+
+    public static void save(Realm realm, RealmObject realmObject) {
+        if (realmObject == null) {
             return;
         }
+        realm = initRealm(realm);
         realm.beginTransaction();
         realm.copyToRealmOrUpdate(realmObject);
         realm.commitTransaction();
@@ -37,9 +43,7 @@ public class DB {
 
 
     public static <T extends RealmObject> RealmResults<T> findAll(Realm realm, Class<T> realmObjectClass) {
-        if (realm.isClosed()) {
-            return null;
-        }
+        realm = initRealm(realm);
         return realm.where(realmObjectClass).findAll();
     }
 
@@ -50,9 +54,7 @@ public class DB {
     }
 
     public static RealmResults<Image> getImages(Realm realm, int type) {
-        if (realm.isClosed()) {
-            return null;
-        }
+        realm = initRealm(realm);
         return realm.where(Image.class)
                 .equalTo("type", type)
                 .findAll()

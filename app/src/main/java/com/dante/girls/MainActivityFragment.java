@@ -5,12 +5,10 @@ import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
-import android.support.v4.app.SharedElementCallback;
 import android.support.v4.view.ViewPager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.util.Log;
-import android.view.View;
 
 import com.dante.girls.base.BaseFragment;
 import com.dante.girls.model.MessageEvent;
@@ -23,7 +21,6 @@ import org.greenrobot.eventbus.Subscribe;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
 
 import butterknife.BindView;
 
@@ -92,18 +89,18 @@ public class MainActivityFragment extends BaseFragment {
 
     @Override
     protected void initData() {
-        setExitSharedElementCallback(new SharedElementCallback() {
-            @Override
-            public void onMapSharedElements(List<String> names, Map<String, View> sharedElements) {
-                if (reenterState != null) {
-                    int i = reenterState.getInt("index", 0);
-                    Log.d(TAG, "reenter from " + i);
-                    sharedElements.clear();
-                    sharedElements.put(adapter.getCurrent().getData(i).url, adapter.getCurrent().getRecyclerView().getLayoutManager().findViewByPosition(i));
-                    reenterState = null;
-                }
-            }
-        });
+//        setExitSharedElementCallback(new SharedElementCallback() {
+//            @Override
+//            public void onMapSharedElements(List<String> names, Map<String, View> sharedElements) {
+//                if (reenterState != null) {
+//                    int i = reenterState.getInt("index", 0);
+//                    Log.d(TAG, "reenter from " + i);
+//                    sharedElements.clear();
+//                    sharedElements.put(adapter.getCurrent().getData(i).url, adapter.getCurrent().getRecyclerView().getLayoutManager().findViewByPosition(i));
+//                    reenterState = null;
+//                }
+//            }
+//        });
     }
 
     private void initFragments() {

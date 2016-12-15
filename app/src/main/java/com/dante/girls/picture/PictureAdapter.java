@@ -10,14 +10,13 @@ import com.dante.girls.model.Image;
 import com.dante.girls.utils.Imager;
 
 /**
- * Created by yons on 16/12/8.
+ * Adapter of picture list.
  */
 
-class PictureAdapter extends BaseQuickAdapter<Image> {
+class PictureAdapter extends BaseQuickAdapter<Image, BaseViewHolder> {
 
     PictureAdapter() {
         super(R.layout.picture_item, null);
-        setHasStableIds(true);//any effect?
     }
 
     @Override

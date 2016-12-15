@@ -20,7 +20,6 @@ public abstract class BaseFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         if (rootView == null) {
-            initLayoutId();
             rootView = inflater.inflate(initLayoutId(), container, false);
             ButterKnife.bind(this, rootView);
             initViews();
@@ -56,8 +55,4 @@ public abstract class BaseFragment extends Fragment {
 
     protected abstract void initData();
 
-
-    public boolean isAlive() {
-        return getActivity() != null;
-    }
 }

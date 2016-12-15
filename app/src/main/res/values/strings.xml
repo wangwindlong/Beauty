@@ -1,5 +1,4 @@
 <resources>
-    <string name="app_name">女孩</string>
 
     <string name="navigation_drawer_open" translatable="false">close drawer</string>
     <string name="navigation_drawer_close" translatable="false">open drawer</string>
@@ -73,5 +72,6 @@
     <string name="clear_finished">清理完成。</string>
     <string name="deep_clean">深度清理</string>
     <string name="app_info">应用信息</string>
+    <string name="app_name">美铝</string>
 
 </resources>

@@ -54,10 +54,10 @@ public abstract class RecyclerFragment extends BaseFragment implements SwipeRefr
 
     @Override
     public void onDestroyView() {
-        super.onDestroyView();
         if (subscription != null) {
             subscription.unsubscribe();
         }
+        super.onDestroyView();
     }
 
     @Override

@@ -1,6 +1,8 @@
 package com.dante.girls;
 
+import android.annotation.TargetApi;
 import android.content.Intent;
+import android.os.Build;
 import android.os.Handler;
 import android.support.design.widget.FloatingActionButton;
 import android.util.Log;
@@ -29,6 +31,7 @@ public class MainActivity extends BaseActivity {
         return R.layout.activity_main;
     }
 
+    @TargetApi(Build.VERSION_CODES.LOLLIPOP)
     @Override
     protected void initViews() {
         super.initViews();
@@ -44,6 +47,7 @@ public class MainActivity extends BaseActivity {
                 }
             }
         });
+        getWindow().setSharedElementsUseOverlay(false);
     }
 
     @Override
