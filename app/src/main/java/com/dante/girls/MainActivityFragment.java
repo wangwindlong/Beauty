@@ -1,6 +1,5 @@
 package com.dante.girls;
 
-import android.os.Bundle;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -43,7 +42,6 @@ public class MainActivityFragment extends BaseFragment {
     TabLayout tabs;
     private List<RecyclerFragment> fragments = new ArrayList<>();
     private TabPagerAdapter adapter;
-    private Bundle reenterState;
 
     @Override
     protected int initLayoutId() {
