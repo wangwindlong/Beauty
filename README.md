@@ -1,5 +1,5 @@
 
-Beauty 是一款看妹子的APP (获取[apk](https://github.com/DanteAndroid/Girls/blob/master/app/app-release.apk)）
+Beauty 是一款看妹子的APP (获取[apk](https://github.com/DanteAndroid/Girls/blob/master/app/app-armeabi-v7a-release.apk)）
 ---
 
 ## Feature
