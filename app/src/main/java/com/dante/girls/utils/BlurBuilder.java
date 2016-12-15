@@ -4,11 +4,11 @@ import android.graphics.Bitmap;
 
 public class BlurBuilder {
 
-    public static final int BLUR_RADIUS = 8;
+    public static final int BLUR_RADIUS = 6;
     public static final int BLUR_LITTLE = 8;
-    public static final int BLUR_BASIC = 18;
-    public static final int BLUR_MEDIUM = 40;
-    public static final int BLUR_HIGH = 80;
+    public static final int BLUR_BASIC = 16;
+    public static final int BLUR_MEDIUM = 38;
+    public static final int BLUR_HIGH = 68;
 
     public static Bitmap blur(Bitmap bitmap) {
         return blur(bitmap, BLUR_RADIUS, BLUR_LITTLE, false);

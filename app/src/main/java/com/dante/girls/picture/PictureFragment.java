@@ -6,12 +6,12 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.SimpleItemAnimator;
 import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
 
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.listener.OnItemClickListener;
@@ -24,8 +24,8 @@ import com.dante.girls.model.Image;
 import com.dante.girls.net.API;
 import com.dante.girls.net.DataFetcher;
 import com.dante.girls.utils.SPUtil;
+import com.dante.girls.utils.UI;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
@@ -98,18 +98,11 @@ public class PictureFragment extends RecyclerFragment {
         adapter = new PictureAdapter();
         adapter.setLoadingView(LayoutInflater.from(context).inflate(R.layout.empty, (ViewGroup) rootView, false));
         adapter.openLoadAnimation(BaseQuickAdapter.SCALEIN);
-        adapter.setOnLoadMoreListener(new BaseQuickAdapter.RequestLoadMoreListener() {
-            @Override
-            public void onLoadMoreRequested() {
-                if (datas == null) {
-                    fetch(true);
-                } else {
-                    fetch(datas.isEmpty());
-                }
-                Log.i(TAG, "onLoadMoreRequested: " + page);
-            }
-        });
         recyclerView.setAdapter(adapter);
+        RecyclerView.ItemAnimator animator = recyclerView.getItemAnimator();
+        if (animator instanceof SimpleItemAnimator) {
+            ((SimpleItemAnimator) animator).setSupportsChangeAnimations(false);
+        }
         recyclerView.addOnItemTouchListener(new OnItemClickListener() {
             @Override
             public void SimpleOnItemClick(BaseQuickAdapter baseQuickAdapter, View view, int i) {
@@ -160,49 +153,54 @@ public class PictureFragment extends RecyclerFragment {
 
     }
 
-    private void fetchImages(Observable<List<Image>> observable) {
-        observable
-                .map(new Func1<List<Image>, List<Image>>() {
+    private void fetchImages(final Observable<List<Image>> observable) {
+        subscription =observable
+                .flatMap(new Func1<List<Image>, Observable<Image>>() {
                     @Override
-                    public List<Image> call(List<Image> results) {
-                        List<Image> list = new ArrayList<>();
-                        for (Image image : results) {
-                            try {
-                                list.add(Image.getFixedImage(context, image, type, page));
-                            } catch (ExecutionException | InterruptedException e) {
-                                e.printStackTrace();
-                            }
+                    public Observable<Image> call(List<Image> images) {
+                        return Observable.from(images);
+                    }
+                })
+                .map(new Func1<Image, Image>() {
+                    @Override
+                    public Image call(Image image) {
+                        try {
+                            return Image.getFixedImage(context, image, type, page);
+                        } catch (ExecutionException | InterruptedException e) {
+                            e.printStackTrace();
                         }
-                        return list;
+                        return null;
                     }
                 })
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Subscriber<List<Image>>() {
+                .subscribe(new Subscriber<Image>() {
+                    int oldSize;
+
                     @Override
                     public void onStart() {
                         changeState(true);
+                        oldSize = datas.size();
                     }
 
                     @Override
                     public void onCompleted() {
                         page++;
-                        if (!isFetching) {
-                            changeState(false);
-                        }
-                        adapter.dataAdded();
+                        changeState(false);
+                        adapter.hiedLoadingMore();
+                        adapter.notifyItemRangeChanged(oldSize  , datas.size());
                     }
 
                     @Override
                     public void onError(Throwable e) {
                         changeState(false);
-                        Toast.makeText(context.getApplicationContext(), R.string.load_fail, Toast.LENGTH_SHORT).show();
+                        UI.showSnack(rootView, R.string.load_fail);
                         e.printStackTrace();
                     }
 
                     @Override
-                    public void onNext(List<Image> images) {
-                        DB.save(context.realm, images);
+                    public void onNext(Image image) {
+                        DB.save(context.realm, image);
                     }
                 });
     }
@@ -215,6 +213,18 @@ public class PictureFragment extends RecyclerFragment {
     @Override
     protected void AlwaysInit() {
         super.AlwaysInit();
+        Log.i(TAG, "AlwaysInit: ");
+        adapter.setOnLoadMoreListener(new BaseQuickAdapter.RequestLoadMoreListener() {
+            @Override
+            public void onLoadMoreRequested() {
+                if (datas == null) {
+                    fetch(true);
+                } else {
+                    fetch(datas.isEmpty());
+                }
+                Log.i(TAG, "onLoadMoreRequested: " + page);
+            }
+        });
     }
 
     @Override

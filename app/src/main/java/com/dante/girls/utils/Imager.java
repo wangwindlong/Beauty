@@ -1,10 +1,13 @@
 package com.dante.girls.utils;
 
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.support.v4.app.FragmentActivity;
 import android.widget.ImageView;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.bumptech.glide.request.target.SimpleTarget;
 import com.dante.girls.base.App;
 
 /**
@@ -18,6 +21,13 @@ public class Imager {
                 .diskCacheStrategy(DiskCacheStrategy.ALL)
                 .crossFade()
                 .into(view);
+    }
+
+    public static void loadDefer(final FragmentActivity context, String url, SimpleTarget<Bitmap> target) {
+        Glide.with(context)
+                .load(url)
+                .asBitmap()
+                .into(target);
     }
 
     public static void load(Context context, int resourceId, ImageView view) {

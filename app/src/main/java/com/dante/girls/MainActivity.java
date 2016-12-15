@@ -1,6 +1,7 @@
 package com.dante.girls;
 
 import android.content.Intent;
+import android.os.Handler;
 import android.support.design.widget.FloatingActionButton;
 import android.util.Log;
 import android.view.Menu;
@@ -11,6 +12,7 @@ import com.dante.girls.base.BaseActivity;
 import com.dante.girls.base.Constants;
 import com.dante.girls.ui.SettingsActivity;
 import com.dante.girls.utils.Share;
+import com.dante.girls.utils.UI;
 
 import butterknife.BindView;
 import moe.feng.alipay.zerosdk.AlipayZeroSdk;
@@ -20,6 +22,7 @@ public class MainActivity extends BaseActivity {
     private static final String TAG = "MainActivity";
     @BindView(R.id.fab)
     public FloatingActionButton fab;
+    private boolean backPressed;
 
     @Override
     protected int initLayoutId() {
@@ -52,6 +55,28 @@ public class MainActivity extends BaseActivity {
 //            fragment.onReenter(new MessageEvent(data.getIntExtra("index", 0)));
         }
     }
+
+
+    @Override
+    public void onBackPressed() {
+        doublePressBackToQuit();
+    }
+
+    private void doublePressBackToQuit() {
+        if (backPressed) {
+            super.onBackPressed();
+            return;
+        }
+        backPressed = true;
+        UI.showSnack(fab, R.string.leave_app);
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                backPressed = false;
+            }
+        }, 2000);
+    }
+
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {

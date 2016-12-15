@@ -11,26 +11,26 @@ import android.os.Bundle;
 import android.support.v4.view.ViewCompat;
 import android.view.View;
 
+import com.bumptech.glide.request.animation.GlideAnimation;
+import com.bumptech.glide.request.target.SimpleTarget;
 import com.dante.girls.R;
 import com.dante.girls.base.BaseFragment;
 import com.dante.girls.base.Constants;
 import com.dante.girls.lib.TouchImageView;
-import com.dante.girls.model.Image;
 import com.dante.girls.utils.BitmapUtil;
 import com.dante.girls.utils.BlurBuilder;
+import com.dante.girls.utils.Imager;
 import com.dante.girls.utils.SPUtil;
 import com.dante.girls.utils.Share;
 import com.dante.girls.utils.UI;
 import com.tbruyelle.rxpermissions.RxPermissions;
 
 import java.io.File;
-import java.util.concurrent.ExecutionException;
 
 import butterknife.BindView;
 import rx.Observable;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Action1;
-import rx.functions.Func0;
 import rx.functions.Func1;
 import rx.schedulers.Schedulers;
 
@@ -43,7 +43,6 @@ public class ViewerFragment extends BaseFragment implements View.OnLongClickList
     private static final String TAG = "test";
     @BindView(R.id.headImage)
     TouchImageView imageView;
-    private String url;
     private ViewerActivity context;
     private Bitmap bitmap;
 
@@ -63,9 +62,16 @@ public class ViewerFragment extends BaseFragment implements View.OnLongClickList
     @Override
     protected void initViews() {
         context = (ViewerActivity) getActivity();
-        url = getArguments().getString(Constants.URL);
+        String url = getArguments().getString(Constants.URL);
         ViewCompat.setTransitionName(imageView, url);
-        load();
+        Imager.loadDefer(context, url, new SimpleTarget<Bitmap>() {
+            @Override
+            public void onResourceReady(Bitmap b, GlideAnimation<? super Bitmap> arg1) {
+                bitmap = b;
+                imageView.setImageBitmap(b);
+                context.supportStartPostponedEnterTransition();
+            }
+        });
     }
 
     private void showHint() {
@@ -189,35 +195,6 @@ public class ViewerFragment extends BaseFragment implements View.OnLongClickList
         } else {
             context.supportFinishAfterTransition();
         }
-    }
-
-    private void load() {
-        Observable.defer(new Func0<Observable<Bitmap>>() {
-            @Override
-            public Observable<Bitmap> call() {
-                try {
-                    return Observable.just(Image.getBitmap(context, url));
-                } catch (InterruptedException | ExecutionException e) {
-                    e.printStackTrace();
-                }
-                return null;
-            }
-        })
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Action1<Bitmap>() {
-                    @Override
-                    public void call(Bitmap b) {
-                        bitmap = b;
-                        imageView.setImageBitmap(b);
-                        context.supportStartPostponedEnterTransition();
-                    }
-                }, new Action1<Throwable>() {
-                    @Override
-                    public void call(Throwable throwable) {
-                        throwable.printStackTrace();
-                    }
-                });
     }
 
     public View getSharedElement() {

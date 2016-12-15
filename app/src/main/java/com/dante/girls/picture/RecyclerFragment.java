@@ -12,6 +12,7 @@ import com.dante.girls.base.Constants;
 import com.dante.girls.utils.SPUtil;
 
 import butterknife.BindView;
+import rx.Subscription;
 
 /**
  * All fragments have recyclerView & swipeRefresh must implement this.
@@ -25,6 +26,8 @@ public abstract class RecyclerFragment extends BaseFragment implements SwipeRefr
     int type;               // type of recyclerView's content
     int lastPosition;       //last visible position
     int firstPosition;      //first visible position
+    Subscription subscription;
+
 
     @Override
     protected int initLayoutId() {
@@ -47,6 +50,14 @@ public abstract class RecyclerFragment extends BaseFragment implements SwipeRefr
     public void onPause() {
         super.onPause();
         SPUtil.save(type + Constants.POSITION, firstPosition);
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        if (subscription != null) {
+            subscription.unsubscribe();
+        }
     }
 
     @Override
