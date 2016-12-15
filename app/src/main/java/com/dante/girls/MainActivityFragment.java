@@ -114,7 +114,7 @@ public class MainActivityFragment extends BaseFragment {
         fragments.add(PictureFragment.newInstance(TYPE_DB_BREAST));
         fragments.add(PictureFragment.newInstance(TYPE_DB_BUTT));
         if (fragments.size() != titles.size()) {
-            throw new IllegalArgumentException("You need add all fragments in " + getClass().getSimpleName());
+            throw new IllegalArgumentException("You need add all fragments! Go: " + getClass().getSimpleName());
         }
         adapter.setFragments(fragments, titles);
     }
