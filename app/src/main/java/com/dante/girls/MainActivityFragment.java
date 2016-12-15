@@ -22,7 +22,6 @@ import java.util.Arrays;
 import java.util.List;
 
 import butterknife.BindView;
-
 import static com.bumptech.glide.gifdecoder.GifHeaderParser.TAG;
 import static com.dante.girls.net.API.TYPE_DB_BREAST;
 import static com.dante.girls.net.API.TYPE_DB_BUTT;
