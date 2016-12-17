@@ -21,7 +21,6 @@ import java.util.List;
 import butterknife.BindView;
 
 import static com.bumptech.glide.gifdecoder.GifHeaderParser.TAG;
-
 /**
  * A placeholder fragment containing a simple view.
  */
