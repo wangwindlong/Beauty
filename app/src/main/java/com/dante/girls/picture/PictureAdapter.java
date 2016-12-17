@@ -1,6 +1,8 @@
 package com.dante.girls.picture;
 
 import android.support.v4.view.ViewCompat;
+import android.util.Log;
+import android.widget.TextView;
 
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
@@ -15,8 +17,8 @@ import com.dante.girls.utils.Imager;
 
 class PictureAdapter extends BaseQuickAdapter<Image, BaseViewHolder> {
 
-    PictureAdapter() {
-        super(R.layout.picture_item, null);
+    PictureAdapter(int layoutId) {
+        super(layoutId, null);
     }
 
     @Override
@@ -25,6 +27,14 @@ class PictureAdapter extends BaseQuickAdapter<Image, BaseViewHolder> {
         imageView.setOriginalSize(image.width, image.height);
         ViewCompat.setTransitionName(imageView, image.url);
         Imager.load(mContext, image.url, imageView);
+
+        //for post item
+        TextView title = holder.getView(R.id.title);
+        Log.i(TAG, "convert:  ");
+        if (title != null) {
+            Log.i(TAG, "convert: title "+image.title);
+            title.setText(image.title);
+        }
     }
 
 }

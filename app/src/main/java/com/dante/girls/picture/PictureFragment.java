@@ -5,9 +5,12 @@ import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.ActivityOptionsCompat;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SimpleItemAnimator;
 import android.support.v7.widget.StaggeredGridLayoutManager;
+import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 
 import com.chad.library.adapter.base.BaseQuickAdapter;
@@ -33,6 +36,11 @@ import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Func1;
 import rx.schedulers.Schedulers;
 
+import static com.dante.girls.net.API.TYPE_A_ANIME;
+import static com.dante.girls.net.API.TYPE_A_FULI;
+import static com.dante.girls.net.API.TYPE_A_HENTAI;
+import static com.dante.girls.net.API.TYPE_A_UNIFORM;
+import static com.dante.girls.net.API.TYPE_A_ZATU;
 import static com.dante.girls.net.API.TYPE_DB_BREAST;
 import static com.dante.girls.net.API.TYPE_DB_BUTT;
 import static com.dante.girls.net.API.TYPE_DB_LEG;
@@ -43,8 +51,8 @@ import static com.dante.girls.net.API.TYPE_DB_SILK;
  * Gank and DB beauty fragment.
  */
 public class PictureFragment extends RecyclerFragment {
-
     public static final int LOAD_COUNT_LARGE = 12;
+    private static final String TAG = "PictureFragment";
     private static final int REQUEST_VIEW = 1;
     public static int LOAD_COUNT = 8;
     private static int PRELOAD_COUNT = 10;
@@ -56,13 +64,21 @@ public class PictureFragment extends RecyclerFragment {
     private BaseActivity context;
     private RealmResults<Image> images;
     private boolean isFetching;
+    private boolean isInPost;
+    private boolean isA;
+    private String info;//附加信息，这里暂时用于type为A区时的帖子地址
+    private String imageType;
 
-    public static PictureFragment newInstance(int type) {
+    public static PictureFragment newInstance(String type) {
         Bundle args = new Bundle();
-        args.putInt(Constants.TYPE, type);
+        args.putString(Constants.TYPE, type);
         PictureFragment fragment = new PictureFragment();
         fragment.setArguments(args);
         return fragment;
+    }
+
+    public void setInfo(String info) {
+        this.info = info;
     }
 
     @Override
@@ -81,18 +97,30 @@ public class PictureFragment extends RecyclerFragment {
 
     @Override
     public void onDestroyView() {
-        SPUtil.save(type + Constants.PAGE, page);
+        SPUtil.save(imageType + Constants.PAGE, page);
         super.onDestroyView();
     }
 
     @Override
     protected void initViews() {
         super.initViews();
+        type = getArguments().getString(Constants.TYPE);
         context = (BaseActivity) getActivity();
         layoutManager = new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL);
         recyclerView.setLayoutManager(layoutManager);
-        adapter = new PictureAdapter();
-        adapter.openLoadAnimation(BaseQuickAdapter.SCALEIN);
+
+        int layout = R.layout.picture_item;
+        switch (type) {
+            case TYPE_A_ANIME:
+            case TYPE_A_FULI:
+            case TYPE_A_HENTAI:
+            case TYPE_A_ZATU:
+            case TYPE_A_UNIFORM:
+                isA = true;
+                layout = R.layout.post_item;
+                Log.i(TAG, "initViews: post layout");
+        }
+        adapter = new PictureAdapter(layout);
         recyclerView.setAdapter(adapter);
         RecyclerView.ItemAnimator animator = recyclerView.getItemAnimator();
         if (animator instanceof SimpleItemAnimator) {
@@ -101,10 +129,26 @@ public class PictureFragment extends RecyclerFragment {
         recyclerView.addOnItemTouchListener(new OnItemClickListener() {
             @Override
             public void onSimpleItemClick(BaseQuickAdapter baseQuickAdapter, View view, int i) {
+                if (isA && !isInPost) {
+                    startPost(getData(i).info);
+                    return;
+                }
                 startViewer(view, i);
+
             }
         });
-        type = getArguments().getInt(Constants.TYPE);
+    }
+
+    private void startPost(String postInfo) {
+        Log.i(TAG, "startPost: " + postInfo);
+        FragmentTransaction transaction = context.getSupportFragmentManager().beginTransaction();
+        PictureFragment fragment = PictureFragment.newInstance(type);
+        fragment.setInfo(postInfo);
+        transaction.replace(R.id.container, fragment, "aPost");
+        transaction.setCustomAnimations(android.R.anim.slide_in_left, android.R.anim.slide_out_right
+                , android.R.anim.slide_in_left, android.R.anim.slide_out_right);
+        transaction.addToBackStack("");
+        transaction.commit();
     }
 
     private void startViewer(View view, int position) {
@@ -118,13 +162,13 @@ public class PictureFragment extends RecyclerFragment {
     }
 
 
-    private void fetch(boolean fresh) {
+    private void fetch() {
         if (isFetching) {
             return;
         }
-        if (fresh || images.isEmpty()) {
-            page = 1;
-        }
+
+        Observable<List<Image>> source;
+        DataFetcher fetcher;
         switch (type) {
             case TYPE_DB_BREAST:
             case TYPE_DB_BUTT:
@@ -132,16 +176,29 @@ public class PictureFragment extends RecyclerFragment {
             case TYPE_DB_SILK:
             case TYPE_DB_RANK:
                 url = API.DB_BASE;
+                fetcher = new DataFetcher(url, imageType, page);
+                source = fetcher.getDouban();
+                break;
+            case TYPE_A_ANIME:
+            case TYPE_A_FULI:
+            case TYPE_A_HENTAI:
+            case TYPE_A_ZATU:
+            case TYPE_A_UNIFORM:
+                isA = true;
+                url = API.A_BASE;
+                fetcher = new DataFetcher(url, imageType, page);
+                source = isInPost ? fetcher.getPicturesOfPost(info) : fetcher.getAPosts();
                 break;
             default://type = 0, 代表GANK
                 url = API.GANK;
                 if (page <= 1) {
                     LOAD_COUNT = LOAD_COUNT_LARGE;
                 }
+                fetcher = new DataFetcher(url, imageType, page);
+                source = fetcher.getGank();
                 break;
         }
-        DataFetcher fetcher = new DataFetcher(url, type, page);
-        Observable<List<Image>> source = (type == 0) ? fetcher.getGankObservable() : fetcher.getDBObservable();
+
         fetchImages(source);
     }
 
@@ -157,7 +214,7 @@ public class PictureFragment extends RecyclerFragment {
                     @Override
                     public Image call(Image image) {
                         try {
-                            return Image.getFixedImage(context, image, type, page);
+                            return Image.getFixedImage(context, image, imageType, page);
                         } catch (ExecutionException | InterruptedException e) {
                             e.printStackTrace();
                         }
@@ -168,18 +225,25 @@ public class PictureFragment extends RecyclerFragment {
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Subscriber<Image>() {
                     int oldSize;
+                    int newSize;
 
                     @Override
                     public void onStart() {
                         isFetching = true;
                         oldSize = images.size();
+                        Log.i(TAG, "onStart: oldSize " + oldSize);
                     }
 
                     @Override
                     public void onCompleted() {
+                        newSize = images.size();
                         page++;
                         changeState(false);
                         adapter.loadMoreComplete();
+                        if (oldSize == newSize) {
+                            adapter.loadMoreEnd(true);
+                        }
+                        Log.i(TAG, "onCompleted: newSize " + newSize);
                         adapter.notifyItemRangeChanged(oldSize, images.size());
                     }
 
@@ -193,6 +257,7 @@ public class PictureFragment extends RecyclerFragment {
                     @Override
                     public void onNext(Image image) {
                         DB.save(context.realm, image);
+                        Log.i(TAG, "onStart: " + image.url);
                     }
                 });
     }
@@ -205,22 +270,39 @@ public class PictureFragment extends RecyclerFragment {
     @Override
     protected void AlwaysInit() {
         super.AlwaysInit();
-        page = SPUtil.getInt(type + Constants.PAGE, 1);
+        imageType = type;
+        adapter.openLoadAnimation(BaseQuickAdapter.SCALEIN);
+        if (!TextUtils.isEmpty(info)) {
+            isInPost = true;
+            imageType = info;
+            adapter.openLoadAnimation(BaseQuickAdapter.ALPHAIN);
+        }
+
+        page = SPUtil.getInt(imageType + Constants.PAGE, 1);
     }
 
     @Override
     protected void initData() {
-        images = DB.getImages(context.realm, type);
+        Log.i(TAG, "imageType: " + imageType);
+        initFab();
+        images = DB.getImages(context.realm, imageType);
         adapter.setNewData(images);
+        if (images.isEmpty()) {
+            page = 1;
+            fetch();
+            changeState(true);
+        } else if (!isInPost) {
+            fetch();
+            changeState(true);
+        }
+
         adapter.setOnLoadMoreListener(new BaseQuickAdapter.RequestLoadMoreListener() {
             @Override
             public void onLoadMoreRequested() {
-                fetch(false);
+                fetch();
             }
         });
-        initFab();
-        onRefresh();
-        changeState(true);
+
     }
 
     private void initFab() {
@@ -241,9 +323,10 @@ public class PictureFragment extends RecyclerFragment {
         });
     }
 
+
     @Override
     public void onRefresh() {
-        fetch(true);
+        fetch();
     }
 
     public Image getData(int position) {

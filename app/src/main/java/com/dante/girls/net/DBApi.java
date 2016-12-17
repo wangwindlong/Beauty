@@ -10,7 +10,7 @@ import rx.Observable;
  */
 public interface DBApi {
     @GET("show.htm")
-    Observable<ResponseBody> get(@Query("cid") int type, @Query("pager_offset") int page);
+    Observable<ResponseBody> get(@Query("cid") String type, @Query("pager_offset") int page);
     @GET("rank.htm")
     Observable<ResponseBody> getRank(@Query("pager_offset") int page);
 

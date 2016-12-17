@@ -38,7 +38,7 @@ public class ViewerActivity extends BaseActivity implements RealmChangeListener 
     FrameLayout container;
     private DetailPagerAdapter adapter;
     private int currentPosition;
-    private int type;
+    private String type;
     private List<Image> images;
     private boolean isSystemUiShown = true;
     private int position;
@@ -63,7 +63,7 @@ public class ViewerActivity extends BaseActivity implements RealmChangeListener 
         currentPosition = position;
         List<Fragment> fragments = new ArrayList<>();
 
-        type = getIntent().getIntExtra(Constants.TYPE, 0);
+        type = getIntent().getStringExtra(Constants.TYPE);
         images = DB.getImages(realm, type);
 
         for (int i = 0; i < images.size(); i++) {
@@ -104,7 +104,6 @@ public class ViewerActivity extends BaseActivity implements RealmChangeListener 
 //        EventBus.getDefault().post(new MessageEvent(currentPosition));
         if (isPositionChanged()) {
             setShareElement();
-            overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
             finish();
         } else {
             super.supportFinishAfterTransition();

@@ -17,8 +17,10 @@ import io.realm.annotations.PrimaryKey;
  */
 public class Image extends RealmObject {
     public int id;
-    public int type;//Gank or DB
+    public String type;//Gank or DB
     public String publishedAt;
+    public String info;
+    public String title;
     @PrimaryKey
     public String url;
     public int width;
@@ -31,24 +33,28 @@ public class Image extends RealmObject {
     public Image() {
     }
 
-    public Image(String url, int type) {
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    public Image(String url, String type) {
         this.url = url;
         this.type = type;
     }
 
-    public Image(String url, int type, int id) {
+    public Image(String url, String type, int id) {
         this.url = url;
         this.type = type;
         this.id = id;
     }
 
-    public static Image getFixedImage(Context context, Image image, int type, int page) throws ExecutionException, InterruptedException {
+    public static Image getFixedImage(Context context, Image image, String type, int page) throws ExecutionException, InterruptedException {
         Bitmap bitmap = getBitmap(context, image.url);
         image.setWidth(bitmap.getWidth());
         image.setHeight(bitmap.getHeight());
         image.setType(type);
         if (image.id == 0) {
-            image.id = type + page + image.width + image.height;
+            image.id = page + image.width + image.height;
         }
         return image;
     }
@@ -61,7 +67,7 @@ public class Image extends RealmObject {
                 .get();
     }
 
-    public void setType(int type) {
+    public void setType(String type) {
         this.type = type;
     }
 
@@ -75,6 +81,9 @@ public class Image extends RealmObject {
 
     public void setHeight(int height) {
         this.height = height;
+    }
+    public void setInfo(String info) {
+        this.info = info;
     }
 
 }

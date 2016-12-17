@@ -3,8 +3,8 @@
     <string name="navigation_drawer_open" translatable="false">close drawer</string>
     <string name="navigation_drawer_close" translatable="false">open drawer</string>
     <string name="title_activity_main" translatable="false">Main</string>
-    <string name="action_settings">设置</string>
-    <string name="action_about">关于</string>
+    <string name="menu_settings">设置</string>
+    <string name="about">关于</string>
     <string name="load_fail">网络被外星人切断，稍后再试吧</string>
     <string name="share_title" translatable="false">shared_title</string>
     <string name="shared_img" translatable="false">shared_img</string>
@@ -24,8 +24,8 @@
     <string name="menu_share">分享</string>
     <string name="version">版本</string>
     <string name="about_me">作者</string>
-    <string name="about_me_description">如果你有好的idea或建议，不要犹豫，发送邮件跟我交流吧~
-    </string>
+    <string name="about_me_description">我是个热爱Google的android开发者，现在上海，如果有好的Job可以推荐给我~</string>
+    <string name="feedback_description">如果你有好的idea或建议，不要犹豫，发送邮件跟我交流吧~</string>
     <string name="license">免责声明</string>
     <string name="license_description">本APP接口，资源全部来源于网络，如有侵权请告知</string>
     <string name="column_not_available">栏目未完成，请更新或联系作者 :D</string>
@@ -40,12 +40,24 @@
     <string name="tips_content">浏览到下方时，点击标题栏可以快速返回顶部</string>
 
     <string name="gank" translatable="false">Gank</string>
-    <string name="db">豆瓣美女</string>
-    <string name="db_breast">波涛胸涌</string>
-    <string name="db_butt">悬崖翘臂</string>
-    <string name="db_silk">黑丝控</string>
-    <string name="db_leg">美腿</string>
-    <string name="db_rank">热门</string>
+
+    <string-array name="db_titles">
+        <item name="gank">Gank</item>
+        <item name="db_rank">热门</item>
+        <item name="db_breast">波涛胸涌</item>
+        <item name="db_butt">悬崖翘臂</item>
+        <item name="db_leg">美腿</item>
+        <item name="db_silk">黑丝控</item>
+    </string-array>
+    <string-array name="a_titles">
+        <item name="a_anime">动漫</item>
+        <item name="a_fuli">福利</item>
+        <item name="a_hentai">绅士</item>
+        <item name="a_uniform">制服控</item>
+        <item name="a_zatu">杂图</item>
+    </string-array>
+
+
     <string name="nav_secret_mode" translatable="false">XXOO</string>
     <string name="secret_mode_opened">隐藏模式已打开，我们一起嘿嘿嘿~</string>
     <string name="secret_mode_closed">隐藏模式已关闭。</string>
@@ -72,6 +84,9 @@
     <string name="clear_finished">清理完成。</string>
     <string name="deep_clean">深度清理</string>
     <string name="app_info">应用信息</string>
-    <string name="app_name">美铝</string>
+    <string name="app_name">五次元妹子</string>
+    <string name="donate">您的赞助会让app变得更好，非常感谢</string>
+    <string name="nav_a_zone">二次元</string>
+    <string name="nav_beauty">妹子</string>
 
 </resources>

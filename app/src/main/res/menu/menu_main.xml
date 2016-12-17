@@ -1,13 +1,25 @@
-<menu xmlns:android="http://schemas.android.com/apk/res/android"
-      xmlns:app="http://schemas.android.com/apk/res-auto"
-      xmlns:tools="http://schemas.android.com/tools"
-      tools:context="com.dante.girls.MainActivity">
-    <item android:id="@+id/action_settings"
-          android:orderInCategory="1"
-          android:title="@string/action_settings"
-          app:showAsAction="never"/>
-    <item android:id="@+id/action_share"
-          android:orderInCategory="2"
-          android:title="@string/action_share"
-          app:showAsAction="never"/>
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <group android:checkableBehavior="single">
+        <item
+            android:id="@+id/nav_beauty"
+            android:title="@string/nav_beauty"/>
+        <item
+            android:id="@+id/nav_a"
+            android:title="@string/nav_a_zone"/>
+
+    </group>
+
+    <item android:title="@string/app">
+        <menu>
+            <item
+                android:id="@+id/nav_share"
+                android:title="@string/menu_share"/>
+            <item
+                android:id="@+id/nav_setting"
+                android:title="@string/menu_settings"/>
+        </menu>
+    </item>
+
 </menu>

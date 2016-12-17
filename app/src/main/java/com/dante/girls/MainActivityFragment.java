@@ -1,5 +1,6 @@
 package com.dante.girls;
 
+import android.os.Bundle;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -14,33 +15,35 @@ import com.dante.girls.model.MessageEvent;
 import com.dante.girls.picture.PictureFragment;
 import com.dante.girls.picture.RecyclerFragment;
 
-import org.greenrobot.eventbus.EventBus;
-import org.greenrobot.eventbus.Subscribe;
-
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import butterknife.BindView;
+
 import static com.bumptech.glide.gifdecoder.GifHeaderParser.TAG;
-import static com.dante.girls.net.API.TYPE_DB_BREAST;
-import static com.dante.girls.net.API.TYPE_DB_BUTT;
-import static com.dante.girls.net.API.TYPE_DB_LEG;
-import static com.dante.girls.net.API.TYPE_DB_RANK;
-import static com.dante.girls.net.API.TYPE_DB_SILK;
-import static com.dante.girls.net.API.TYPE_GANK;
 
 /**
  * A placeholder fragment containing a simple view.
  */
 public class MainActivityFragment extends BaseFragment {
     private static final int SMOOTH_SCROLL_POSITION = 50;
+    private static final String TITLES = "titles";
+    private static final String TYPES = "types";
     @BindView(R.id.pager)
     ViewPager pager;
     @BindView(R.id.tabs)
     TabLayout tabs;
     private List<RecyclerFragment> fragments = new ArrayList<>();
     private TabPagerAdapter adapter;
+
+    public static MainActivityFragment newInstance(String[] titles, String[] types) {
+        Bundle args = new Bundle();
+        args.putStringArray(TYPES, types);
+        args.putStringArray(TITLES, titles);
+        MainActivityFragment fragment = new MainActivityFragment();
+        fragment.setArguments(args);
+        return fragment;
+    }
 
     @Override
     protected int initLayoutId() {
@@ -50,13 +53,13 @@ public class MainActivityFragment extends BaseFragment {
     @Override
     public void onStart() {
         super.onStart();
-        EventBus.getDefault().register(this);
+//        EventBus.getDefault().register(this);
     }
 
     @Override
     public void onStop() {
         super.onStop();
-        EventBus.getDefault().unregister(this);
+//        EventBus.getDefault().unregister(this);
     }
 
     @Override
@@ -101,22 +104,18 @@ public class MainActivityFragment extends BaseFragment {
     }
 
     private void initFragments() {
-        List<String> titles = Arrays.asList(getString(R.string.gank),
-                getString(R.string.db_rank),
-                getString(R.string.db_leg),
-                getString(R.string.db_silk),
-                getString(R.string.db_breast),
-                getString(R.string.db_butt));
-        fragments.add(PictureFragment.newInstance(TYPE_GANK));
-        fragments.add(PictureFragment.newInstance(TYPE_DB_RANK));
-        fragments.add(PictureFragment.newInstance(TYPE_DB_LEG));
-        fragments.add(PictureFragment.newInstance(TYPE_DB_SILK));
-        fragments.add(PictureFragment.newInstance(TYPE_DB_BREAST));
-        fragments.add(PictureFragment.newInstance(TYPE_DB_BUTT));
-        if (fragments.size() != titles.size()) {
-            throw new IllegalArgumentException("You need add all fragments! Go: " + getClass().getSimpleName());
+        String[] titles = getArguments().getStringArray(TITLES);
+        String[] types = getArguments().getStringArray(TYPES);
+        if (types != null && titles != null) {
+            for (String type : types) {
+                fragments.add(PictureFragment.newInstance(type));
+            }
+
+            if (fragments.size() != titles.length)
+                throw new IllegalArgumentException("You need add all fragments! Check: " + getClass().getSimpleName());
+
+            adapter.setFragments(fragments, titles);
         }
-        adapter.setFragments(fragments, titles);
     }
 
     private void scrollToTop(RecyclerView list) {
@@ -136,7 +135,6 @@ public class MainActivityFragment extends BaseFragment {
         }
     }
 
-    @Subscribe
     public void onReenter(MessageEvent data) {
         Log.i(TAG, "onReenter: ");
 //        getActivity().supportPostponeEnterTransition();
@@ -155,13 +153,13 @@ public class MainActivityFragment extends BaseFragment {
 
     public class TabPagerAdapter extends FragmentPagerAdapter {
         private List<RecyclerFragment> fragments;
-        private List<String> titles;
+        private String[] titles;
 
         TabPagerAdapter(FragmentManager fm) {
             super(fm);
         }
 
-        void setFragments(List<RecyclerFragment> fragments, List<String> titles) {
+        void setFragments(List<RecyclerFragment> fragments, String[] titles) {
             this.fragments = fragments;
             this.titles = titles;
         }
@@ -178,7 +176,7 @@ public class MainActivityFragment extends BaseFragment {
 
         @Override
         public CharSequence getPageTitle(int position) {
-            return titles.get(position);
+            return titles[position];
         }
 
         PictureFragment getCurrent() {

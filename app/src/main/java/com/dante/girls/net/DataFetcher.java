@@ -1,21 +1,26 @@
 package com.dante.girls.net;
 
+import android.util.Log;
+
 import com.dante.girls.model.Image;
 import com.dante.girls.picture.PictureFragment;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import okhttp3.ResponseBody;
 import rx.Observable;
 import rx.functions.Func1;
 import rx.schedulers.Schedulers;
 
+import static com.bumptech.glide.gifdecoder.GifHeaderParser.TAG;
 import static com.dante.girls.net.API.TYPE_DB_RANK;
 
 /**
@@ -25,10 +30,10 @@ import static com.dante.girls.net.API.TYPE_DB_RANK;
 public class DataFetcher {
     private final NetService netService;
     public String url; //source url
-    public int type; //picture type
+    public String type; //picture type
     public int page;
 
-    public DataFetcher(String url, int type, int page) {
+    public DataFetcher(String url, String type, int page) {
         this.url = url;
         this.type = type;
         this.page = page;
@@ -36,7 +41,7 @@ public class DataFetcher {
 
     }
 
-    public Observable<List<Image>> getGankObservable() {
+    public Observable<List<Image>> getGank() {
         return netService.getGankApi().get(PictureFragment.LOAD_COUNT, page)
                 .subscribeOn(Schedulers.io())
                 .observeOn(Schedulers.io())
@@ -54,9 +59,9 @@ public class DataFetcher {
                 });
     }
 
-    public Observable<List<Image>> getDBObservable() {
+    public Observable<List<Image>> getDouban() {
         Observable<ResponseBody> data;
-        if (type == TYPE_DB_RANK) {
+        if (Objects.equals(type, TYPE_DB_RANK)) {
             data = netService.getDbApi().getRank(page);
         } else {
             data = netService.getDbApi().get(type, page);
@@ -76,7 +81,6 @@ public class DataFetcher {
                                 String url = elements.get(i).attr("src");
                                 images.add(new Image(url, type));
                             }
-                            return images;
                         } catch (IOException e) {
                             e.printStackTrace();
                         }
@@ -85,5 +89,72 @@ public class DataFetcher {
                 });
     }
 
+
+    public Observable<List<Image>> getAPosts() {
+        //get all posts' pictures
+        return netService.getaApi().getPosts(type, page)
+                .subscribeOn(Schedulers.io())
+                .observeOn(Schedulers.io())
+                .map(new Func1<ResponseBody, List<Image>>() {
+                    @Override
+                    public List<Image> call(ResponseBody responseBody) {
+                        List<Image> images = new ArrayList<>();
+                        try {
+                            Document document = Jsoup.parse(responseBody.string());
+                            Elements elements = document.select("div[class=content] > a");
+                            final int size = elements.size();
+                            Log.i(TAG, "call: size" + size);
+                            for (int i = 0; i < size; i++) {
+                                Element link = elements.get(i);
+                                String postUrl = link.attr("href").replace(API.A_BASE, "");
+                                String title = link.attr("title");
+                                String url = link.select("img").first().attr("src");
+                                Log.i(TAG, "getAPosts: img url " + url);
+                                Image image = new Image(url, type);
+                                image.setInfo(postUrl);
+                                Log.i(TAG, "getAPosts: title " + image.title);
+                                image.setTitle(title);
+                                images.add(image);
+                            }
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                        return images;
+                    }
+                });
+
+
+    }
+
+    public Observable<List<Image>> getPicturesOfPost(String info) {
+        //get all images in this post
+        Log.i(TAG, "getAPost : " + info);
+
+        return netService.getaApi().getPictures(info, page)
+                .subscribeOn(Schedulers.io())
+                .observeOn(Schedulers.io())
+                .map(new Func1<ResponseBody, List<Image>>() {
+                    @Override
+                    public List<Image> call(ResponseBody responseBody) {
+                        List<Image> images = new ArrayList<>();
+                        try {
+                            Document document = Jsoup.parse(responseBody.string());
+                            Elements elements = document.select("div[class=post] > p > a > img");
+                            final int size = elements.size();
+                            Log.i(TAG, "call: size" + size);
+                            for (int i = 0; i < size; i++) {
+                                String url = elements.get(i).attr("src");
+                                Log.i(TAG, "Inpost imgUrl: " + url + " type-" + type);
+                                Image image = new Image(url, type);
+                                images.add(image);
+                            }
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                        return images;
+                    }
+                });
+
+    }
 
 }

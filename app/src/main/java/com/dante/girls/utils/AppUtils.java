@@ -41,8 +41,7 @@ public class AppUtils {
 
     public static boolean isIntentSafe(Intent intent) {
         PackageManager packageManager = App.context.getPackageManager();
-        List activities = packageManager.queryIntentActivities(intent,
-                PackageManager.MATCH_DEFAULT_ONLY);
+        List activities = packageManager.queryIntentActivities(intent, PackageManager.MATCH_DEFAULT_ONLY);
         return activities.size() > 0;
     }
 }

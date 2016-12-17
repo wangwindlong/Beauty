@@ -53,7 +53,7 @@ public class DB {
         realm.commitTransaction();
     }
 
-    public static RealmResults<Image> getImages(Realm realm, int type) {
+    public static RealmResults<Image> getImages(Realm realm, String type) {
         realm = initRealm(realm);
         return realm.where(Image.class)
                 .equalTo("type", type)

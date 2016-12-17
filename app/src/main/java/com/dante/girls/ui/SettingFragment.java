@@ -42,7 +42,7 @@ public class SettingFragment extends PreferenceFragment implements Preference.On
     private Preference splash;
     private Preference about;
 
-    private View rootView;
+    private View rootView ;
     private long startTime;
     private boolean first = true;
     private int secretIndex;
@@ -142,7 +142,7 @@ public class SettingFragment extends PreferenceFragment implements Preference.On
     private String getDataSize() {
         File file = getActivity().getApplicationContext().getCacheDir();
         long size = AppUtils.folderSize(file);
-        if (size==0){
+        if (size == 0) {
             return getString(R.string.empty);
         }
 
@@ -172,8 +172,11 @@ public class SettingFragment extends PreferenceFragment implements Preference.On
     }
 
     private void sendEmailFeedback() {
-        Intent email = new Intent(Intent.ACTION_SENDTO);
-        if (isIntentSafe(email)) {
+        //This is wired, I used ACTION_SENDTO at first
+        //but check intent returns unsafe
+        //so I change to ACTION_VIEW (like the system do)
+        Intent email = new Intent(Intent.ACTION_VIEW);
+        if (AppUtils.isIntentSafe(email)) {
             email.setData(Uri.parse("mailto:danteandroi@gmail.com"));
             email.putExtra(Intent.EXTRA_SUBJECT, "'Girls' Feedback");
             email.putExtra(Intent.EXTRA_TEXT, "Hi，");

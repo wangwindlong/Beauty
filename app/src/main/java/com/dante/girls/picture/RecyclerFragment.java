@@ -23,7 +23,7 @@ public abstract class RecyclerFragment extends BaseFragment implements SwipeRefr
     @BindView(R.id.swipe_refresh)
     SwipeRefreshLayout swipeRefresh;
     boolean isFirst = true;   //whether is first time to enter fragment
-    int type;               // type of recyclerView's content
+    String type;               // type of recyclerView's content
     int lastPosition;       //last visible position
     int firstPosition;      //first visible position
     Subscription subscription;
