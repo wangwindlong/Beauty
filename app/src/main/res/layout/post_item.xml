@@ -17,7 +17,6 @@
     <TextView
         android:id="@+id/title"
         android:background="@color/btg_global_light_white"
-        android:textSize="16sp"
         android:layout_marginTop="2dp"
         tools:text="This is a test post title, must be veryveryvery long (28P)"
         android:layout_width="match_parent" android:layout_height="wrap_content"/>

@@ -2,6 +2,7 @@ package com.dante.girls.net;
 
 import android.util.Log;
 
+import com.dante.girls.model.DB;
 import com.dante.girls.model.Image;
 import com.dante.girls.picture.PictureFragment;
 
@@ -104,6 +105,12 @@ public class DataFetcher {
                             Elements elements = document.select("div[class=content] > a");
                             final int size = elements.size();
                             Log.i(TAG, "call: size" + size);
+                            String url = elements.last().select("img").first().attr("src");
+                            if (DB.getByUrl(url) != null) {
+                                return null;//最后一个元素在数据库里已经保存了，那么不需要继续解析。
+                            }
+
+
                             for (int i = 0; i < size; i++) {
                                 Element link = elements.get(i);
                                 String postUrl = link.attr("href").replace(API.A_BASE, "");
@@ -141,6 +148,11 @@ public class DataFetcher {
                             Document document = Jsoup.parse(responseBody.string());
                             Elements elements = document.select("div[class=post] > p > a > img");
                             final int size = elements.size();
+                            String url = elements.last().attr("src");
+                            if (DB.getByUrl(url) != null) {
+                                return null;
+                            }
+
                             Log.i(TAG, "call: size" + size);
                             for (int i = 0; i < size; i++) {
                                 String url = elements.get(i).attr("src");

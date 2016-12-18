@@ -39,6 +39,6 @@
         android:layout_margin="@dimen/fab_margin"
         app:layout_anchor="@+id/container"
         app:layout_anchorGravity="bottom|right"
-        app:srcCompat="@drawable/ic_favorite_white_24dp"/>
+        android:src="@drawable/btg_icon_account" />
 
 </android.support.design.widget.CoordinatorLayout>

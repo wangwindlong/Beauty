@@ -42,6 +42,12 @@ public class DB {
     }
 
 
+    public static Image getByUrl(String url) {
+        Realm realm = Realm.getDefaultInstance();
+        return realm.where(Image.class).equalTo("url", url).findFirst();
+    }
+
+
     public static <T extends RealmObject> RealmResults<T> findAll(Realm realm, Class<T> realmObjectClass) {
         realm = initRealm(realm);
         return realm.where(realmObjectClass).findAll();

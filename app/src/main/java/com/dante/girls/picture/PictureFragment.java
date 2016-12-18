@@ -29,6 +29,7 @@ import com.dante.girls.utils.UI;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
+import io.realm.Realm;
 import io.realm.RealmResults;
 import rx.Observable;
 import rx.Subscriber;
@@ -117,6 +118,7 @@ public class PictureFragment extends RecyclerFragment {
             case TYPE_A_ZATU:
             case TYPE_A_UNIFORM:
                 isA = true;
+                if (isInPost) return;
                 layout = R.layout.post_item;
                 Log.i(TAG, "initViews: post layout");
         }
@@ -146,14 +148,14 @@ public class PictureFragment extends RecyclerFragment {
         fragment.setInfo(postInfo);
         transaction.replace(R.id.container, fragment, "aPost");
         transaction.setCustomAnimations(android.R.anim.slide_in_left, android.R.anim.slide_out_right
-                , android.R.anim.slide_in_left, android.R.anim.slide_out_right);
+                , android.R.anim.slide_out_right, android.R.anim.slide_in_left);
         transaction.addToBackStack("");
         transaction.commit();
     }
 
     private void startViewer(View view, int position) {
         Intent intent = new Intent(context, ViewerActivity.class);
-        intent.putExtra(Constants.TYPE, type);
+        intent.putExtra(Constants.TYPE, imageType);
         intent.putExtra(Constants.POSITION, position);
 
         ActivityOptionsCompat options = ActivityOptionsCompat
@@ -203,6 +205,8 @@ public class PictureFragment extends RecyclerFragment {
     }
 
     private void fetchImages(final Observable<List<Image>> observable) {
+        if (observable == null) return;
+
         subscription = observable
                 .flatMap(new Func1<List<Image>, Observable<Image>>() {
                     @Override
@@ -250,6 +254,7 @@ public class PictureFragment extends RecyclerFragment {
                     @Override
                     public void onError(Throwable e) {
                         changeState(false);
+                        adapter.loadMoreComplete();
                         UI.showSnack(rootView, R.string.load_fail);
                         e.printStackTrace();
                     }
