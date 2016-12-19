@@ -1,8 +1,9 @@
 
-Beauty 是一款看妹子的APP (获取[apk](https://github.com/DanteAndroid/Girls/blob/master/app/app-armeabi-v7a-release.apk)）
+Beauty 是一款看妹子的APP (获取[apk](https://github.com/DanteAndroid/Girls/raw/master/app/app-armeabi-v7a-release.apk)）
 ---
 **正在更新中...大量新妹子，敬請期待。**
-
+Update:
+- 添加了动漫栏目。
 
 ## Feature
 0. 它是我另一个库[Knowledge](https://github.com/DanteAndroid/Knowledge)的Rxjava&精简版
