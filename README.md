@@ -2,6 +2,7 @@
 Beauty 是一款看妹子的APP (获取[apk](https://github.com/DanteAndroid/Girls/raw/master/app/app-armeabi-v7a-release.apk)）
 ---
 **正在更新中...大量新妹子，敬請期待。**
+
 Update:
 - 添加了动漫栏目。
 
