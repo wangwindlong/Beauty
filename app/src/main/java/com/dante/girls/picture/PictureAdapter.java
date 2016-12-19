@@ -30,9 +30,7 @@ class PictureAdapter extends BaseQuickAdapter<Image, BaseViewHolder> {
 
         //for post item
         TextView title = holder.getView(R.id.title);
-        Log.i(TAG, "convert:  ");
         if (title != null) {
-            Log.i(TAG, "convert: title "+image.title);
             title.setText(image.title);
         }
     }

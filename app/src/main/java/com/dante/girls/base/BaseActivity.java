@@ -22,7 +22,7 @@ import io.realm.Realm;
 public abstract class BaseActivity extends AppCompatActivity {
     private static final String TAG = "BaseActivity";
     public Realm realm;
-    protected Toolbar toolbar;
+    public Toolbar toolbar;
     private boolean isShowToolbar = true;
 
     @Override
@@ -104,6 +104,13 @@ public abstract class BaseActivity extends AppCompatActivity {
     protected void onDestroy() {
         super.onDestroy();
         realm.close();
+    }
+
+    public void setToolbarTitle(String title){
+        if (toolbar!=null){
+            toolbar.setTitle(title);
+        }
+
     }
 
     @Override

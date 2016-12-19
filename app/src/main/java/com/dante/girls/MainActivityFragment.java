@@ -95,7 +95,7 @@ public class MainActivityFragment extends BaseFragment {
 //                    int i = reenterState.getInt("index", 0);
 //                    Log.d(TAG, "reenter from " + i);
 //                    sharedElements.clear();
-//                    sharedElements.put(adapter.getCurrent().getData(i).url, adapter.getCurrent().getRecyclerView().getLayoutManager().findViewByPosition(i));
+//                    sharedElements.put(adapter.getCurrent().getImage(i).url, adapter.getCurrent().getRecyclerView().getLayoutManager().findViewByPosition(i));
 //                    reenterState = null;
 //                }
 //            }

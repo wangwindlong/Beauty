@@ -79,8 +79,8 @@ public class DataFetcher {
                             Elements elements = document.select("div[class=thumbnail] > div[class=img_single] > a > img");
                             final int size = elements.size();
                             for (int i = 0; i < size; i++) {
-                                String url = elements.get(i).attr("src");
-                                images.add(new Image(url, type));
+                                String src = elements.get(i).attr("src");
+                                images.add(new Image(src, type));
                             }
                         } catch (IOException e) {
                             e.printStackTrace();
@@ -107,19 +107,17 @@ public class DataFetcher {
                             Log.i(TAG, "call: size" + size);
                             String url = elements.last().select("img").first().attr("src");
                             if (DB.getByUrl(url) != null) {
+                                Log.i(TAG, "getAPosts: find saved image!");
                                 return null;//最后一个元素在数据库里已经保存了，那么不需要继续解析。
                             }
-
 
                             for (int i = 0; i < size; i++) {
                                 Element link = elements.get(i);
                                 String postUrl = link.attr("href").replace(API.A_BASE, "");
                                 String title = link.attr("title");
-                                String url = link.select("img").first().attr("src");
-                                Log.i(TAG, "getAPosts: img url " + url);
-                                Image image = new Image(url, type);
+                                String src = link.select("img").first().attr("src");
+                                Image image = new Image(src, type);
                                 image.setInfo(postUrl);
-                                Log.i(TAG, "getAPosts: title " + image.title);
                                 image.setTitle(title);
                                 images.add(image);
                             }
@@ -150,14 +148,15 @@ public class DataFetcher {
                             final int size = elements.size();
                             String url = elements.last().attr("src");
                             if (DB.getByUrl(url) != null) {
+                                Log.i(TAG, "getPicturesOfPost: find saved image!");
                                 return null;
                             }
 
                             Log.i(TAG, "call: size" + size);
                             for (int i = 0; i < size; i++) {
-                                String url = elements.get(i).attr("src");
-                                Log.i(TAG, "Inpost imgUrl: " + url + " type-" + type);
-                                Image image = new Image(url, type);
+                                String src = elements.get(i).attr("src");
+//                                Log.i(TAG, "Inpost imgUrl: " + src + " type-" + type);
+                                Image image = new Image(src, type);
                                 images.add(image);
                             }
                         } catch (IOException e) {

@@ -2,6 +2,7 @@ package com.dante.girls;
 
 import android.annotation.TargetApi;
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Build;
 import android.os.Handler;
 import android.support.annotation.NonNull;
@@ -23,6 +24,8 @@ import com.dante.girls.utils.Imager;
 import com.dante.girls.utils.SPUtil;
 import com.dante.girls.utils.Share;
 import com.dante.girls.utils.UI;
+import com.mikepenz.google_material_typeface_library.GoogleMaterial;
+import com.mikepenz.iconics.IconicsDrawable;
 
 import butterknife.BindView;
 import moe.feng.alipay.zerosdk.AlipayZeroSdk;
@@ -52,6 +55,7 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
     FrameLayout container;
 
     private boolean backPressed;
+    private MenuItem item;
 
     @Override
     protected int initLayoutId() {
@@ -82,13 +86,13 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
     private void initMain() {
         String[] titles = getResources().getStringArray(R.array.db_titles);
         String[] types = {TYPE_GANK, TYPE_DB_RANK, TYPE_DB_BREAST, TYPE_DB_BUTT, TYPE_DB_LEG, TYPE_DB_SILK};
-        replaceFragment(MainActivityFragment.newInstance(titles, types), MAIN_FRAGMENT_TAG);
+        replaceFragment(MainActivityFragment.newInstance(titles, types), "");
     }
 
     private void initA() {
         String[] titles = getResources().getStringArray(R.array.a_titles);
         String[] types = {TYPE_A_ANIME, TYPE_A_FULI, TYPE_A_HENTAI, TYPE_A_UNIFORM, TYPE_A_ZATU};
-        replaceFragment(MainActivityFragment.newInstance(titles, types), MAIN_FRAGMENT_TAG);
+        replaceFragment(MainActivityFragment.newInstance(titles, types), "");
     }
 
     private void setupDrawer() {
@@ -128,38 +132,32 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
         navView.setNavigationItemSelectedListener(this);
         boolean isSecretOn = SPUtil.getBoolean(SettingFragment.SECRET_MODE);
         navView.inflateMenu(R.menu.menu_main);
+        navView.setCheckedItem(R.id.nav_beauty);
 //        if (isSecretOn) {
 //            navView.inflateMenu(R.menu.main_menu_all);
 //        } else {
 //            navView.inflateMenu(R.menu.main_drawer);
 //        }
-        //select the first menu at startup
-//        Menu menu = navView.getMenu();
-//        menu.getItem(0).setChecked(true);
-//        menu.getItem(0).setIcon(
-//                new IconicsDrawable(this).
-//                        icon(GoogleMaterial.Icon.gmd_explore));
-//        menu.getItem(1).setIcon(
-//                new IconicsDrawable(this).
-//                        icon(GoogleMaterial.Icon.gmd_face)
-//                        .color(Color.RED));
-//        sub.getItem(2).setIcon(
-//                new IconicsDrawable(this).
-//                        icon(GoogleMaterial.Icon.gmd_share)
-//                        .color(Color.DKGRAY));
-//        sub.getItem(3).setIcon(
-//                new IconicsDrawable(this).
-//                        icon(GoogleMaterial.Icon.gmd_settings)
-//                        .color(Color.GRAY));
-
+        //       select the first menu at startup
+        Menu menu = navView.getMenu();
+        menu.getItem(0).setChecked(true);
+        menu.getItem(0).setIcon(
+                new IconicsDrawable(this).
+                        icon(GoogleMaterial.Icon.gmd_face));
+        menu.getItem(1).setIcon(
+                new IconicsDrawable(this).
+                        icon(GoogleMaterial.Icon.gmd_collections)
+                        .color(Color.RED));
+        Menu sub = menu.getItem(2).getSubMenu();
+        sub.getItem(0).setIcon(
+                new IconicsDrawable(this).
+                        icon(GoogleMaterial.Icon.gmd_share)
+                        .color(Color.DKGRAY));
+        sub.getItem(1).setIcon(
+                new IconicsDrawable(this).
+                        icon(GoogleMaterial.Icon.gmd_settings)
+                        .color(Color.GRAY));
     }
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.menu_main, menu);
-        return true;
-    }
-
 
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
@@ -173,8 +171,21 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
             return true;
         } else if (id == R.id.nav_share) {
             Share.shareText(this, getString(R.string.share_app_description));
-
         }
+        this.item = item;
+        drawerLayout.closeDrawers();
         return true;
+    }
+
+    public MenuItem getCurrentMenu() {
+        if (navView == null) {
+            navView = (NavigationView) findViewById(R.id.nav_view);
+        }
+
+        if (item == null) {
+            item = navView.getMenu().getItem(0);
+        }
+
+        return item;
     }
 }
