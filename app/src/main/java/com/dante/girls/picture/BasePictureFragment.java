@@ -74,8 +74,6 @@ public abstract class BasePictureFragment extends RecyclerFragment {
     public void onResume() {
         super.onResume();
         lastPosition = SPUtil.getInt(imageType + Constants.POSITION);
-        Log.i(TAG, "onResume: type- " + imageType + " position- " + lastPosition);
-
         recyclerView.scrollToPosition(lastPosition > 0 ? lastPosition : 0);
     }
 
@@ -134,7 +132,6 @@ public abstract class BasePictureFragment extends RecyclerFragment {
     public abstract int initAdapterLayout();
 
     private void startPost(Image image) {
-        Log.i(TAG, "startPost: " + image.info);
         FragmentTransaction transaction = context.getSupportFragmentManager().beginTransaction();
         PictureFragment fragment = PictureFragment.newInstance(imageType);
         fragment.setInfo(image.info);
@@ -163,7 +160,7 @@ public abstract class BasePictureFragment extends RecyclerFragment {
                 .flatMap(new Func1<List<Image>, Observable<Image>>() {
                     @Override
                     public Observable<Image> call(List<Image> images) {
-                        if (images==null){
+                        if (images == null) {
                             subscription.unsubscribe();
                         }
                         return Observable.from(images);
@@ -190,7 +187,6 @@ public abstract class BasePictureFragment extends RecyclerFragment {
                     public void onStart() {
                         isFetching = true;
                         oldSize = images.size();
-                        Log.i(TAG, "onStart: oldSize " + oldSize);
                     }
 
                     @Override
@@ -202,7 +198,6 @@ public abstract class BasePictureFragment extends RecyclerFragment {
                         if (oldSize == newSize) {
                             adapter.loadMoreEnd(true);
                         }
-                        Log.i(TAG, "onCompleted: newSize " + newSize);
                         adapter.notifyItemRangeChanged(oldSize, images.size());
                     }
 
@@ -233,10 +228,8 @@ public abstract class BasePictureFragment extends RecyclerFragment {
         setTitle("");
         adapter.openLoadAnimation(BaseQuickAdapter.SCALEIN);
         imageType = baseType;
-        Log.i(TAG, "AlwaysInit: imageType" + imageType);
         if (!TextUtils.isEmpty(info)) {
             imageType = info;
-//            adapter.openLoadAnimation(BaseQuickAdapter.ALPHAIN);
         }
 
         page = SPUtil.getInt(imageType + Constants.PAGE, 1);
@@ -248,7 +241,6 @@ public abstract class BasePictureFragment extends RecyclerFragment {
 
     @Override
     protected void initData() {
-        Log.i(TAG, "imageType: " + imageType);
         initFab();
         images = DB.getImages(context.realm, imageType);
         adapter.setNewData(images);
@@ -256,11 +248,7 @@ public abstract class BasePictureFragment extends RecyclerFragment {
             page = 1;
             fetch();
             changeState(true);
-        } else if (!isInPost) {
-//            fetch();
-//            changeState(true);
         }
-
         adapter.setOnLoadMoreListener(new BaseQuickAdapter.RequestLoadMoreListener() {
             @Override
             public void onLoadMoreRequested() {

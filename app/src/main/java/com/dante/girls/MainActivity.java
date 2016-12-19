@@ -4,6 +4,7 @@ import android.annotation.TargetApi;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Build;
+import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
@@ -68,9 +69,7 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
         super.initViews();
         setupDrawer();
         initNavigationView();
-
         initMain();
-//        initA();
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -83,15 +82,26 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
         getWindow().setSharedElementsUseOverlay(false);
     }
 
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putInt("itemId", item == null ? R.id.nav_beauty : item.getItemId());
+    }
+
+    @Override
+    protected void onRestoreInstanceState(Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+        int itemId = savedInstanceState.getInt("itemId", R.id.nav_beauty);
+        navView.setCheckedItem(itemId);
+    }
+
     private void initMain() {
         String[] titles = getResources().getStringArray(R.array.db_titles);
         String[] types = {TYPE_GANK, TYPE_DB_RANK, TYPE_DB_BREAST, TYPE_DB_BUTT, TYPE_DB_LEG, TYPE_DB_SILK};
-        replaceFragment(MainActivityFragment.newInstance(titles, types), "");
+        init(titles, types);
     }
 
-    private void initA() {
-        String[] titles = getResources().getStringArray(R.array.a_titles);
-        String[] types = {TYPE_A_ANIME, TYPE_A_FULI, TYPE_A_HENTAI, TYPE_A_UNIFORM, TYPE_A_ZATU};
+    private void init(String[] titles, String[] types) {
         replaceFragment(MainActivityFragment.newInstance(titles, types), "");
     }
 
@@ -163,9 +173,13 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
         int id = item.getItemId();
         if (id == R.id.nav_beauty) {
-            initMain();
+            String[] titles = getResources().getStringArray(R.array.db_titles);
+            String[] types = {TYPE_GANK, TYPE_DB_RANK, TYPE_DB_BREAST, TYPE_DB_BUTT, TYPE_DB_LEG, TYPE_DB_SILK};
+            init(titles, types);
         } else if (id == R.id.nav_a) {
-            initA();
+            String[] titles = getResources().getStringArray(R.array.a_titles);
+            String[] types = {TYPE_A_ANIME, TYPE_A_FULI, TYPE_A_HENTAI, TYPE_A_UNIFORM, TYPE_A_ZATU};
+            init(titles, types);
         } else if (id == R.id.nav_setting) {
             startActivity(new Intent(getApplicationContext(), SettingsActivity.class));
             return true;
