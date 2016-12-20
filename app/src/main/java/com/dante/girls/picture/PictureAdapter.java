@@ -1,7 +1,6 @@
 package com.dante.girls.picture;
 
 import android.support.v4.view.ViewCompat;
-import android.util.Log;
 import android.widget.TextView;
 
 import com.chad.library.adapter.base.BaseQuickAdapter;
@@ -19,6 +18,7 @@ class PictureAdapter extends BaseQuickAdapter<Image, BaseViewHolder> {
 
     PictureAdapter(int layoutId) {
         super(layoutId, null);
+//        setHasStableIds(true);
     }
 
     @Override

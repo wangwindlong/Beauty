@@ -118,4 +118,6 @@ public abstract class BaseActivity extends AppCompatActivity {
         Bugtags.onDispatchTouchEvent(this, ev);
         return super.dispatchTouchEvent(ev);
     }
+
+
 }

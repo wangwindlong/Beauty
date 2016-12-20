@@ -3,11 +3,13 @@ package com.dante.girls.base;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
 import butterknife.ButterKnife;
+import io.realm.Realm;
 
 /**
  * BaseFragment helps onCreateView, and initViews(when root is null), init data on Activity Created.
@@ -15,6 +17,8 @@ import butterknife.ButterKnife;
 public abstract class BaseFragment extends Fragment {
 
     protected View rootView;
+    protected Realm realm;
+    protected Toolbar toolbar;
 
     @Nullable
     @Override
@@ -49,6 +53,8 @@ public abstract class BaseFragment extends Fragment {
 
     protected void AlwaysInit() {
         ButterKnife.bind(this, rootView);
+        realm = ((BaseActivity) getActivity()).realm;
+        toolbar = ((BaseActivity) getActivity()).toolbar;
     }
 
     protected abstract void initViews();

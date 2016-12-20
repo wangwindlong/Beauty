@@ -9,6 +9,7 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.view.ViewCompat;
+import android.util.Log;
 import android.view.View;
 
 import com.bumptech.glide.request.animation.GlideAnimation;
@@ -17,22 +18,31 @@ import com.dante.girls.R;
 import com.dante.girls.base.BaseFragment;
 import com.dante.girls.base.Constants;
 import com.dante.girls.lib.TouchImageView;
+import com.dante.girls.model.DataBase;
+import com.dante.girls.ui.SettingFragment;
 import com.dante.girls.utils.BitmapUtil;
 import com.dante.girls.utils.BlurBuilder;
 import com.dante.girls.utils.Imager;
 import com.dante.girls.utils.SPUtil;
 import com.dante.girls.utils.Share;
 import com.dante.girls.utils.UI;
+import com.like.LikeButton;
+import com.like.OnLikeListener;
 import com.tbruyelle.rxpermissions.RxPermissions;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 
 import butterknife.BindView;
 import rx.Observable;
+import rx.Subscription;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Action1;
 import rx.functions.Func1;
 import rx.schedulers.Schedulers;
+
+import static com.dante.girls.model.DataBase.getByUrl;
 
 
 /**
@@ -43,6 +53,9 @@ public class ViewerFragment extends BaseFragment implements View.OnLongClickList
     private static final String TAG = "test";
     @BindView(R.id.headImage)
     TouchImageView imageView;
+    List<Subscription> tasks = new ArrayList<>();
+    @BindView(R.id.likeBtn)
+    LikeButton likeBtn;
     private ViewerActivity context;
     private Bitmap bitmap;
     private String url;
@@ -66,6 +79,24 @@ public class ViewerFragment extends BaseFragment implements View.OnLongClickList
         url = getArguments().getString(Constants.URL);
         ViewCompat.setTransitionName(imageView, url);
         load(url);
+        likeBtn.setOnLikeListener(new OnLikeListener() {
+            @Override
+            public void liked(LikeButton likeButton) {
+                realm.beginTransaction();
+                DataBase.getByUrl(realm, url).setLiked(true);
+                realm.commitTransaction();
+
+                if (SPUtil.getBoolean(SettingFragment.LIKE_DOWNLOAD)) {
+                    Log.i(TAG, "liked: save");
+                    save(bitmap);
+                }
+            }
+
+            @Override
+            public void unLiked(LikeButton likeButton) {
+                getByUrl(url).setLiked(false);
+            }
+        });
     }
 
     private void load(String url) {
@@ -75,6 +106,7 @@ public class ViewerFragment extends BaseFragment implements View.OnLongClickList
                 bitmap = b;
                 imageView.setImageBitmap(b);
                 context.supportStartPostponedEnterTransition();
+                likeBtn.setVisibility(View.VISIBLE);
             }
         });
     }
@@ -127,7 +159,7 @@ public class ViewerFragment extends BaseFragment implements View.OnLongClickList
     }
 
     private void blur(Bitmap bitmap) {
-        Observable.just(bitmap)
+        Subscription subscription = Observable.just(bitmap)
                 .map(new Func1<Bitmap, Bitmap>() {
                     @Override
                     public Bitmap call(Bitmap bitmap) {
@@ -142,11 +174,12 @@ public class ViewerFragment extends BaseFragment implements View.OnLongClickList
                         imageView.setImageBitmap(bitmap);
                     }
                 });
+        tasks.add(subscription);
     }
 
     private void save(final Bitmap bitmap) {
         RxPermissions permissions = new RxPermissions(context);
-        permissions.request(Manifest.permission.WRITE_EXTERNAL_STORAGE)
+        Subscription subscription = permissions.request(Manifest.permission.WRITE_EXTERNAL_STORAGE)
                 .map(new Func1<Boolean, File>() {
                     @Override
                     public File call(Boolean granted) {
@@ -167,11 +200,12 @@ public class ViewerFragment extends BaseFragment implements View.OnLongClickList
                         }
                     }
                 });
+        tasks.add(subscription);
     }
 
     private void share(final Bitmap bitmap) {
         final RxPermissions permissions = new RxPermissions(context);
-        permissions.request(Manifest.permission.WRITE_EXTERNAL_STORAGE)
+        Subscription subscription = permissions.request(Manifest.permission.WRITE_EXTERNAL_STORAGE)
                 .map(new Func1<Boolean, Uri>() {
                     @Override
                     public Uri call(Boolean granted) {
@@ -190,13 +224,13 @@ public class ViewerFragment extends BaseFragment implements View.OnLongClickList
                         Share.shareImage(context, uri);
                     }
                 });
-
+        tasks.add(subscription);
     }
 
     @Override
     public void onClick(View v) {
         if (!SPUtil.getBoolean(Constants.HAS_HINT)) {
-            showHint();
+//            showHint();
             SPUtil.save(Constants.HAS_HINT, true);
         } else {
             context.supportFinishAfterTransition();
@@ -205,6 +239,14 @@ public class ViewerFragment extends BaseFragment implements View.OnLongClickList
 
     public View getSharedElement() {
         return imageView;
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        for (Subscription s : tasks) {
+            s.unsubscribe();
+        }
     }
 
 }

@@ -14,7 +14,7 @@ import android.widget.FrameLayout;
 import com.dante.girls.R;
 import com.dante.girls.base.BaseActivity;
 import com.dante.girls.base.Constants;
-import com.dante.girls.model.DB;
+import com.dante.girls.model.DataBase;
 import com.dante.girls.model.Image;
 import com.dante.girls.utils.SPUtil;
 
@@ -64,7 +64,7 @@ public class ViewerActivity extends BaseActivity implements RealmChangeListener 
         List<Fragment> fragments = new ArrayList<>();
 
         type = getIntent().getStringExtra(Constants.TYPE);
-        images = DB.getImages(realm, type);
+        images = DataBase.findImages(realm, type);
 
         for (int i = 0; i < images.size(); i++) {
             fragments.add(ViewerFragment.newInstance(images.get(i).url));
@@ -89,7 +89,6 @@ public class ViewerActivity extends BaseActivity implements RealmChangeListener 
             }
         });
 
-        getWindow().setSharedElementsUseOverlay(false);
     }
 
 

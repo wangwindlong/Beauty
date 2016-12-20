@@ -2,9 +2,9 @@ package com.dante.girls.net;
 
 import android.util.Log;
 
-import com.dante.girls.model.DB;
+import com.dante.girls.model.DataBase;
 import com.dante.girls.model.Image;
-import com.dante.girls.picture.PictureFragment;
+import com.dante.girls.picture.CustomPictureFragment;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -14,7 +14,6 @@ import org.jsoup.select.Elements;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 import okhttp3.ResponseBody;
 import rx.Observable;
@@ -32,7 +31,7 @@ public class DataFetcher {
     private final NetService netService;
     public String url; //source url
     public String type; //picture type
-    public int page;
+    private int page;
 
     public DataFetcher(String url, String type, int page) {
         this.url = url;
@@ -43,7 +42,7 @@ public class DataFetcher {
     }
 
     public Observable<List<Image>> getGank() {
-        return netService.getGankApi().get(PictureFragment.LOAD_COUNT, page)
+        return netService.getGankApi().get(CustomPictureFragment.LOAD_COUNT, page)
                 .subscribeOn(Schedulers.io())
                 .observeOn(Schedulers.io())
                 .filter(new Func1<GankApi.Result<List<Image>>, Boolean>() {
@@ -62,7 +61,7 @@ public class DataFetcher {
 
     public Observable<List<Image>> getDouban() {
         Observable<ResponseBody> data;
-        if (Objects.equals(type, TYPE_DB_RANK)) {
+        if (TYPE_DB_RANK.equals(type)) {
             data = netService.getDbApi().getRank(page);
         } else {
             data = netService.getDbApi().get(type, page);
@@ -106,7 +105,7 @@ public class DataFetcher {
                             final int size = elements.size();
                             Log.i(TAG, "call: size" + size);
                             String url = elements.last().select("img").first().attr("src");
-                            if (DB.getByUrl(url) != null) {
+                            if (DataBase.getByUrl(url) != null) {
                                 Log.i(TAG, "getAPosts: find saved image!");
                                 return null;//最后一个元素在数据库里已经保存了，那么不需要继续解析。
                             }
@@ -124,6 +123,7 @@ public class DataFetcher {
                         } catch (IOException e) {
                             e.printStackTrace();
                         }
+                        Log.i(TAG, "getAPosts>>>> reached End, return images (instead of null)");
                         return images;
                     }
                 });
@@ -147,7 +147,7 @@ public class DataFetcher {
                             Elements elements = document.select("div[class=post] > p > a > img");
                             final int size = elements.size();
                             String url = elements.last().attr("src");
-                            if (DB.getByUrl(url) != null) {
+                            if (DataBase.getByUrl(url) != null) {
                                 Log.i(TAG, "getPicturesOfPost: find saved image!");
                                 return null;
                             }

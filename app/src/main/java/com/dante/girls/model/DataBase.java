@@ -11,7 +11,7 @@ import io.realm.Sort;
 /**
  * Deals with cache, data
  */
-public class DB {
+public class DataBase {
 
     public static <T extends RealmObject> void save(Realm realm, List<T> realmObjects) {
         realm = initRealm(realm);
@@ -42,13 +42,18 @@ public class DB {
     }
 
 
+    public static Image getByUrl(Realm realm, String url) {
+        initRealm(realm);
+        return realm.where(Image.class).equalTo("url", url).findFirst();
+    }
+
     public static Image getByUrl(String url) {
         Realm realm = Realm.getDefaultInstance();
         return realm.where(Image.class).equalTo("url", url).findFirst();
     }
 
 
-    public static <T extends RealmObject> RealmResults<T> findAll(Realm realm, Class<T> realmObjectClass) {
+    private static <T extends RealmObject> RealmResults<T> findAll(Realm realm, Class<T> realmObjectClass) {
         realm = initRealm(realm);
         return realm.where(realmObjectClass).findAll();
     }
@@ -59,11 +64,18 @@ public class DB {
         realm.commitTransaction();
     }
 
-    public static RealmResults<Image> getImages(Realm realm, String type) {
+    public static RealmResults<Image> findImages(Realm realm, String type) {
         realm = initRealm(realm);
         return realm.where(Image.class)
                 .equalTo("type", type)
                 .findAll()
                 .sort("publishedAt", Sort.DESCENDING);
+    }
+
+    public static RealmResults<Image> findFavoriteImages(Realm realm) {
+        realm = initRealm(realm);
+        return realm.where(Image.class)
+                .equalTo("isLiked", true)
+                .findAll();
     }
 }

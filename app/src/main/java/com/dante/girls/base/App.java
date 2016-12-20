@@ -1,5 +1,6 @@
 package com.dante.girls.base;
 
+import android.annotation.SuppressLint;
 import android.app.Application;
 import android.content.Context;
 
@@ -10,9 +11,10 @@ import com.squareup.leakcanary.RefWatcher;
 import io.realm.Realm;
 
 /**
- * Created by yons on 16/12/8.
+ * Custom application for libs init etc.
  */
 public class App extends Application {
+    @SuppressLint("StaticFieldLeak")
     public static Context context;
     private RefWatcher refWatcher;
 
@@ -26,7 +28,7 @@ public class App extends Application {
         super.onCreate();
         context = this;
         refWatcher = LeakCanary.install(this);
-        Bugtags.start("1ddf7128d535505cc4adbda213e8c12f", this, Bugtags.BTGInvocationEventShake);
+        Bugtags.start("1ddf7128d535505cc4adbda213e8c12f", this, Bugtags.BTGInvocationEventNone);
         Realm.init(this);
     }
 }

@@ -11,6 +11,7 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -19,6 +20,7 @@ import android.widget.ImageView;
 
 import com.dante.girls.base.BaseActivity;
 import com.dante.girls.base.Constants;
+import com.dante.girls.picture.FavoriteFragment;
 import com.dante.girls.ui.SettingFragment;
 import com.dante.girls.ui.SettingsActivity;
 import com.dante.girls.utils.Imager;
@@ -48,13 +50,13 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
     private static final String TAG = "MainActivity";
     @BindView(R.id.fab)
     public FloatingActionButton fab;
+    public ActionBarDrawerToggle toggle;
     @BindView(R.id.nav_view)
     NavigationView navView;
     @BindView(R.id.drawer_layout)
     DrawerLayout drawerLayout;
     @BindView(R.id.container)
     FrameLayout container;
-
     private boolean backPressed;
     private MenuItem item;
 
@@ -79,12 +81,13 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
                 }
             }
         });
-        getWindow().setSharedElementsUseOverlay(false);
+
     }
 
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
+        Log.i(TAG, "onSaveInstanceState: ");
         outState.putInt("itemId", item == null ? R.id.nav_beauty : item.getItemId());
     }
 
@@ -92,6 +95,7 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
     protected void onRestoreInstanceState(Bundle savedInstanceState) {
         super.onRestoreInstanceState(savedInstanceState);
         int itemId = savedInstanceState.getInt("itemId", R.id.nav_beauty);
+        Log.i(TAG, "onRestoreInstanceState: ");
         navView.setCheckedItem(itemId);
     }
 
@@ -106,7 +110,7 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
     }
 
     private void setupDrawer() {
-        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
+        toggle = new ActionBarDrawerToggle(
                 this, drawerLayout, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawerLayout.addDrawerListener(toggle);
         toggle.syncState();
@@ -158,7 +162,12 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
                 new IconicsDrawable(this).
                         icon(GoogleMaterial.Icon.gmd_collections)
                         .color(Color.RED));
-        Menu sub = menu.getItem(2).getSubMenu();
+        menu.getItem(2).setIcon(
+                new IconicsDrawable(this).
+                        icon(GoogleMaterial.Icon.gmd_favorite)
+                        .color(Color.MAGENTA));
+
+        Menu sub = menu.getItem(3).getSubMenu();
         sub.getItem(0).setIcon(
                 new IconicsDrawable(this).
                         icon(GoogleMaterial.Icon.gmd_share)
@@ -185,21 +194,20 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
             return true;
         } else if (id == R.id.nav_share) {
             Share.shareText(this, getString(R.string.share_app_description));
+        } else if (id == R.id.nav_favorite) {
+            replaceFragment(new FavoriteFragment(), "favorite");
         }
+
         this.item = item;
         drawerLayout.closeDrawers();
         return true;
     }
 
-    public MenuItem getCurrentMenu() {
-        if (navView == null) {
-            navView = (NavigationView) findViewById(R.id.nav_view);
-        }
-
+    public String getCurrentMenuTitle() {
         if (item == null) {
             item = navView.getMenu().getItem(0);
         }
-
-        return item;
+        return item.getTitle().toString();
     }
+
 }

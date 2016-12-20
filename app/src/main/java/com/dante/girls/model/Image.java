@@ -13,7 +13,7 @@ import io.realm.RealmObject;
 import io.realm.annotations.PrimaryKey;
 
 /**
- * Created by yons on 16/2/17.
+ * Image object for save in Realm database.
  */
 public class Image extends RealmObject {
     public int id;
@@ -25,6 +25,7 @@ public class Image extends RealmObject {
     public String url;
     public int width;
     public int height;
+    public boolean isLiked;
 
     public Image(String url) {
         this.url = url;
@@ -74,16 +75,16 @@ public class Image extends RealmObject {
     public void setId(int id) {
         this.id = id;
     }
-
     public void setWidth(int width) {
         this.width = width;
     }
-
     public void setHeight(int height) {
         this.height = height;
     }
     public void setInfo(String info) {
         this.info = info;
     }
-
+    public void setLiked(boolean liked) {
+        isLiked = liked;
+    }
 }

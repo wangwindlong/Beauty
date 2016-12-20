@@ -12,7 +12,7 @@ import android.util.Log;
 
 import com.dante.girls.base.BaseFragment;
 import com.dante.girls.model.MessageEvent;
-import com.dante.girls.picture.PictureFragment;
+import com.dante.girls.picture.CustomPictureFragment;
 import com.dante.girls.picture.RecyclerFragment;
 
 import java.util.ArrayList;
@@ -107,7 +107,7 @@ public class MainActivityFragment extends BaseFragment {
         String[] types = getArguments().getStringArray(TYPES);
         if (types != null && titles != null) {
             for (String type : types) {
-                fragments.add(PictureFragment.newInstance(type));
+                fragments.add(CustomPictureFragment.newInstance(type));
             }
 
             if (fragments.size() != titles.length)
@@ -178,8 +178,8 @@ public class MainActivityFragment extends BaseFragment {
             return titles[position];
         }
 
-        PictureFragment getCurrent() {
-            return (PictureFragment) adapter.instantiateItem(pager, pager.getCurrentItem());
+        CustomPictureFragment getCurrent() {
+            return (CustomPictureFragment) adapter.instantiateItem(pager, pager.getCurrentItem());
         }
     }
 }

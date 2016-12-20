@@ -25,14 +25,14 @@
     <string name="menu_share">Share</string>
     <string name="license">licence</string>
     <string name="license_description">All the resources are from network, if it has become an
-        infringement, please inform me
+        infringement, please inform the original web: http://www.dbmeinv.com, http://www.apic.in/
     </string>
     <string name="clear_cache_failed">Fail to delete cache.</string>
     <string name="clear_cache_success">Cache cleared.</string>
     <string name="set_original_splash">Use orignial splash instead of getting from net</string>
     <string name="about_me">About author</string>
     <string name="share_app_description">This android repository is nice :)
-        https://github.com/DanteAndroid/Girls/
+        https://github.com/DanteAndroid/Beauty/
     </string>
     <string name="share_app">Share App</string>
     <string name="tips">Tips</string>
@@ -82,4 +82,7 @@
         <item name="a_uniform">Uniform</item>
         <item name="a_zatu">Zatu</item>
     </string-array>
+    <string name="empty_content">Nothing here :P</string>
+    <string name="favorite">My Collections</string>
+    <string name="images_empty">Hmm, no content here, go like something :)</string>
 </resources>

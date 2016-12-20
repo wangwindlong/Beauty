@@ -3,6 +3,7 @@ package com.dante.girls.ui;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.preference.Preference;
 import android.preference.PreferenceFragment;
@@ -32,6 +33,7 @@ public class SettingFragment extends PreferenceFragment implements Preference.On
     public static final String FEED_BACK = "feedback";
     public static final String APP_VERSION = "check_version";
     public static final String ORIGINAL_SPLASH = "original_splash";
+    public static final String LIKE_DOWNLOAD = "like_download";
     public static final String SECRET_MODE = "secret_mode";
     public static final String ABOUT = "about";
     private static final long DURATION = 300;
@@ -42,7 +44,7 @@ public class SettingFragment extends PreferenceFragment implements Preference.On
     private Preference splash;
     private Preference about;
 
-    private View rootView ;
+    private View rootView;
     private long startTime;
     private boolean first = true;
     private int secretIndex;
@@ -175,7 +177,10 @@ public class SettingFragment extends PreferenceFragment implements Preference.On
         //This is wired, I used ACTION_SENDTO at first
         //but check intent returns unsafe
         //so I change to ACTION_VIEW (like the system do)
-        Intent email = new Intent(Intent.ACTION_VIEW);
+        Intent email = new Intent(Intent.ACTION_SENDTO);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            email = new Intent(Intent.ACTION_VIEW);
+        }
         if (AppUtils.isIntentSafe(email)) {
             email.setData(Uri.parse("mailto:danteandroi@gmail.com"));
             email.putExtra(Intent.EXTRA_SUBJECT, "'Girls' Feedback");
