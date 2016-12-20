@@ -57,7 +57,6 @@
         <item name="a_zatu">杂图</item>
     </string-array>
 
-
     <string name="nav_secret_mode" translatable="false">XXOO</string>
     <string name="secret_mode_opened">隐藏模式已打开，我们一起嘿嘿嘿~</string>
     <string name="secret_mode_closed">隐藏模式已关闭。</string>
