@@ -155,27 +155,24 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
         //       select the first menu at startup
         Menu menu = navView.getMenu();
         menu.getItem(0).setChecked(true);
-        menu.getItem(0).setIcon(
-                new IconicsDrawable(this).
-                        icon(GoogleMaterial.Icon.gmd_face));
-        menu.getItem(1).setIcon(
-                new IconicsDrawable(this).
-                        icon(GoogleMaterial.Icon.gmd_collections)
-                        .color(Color.RED));
-        menu.getItem(2).setIcon(
-                new IconicsDrawable(this).
-                        icon(GoogleMaterial.Icon.gmd_favorite)
-                        .color(Color.MAGENTA));
+        menu.getItem(0).setIcon(new IconicsDrawable(this).
+                icon(GoogleMaterial.Icon.gmd_face)
+                .color(getColor(R.color.pink)));
+
+        menu.getItem(1).setIcon(new IconicsDrawable(this)
+                .icon(GoogleMaterial.Icon.gmd_collections));
+
+        menu.getItem(2).setIcon(new IconicsDrawable(this)
+                .icon(GoogleMaterial.Icon.gmd_favorite)
+                .color(Color.RED));
 
         Menu sub = menu.getItem(3).getSubMenu();
-        sub.getItem(0).setIcon(
-                new IconicsDrawable(this).
-                        icon(GoogleMaterial.Icon.gmd_share)
-                        .color(Color.DKGRAY));
-        sub.getItem(1).setIcon(
-                new IconicsDrawable(this).
-                        icon(GoogleMaterial.Icon.gmd_settings)
-                        .color(Color.GRAY));
+        sub.getItem(0).setIcon(new IconicsDrawable(this)
+                .icon(GoogleMaterial.Icon.gmd_share)
+                .color(Color.DKGRAY));
+        sub.getItem(1).setIcon(new IconicsDrawable(this)
+                .icon(GoogleMaterial.Icon.gmd_settings)
+                .color(Color.GRAY));
     }
 
     @Override
