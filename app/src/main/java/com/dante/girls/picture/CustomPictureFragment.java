@@ -142,7 +142,9 @@ public class CustomPictureFragment extends PictureFragment {
                     @Override
                     public Observable<Image> call(List<Image> images) {
                         if (images == null) {
+                            adapter.loadComplete();
                             if (isInPost) adapter.loadMoreEnd(true);
+                      
                             subscription.unsubscribe();
                             images = new ArrayList<>();
                         }
