@@ -72,6 +72,8 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
         setupDrawer();
         initNavigationView();
         initMain();
+
+
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -88,7 +90,9 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         Log.i(TAG, "onSaveInstanceState: ");
-        outState.putInt("itemId", item == null ? R.id.nav_beauty : item.getItemId());
+        if (item != null) {
+            outState.putInt("itemId", item.getItemId());
+        }
     }
 
     @Override
@@ -96,16 +100,19 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
         super.onRestoreInstanceState(savedInstanceState);
         int itemId = savedInstanceState.getInt("itemId", R.id.nav_beauty);
         Log.i(TAG, "onRestoreInstanceState: ");
+        MenuItem item = navView.getMenu().findItem(itemId);
         navView.setCheckedItem(itemId);
+        if (item != null) {
+            onNavigationItemSelected(item);
+        }
     }
 
     private void initMain() {
-        String[] titles = getResources().getStringArray(R.array.db_titles);
-        String[] types = {TYPE_GANK, TYPE_DB_RANK, TYPE_DB_BREAST, TYPE_DB_BUTT, TYPE_DB_LEG, TYPE_DB_SILK};
-        init(titles, types);
+        MenuItem item = navView.getMenu().findItem(R.id.nav_beauty);
+        onNavigationItemSelected(item);
     }
 
-    private void init(String[] titles, String[] types) {
+    private void replace(String[] titles, String[] types) {
         replaceFragment(MainActivityFragment.newInstance(titles, types), "");
     }
 
@@ -146,13 +153,8 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
         navView.setNavigationItemSelectedListener(this);
         boolean isSecretOn = SPUtil.getBoolean(SettingFragment.SECRET_MODE);
         navView.inflateMenu(R.menu.menu_main);
-        navView.setCheckedItem(R.id.nav_beauty);
-//        if (isSecretOn) {
-//            navView.inflateMenu(R.menu.main_menu_all);
-//        } else {
-//            navView.inflateMenu(R.menu.main_drawer);
-//        }
-        //       select the first menu at startup
+//        navView.setCheckedItem(R.id.nav_beauty);
+
         Menu menu = navView.getMenu();
         menu.getItem(0).setChecked(true);
         menu.getItem(0).setIcon(new IconicsDrawable(this).
@@ -181,18 +183,18 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
         if (id == R.id.nav_beauty) {
             String[] titles = getResources().getStringArray(R.array.db_titles);
             String[] types = {TYPE_GANK, TYPE_DB_RANK, TYPE_DB_BREAST, TYPE_DB_BUTT, TYPE_DB_LEG, TYPE_DB_SILK};
-            init(titles, types);
+            replace(titles, types);
         } else if (id == R.id.nav_a) {
             String[] titles = getResources().getStringArray(R.array.a_titles);
             String[] types = {TYPE_A_ANIME, TYPE_A_FULI, TYPE_A_HENTAI, TYPE_A_UNIFORM, TYPE_A_ZATU};
-            init(titles, types);
+            replace(titles, types);
         } else if (id == R.id.nav_setting) {
             startActivity(new Intent(getApplicationContext(), SettingsActivity.class));
             return true;
         } else if (id == R.id.nav_share) {
             Share.shareText(this, getString(R.string.share_app_description));
         } else if (id == R.id.nav_favorite) {
-            replaceFragment(new FavoriteFragment(), "favorite");
+            replaceFragment(new FavoriteFragment(), Constants.FAVORITE);
         }
 
         this.item = item;

@@ -9,7 +9,6 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.view.ViewCompat;
-import android.util.Log;
 import android.view.View;
 
 import com.bumptech.glide.request.animation.GlideAnimation;
@@ -41,8 +40,6 @@ import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Action1;
 import rx.functions.Func1;
 import rx.schedulers.Schedulers;
-
-import static com.dante.girls.model.DataBase.getByUrl;
 
 
 /**
@@ -87,14 +84,15 @@ public class ViewerFragment extends BaseFragment implements View.OnLongClickList
                 realm.commitTransaction();
 
                 if (SPUtil.getBoolean(SettingFragment.LIKE_DOWNLOAD)) {
-                    Log.i(TAG, "liked: save");
                     save(bitmap);
                 }
             }
 
             @Override
             public void unLiked(LikeButton likeButton) {
-                getByUrl(url).setLiked(false);
+                realm.beginTransaction();
+                DataBase.getByUrl(realm, url).setLiked(false);
+                realm.commitTransaction();
             }
         });
     }

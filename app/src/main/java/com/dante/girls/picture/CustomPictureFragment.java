@@ -15,12 +15,13 @@ import com.dante.girls.model.DataBase;
 import com.dante.girls.model.Image;
 import com.dante.girls.net.API;
 import com.dante.girls.net.DataFetcher;
+import com.dante.girls.utils.SPUtil;
 import com.dante.girls.utils.UI;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
+import io.realm.Realm;
 import rx.Observable;
 import rx.Subscriber;
 import rx.android.schedulers.AndroidSchedulers;
@@ -86,9 +87,10 @@ public class CustomPictureFragment extends PictureFragment {
             case TYPE_A_HENTAI:
             case TYPE_A_ZATU:
             case TYPE_A_UNIFORM:
-                isA = true;
-                if (isInPost) return layout;
-                layout = R.layout.post_item;
+                layout = R.layout.picture_item_fixed;
+                if (!isInPost) {
+                    layout = R.layout.post_item;
+                }
         }
         return layout;
     }
@@ -97,6 +99,9 @@ public class CustomPictureFragment extends PictureFragment {
     public void fetch() {
         if (isFetching) {
             return;
+        }
+        if (page <= 1) {
+            imageList = realm.copyFromRealm(images);
         }
 
         Observable<List<Image>> source;
@@ -141,25 +146,19 @@ public class CustomPictureFragment extends PictureFragment {
                 .flatMap(new Func1<List<Image>, Observable<Image>>() {
                     @Override
                     public Observable<Image> call(List<Image> images) {
-                        if (images == null) {
-                            adapter.loadComplete();
-                            if (isInPost) adapter.loadMoreEnd(true);
-                      
-                            subscription.unsubscribe();
-                            images = new ArrayList<>();
-                        }
                         return Observable.from(images);
                     }
                 })
                 .map(new Func1<Image, Image>() {
                     @Override
                     public Image call(Image image) {
-                        if (image != null) {
-                            try {
-                                return Image.getFixedImage(context, image, imageType, page);
-                            } catch (ExecutionException | InterruptedException e) {
-                                e.printStackTrace();
-                            }
+                        if (isA) {
+                            return image;
+                        }
+                        try {
+                            return Image.getFixedImage(context, image, imageType, page);
+                        } catch (ExecutionException | InterruptedException e) {
+                            e.printStackTrace();
                         }
                         return image;
                     }
@@ -175,21 +174,31 @@ public class CustomPictureFragment extends PictureFragment {
                     public void onStart() {
                         isFetching = true;
                         oldSize = images.size();
+                        log("old size", oldSize);
                     }
 
                     @Override
                     public void onCompleted() {
+                        images = DataBase.findImages(realm, imageType);
                         newSize = images.size();
                         changeState(false);
                         adapter.loadMoreComplete();
+                        if (newSize == 0) {
+                            Log.w(TAG, "onCompleted: data empty");
+                            return;
+                        }
+                        sortData(newSize - oldSize);
+
                         if (oldSize == newSize) {
                             if (isInPost) adapter.loadMoreEnd(true);
-                            Log.e(TAG, "onCompleted: old new size are the same, means we got duplicate data.");
+                            adapter.loadMoreComplete();
+                            Log.w(TAG, "onCompleted: old new size are the same");
                         } else {
                             //获取到数据了，下一页
                             page++;
+                            SPUtil.save(imageType + Constants.PAGE, page);
+                            adapter.notifyItemRangeChanged(oldSize, newSize);
                         }
-                        adapter.notifyItemRangeChanged(oldSize, images.size());
                     }
 
                     @Override
@@ -202,9 +211,36 @@ public class CustomPictureFragment extends PictureFragment {
 
                     @Override
                     public void onNext(List<Image> list) {
+                        imageList.addAll(0, list);
                         DataBase.save(realm, list);
                     }
                 });
+    }
+
+    private void sortData(final int newSize) {
+        Log.i(TAG, "execute: before sort " + images.first().url);
+        if (page <= 1 && newSize > 0) {
+            realm.executeTransactionAsync(new Realm.Transaction() {
+                public void execute(Realm realm) {
+                    for (int i = 0; i < imageList.size(); i++) {
+                        Image image = imageList.get(i);
+                        Image data = realm.where(Image.class).equalTo(Constants.ID, image.id).findFirst();
+                        if (data != null) {
+                            data.setId(i);//id作为序号: 1, 2, 3 ...
+                        }
+                    }
+                }
+
+            }, new Realm.Transaction.OnSuccess() {
+                @Override
+                public void onSuccess() {
+                    images.sort(Constants.ID);
+                    Log.i(TAG, "execute: after sort " + images.first().url);
+                    adapter.notifyItemRangeInserted(0, newSize);
+                    Log.i(TAG, "onSuccess: sortData " + newSize + " inserted");
+                }
+            });
+        }
     }
 
     @Override
@@ -253,15 +289,10 @@ public class CustomPictureFragment extends PictureFragment {
         adapter.setOnLoadMoreListener(new BaseQuickAdapter.RequestLoadMoreListener() {
             @Override
             public void onLoadMoreRequested() {
+                page = SPUtil.getInt(imageType + Constants.PAGE, 1);
                 fetch();
             }
         });
     }
 
-    @Override
-    public void onViewStateRestored(Bundle savedInstanceState) {
-        super.onViewStateRestored(savedInstanceState);
-        Log.i(TAG, "onViewStateRestored: ");
-        adapter.loadMoreComplete();
-    }
 }

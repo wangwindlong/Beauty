@@ -16,7 +16,9 @@
         android:layout_height="wrap_content"
         android:layout_gravity="end|bottom"
         android:layout_marginBottom="8dp"
-        android:visibility="gone"
-        app:icon_size="38dp"
+        android:visibility="visible"
+        app:circle_start_color="@color/colorPrimary"
+        app:anim_scale_factor="2.5"
+        app:icon_size="48dp"
         app:icon_type="heart"/>
 </FrameLayout>

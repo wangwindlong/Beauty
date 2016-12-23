@@ -20,6 +20,8 @@ import com.dante.girls.model.DataBase;
 import com.dante.girls.model.Image;
 import com.dante.girls.utils.SPUtil;
 
+import java.util.List;
+
 import io.realm.RealmResults;
 
 /**
@@ -27,8 +29,8 @@ import io.realm.RealmResults;
  */
 public abstract class PictureFragment extends RecyclerFragment {
     public static final int LOAD_COUNT_LARGE = 12;
+    public static final int REQUEST_VIEW = 1;
     private static final String TAG = "PictureFragment";
-    private static final int REQUEST_VIEW = 1;
     public static int LOAD_COUNT = 8;
     private static int PRELOAD_COUNT = 10;
 
@@ -42,6 +44,7 @@ public abstract class PictureFragment extends RecyclerFragment {
     StaggeredGridLayoutManager layoutManager;
     PictureAdapter adapter;
     RealmResults<Image> images;
+    List<Image> imageList;
 
     @Override
     public void onResume() {
@@ -57,11 +60,11 @@ public abstract class PictureFragment extends RecyclerFragment {
         changeRefresh(false);
     }
 
-    @Override
-    public void onDestroyView() {
-        SPUtil.save(imageType + Constants.PAGE, page);
-        super.onDestroyView();
-    }
+//    @Override
+//    public void onDestroyView() {
+//        SPUtil.save(imageType + Constants.PAGE, page);
+//        super.onDestroyView();
+//    }
 
     @Override
     protected void initViews() {
@@ -131,9 +134,11 @@ public abstract class PictureFragment extends RecyclerFragment {
     @Override
     protected void AlwaysInit() {
         super.AlwaysInit();
-        page = SPUtil.getInt(imageType + Constants.PAGE, 1);
+//        page = SPUtil.getInt(imageType + Constants.PAGE, 1);
         initTitle();
-        images = DataBase.findImages(context.realm, imageType);
+        images = DataBase.findImages(realm, imageType);
+
+        log("AlwaysInit: ", imageType);
     }
 
     private void initTitle() {
@@ -172,6 +177,7 @@ public abstract class PictureFragment extends RecyclerFragment {
 
     @Override
     public void onRefresh() {
+        page = 1;
         fetch();
     }
 

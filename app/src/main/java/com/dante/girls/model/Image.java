@@ -34,10 +34,6 @@ public class Image extends RealmObject {
     public Image() {
     }
 
-    public void setTitle(String title) {
-        this.title = title;
-    }
-
     public Image(String url, String type) {
         this.url = url;
         this.type = type;
@@ -54,18 +50,22 @@ public class Image extends RealmObject {
         image.setWidth(bitmap.getWidth());
         image.setHeight(bitmap.getHeight());
         image.setType(type);
-        if (image.id == 0) {
-            image.id = page + image.width + image.height;
-        }
+//        if (image.id == 0) {
+//            image.id = page + image.width + image.height;
+//        }
         return image;
     }
 
     public static Bitmap getBitmap(Context context, String url) throws InterruptedException, ExecutionException {
         return Glide.with(context).load(url)
                 .asBitmap()
-                .diskCacheStrategy(DiskCacheStrategy.ALL)
+                .diskCacheStrategy(DiskCacheStrategy.SOURCE)
                 .into(Target.SIZE_ORIGINAL, Target.SIZE_ORIGINAL)
                 .get();
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
     }
 
     public void setType(String type) {
@@ -75,15 +75,19 @@ public class Image extends RealmObject {
     public void setId(int id) {
         this.id = id;
     }
+
     public void setWidth(int width) {
         this.width = width;
     }
+
     public void setHeight(int height) {
         this.height = height;
     }
+
     public void setInfo(String info) {
         this.info = info;
     }
+
     public void setLiked(boolean liked) {
         isLiked = liked;
     }

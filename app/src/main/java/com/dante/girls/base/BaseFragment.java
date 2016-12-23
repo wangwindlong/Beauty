@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -60,5 +61,17 @@ public abstract class BaseFragment extends Fragment {
     protected abstract void initViews();
 
     protected abstract void initData();
+
+    public void log(String key, String content) {
+        if (getUserVisibleHint()) {
+            Log.i(getClass().getSimpleName(), key + ": " + content);
+        }
+    }
+
+    public void log(String key, int content) {
+        if (getUserVisibleHint()) {
+            Log.i(getClass().getSimpleName(), key + ": " + String.valueOf(content));
+        }
+    }
 
 }

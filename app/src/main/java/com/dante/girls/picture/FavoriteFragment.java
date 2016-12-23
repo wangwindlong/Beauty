@@ -5,6 +5,7 @@ import android.view.LayoutInflater;
 import android.view.ViewGroup;
 
 import com.dante.girls.R;
+import com.dante.girls.base.Constants;
 import com.dante.girls.model.DataBase;
 import com.dante.girls.utils.UI;
 
@@ -32,9 +33,12 @@ public class FavoriteFragment extends PictureFragment {
     @Override
     protected void initData() {
         super.initData();
+        imageType = Constants.FAVORITE;
         if (images.isEmpty()) {
             UI.showSnackLong(rootView, R.string.images_empty);
         }
         adapter.setEmptyView(LayoutInflater.from(context).inflate(R.layout.empty, (ViewGroup) rootView, false));
     }
+
+
 }

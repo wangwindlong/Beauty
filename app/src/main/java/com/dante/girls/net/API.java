@@ -19,7 +19,7 @@ public class API {
     public static final String TYPE_A_ANIME = "anime";
     public static final String TYPE_A_UNIFORM = "zhifu";
     public static final String TYPE_A_HENTAI = "hentai";
-//    public static final String TYPE_A_YSJ = "yusanjia";
+    //    public static final String TYPE_A_YSJ = "yusanjia";
     public static final String TYPE_A_ZATU = "zatuji";
     public static final String TYPE_A_FULI = "fuli";
 
