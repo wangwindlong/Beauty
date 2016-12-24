@@ -17,12 +17,19 @@ import com.blankj.utilcode.utils.ConvertUtils;
 import com.blankj.utilcode.utils.FileUtils;
 import com.dante.girls.R;
 import com.dante.girls.base.App;
+import com.dante.girls.model.Image;
 import com.dante.girls.utils.AppUtils;
 import com.dante.girls.utils.SPUtil;
 import com.dante.girls.utils.UI;
 
 import java.io.File;
 import java.util.List;
+
+import io.realm.Realm;
+import rx.Observable;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.functions.Action1;
+import rx.schedulers.Schedulers;
 
 
 /**
@@ -156,21 +163,41 @@ public class SettingFragment extends PreferenceFragment implements Preference.On
         String key = preference.getKey();
         switch (key) {
             case CLEAR_CACHE:
-                FileUtils.deleteDir(App.context.getCacheDir());
-                refreshCache();
-                Snackbar.make(rootView, R.string.clear_finished, Snackbar.LENGTH_LONG)
-                        .setAction(R.string.deep_clean, new View.OnClickListener() {
+                Observable.just(clearCache())
+                        .subscribeOn(Schedulers.io())
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribe(new Action1<Boolean>() {
                             @Override
-                            public void onClick(View view) {
-                                AppUtils.openAppInfo(getActivity());
+                            public void call(Boolean success) {
+                                if (success) {
+                                    refreshCache();
+                                    Snackbar.make(rootView, R.string.clear_finished, Snackbar.LENGTH_LONG)
+                                            .setAction(R.string.deep_clean, new View.OnClickListener() {
+                                                @Override
+                                                public void onClick(View view) {
+                                                    AppUtils.openAppInfo(getActivity());
+                                                }
+                                            }).show();
+                                } else {
+                                    UI.showSnack(rootView, R.string.clear_cache_failed);
+                                }
                             }
-                        }).show();
+                        });
+
                 break;
             case FEED_BACK:
                 sendEmailFeedback();
                 break;
         }
         return true;
+    }
+
+    private boolean clearCache() {
+        Realm realm = Realm.getDefaultInstance();
+        realm.beginTransaction();
+        realm.delete(Image.class);
+        realm.commitTransaction();
+        return FileUtils.deleteDir(App.context.getCacheDir());
     }
 
     private void sendEmailFeedback() {

@@ -7,7 +7,9 @@ import android.widget.ImageView;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.target.SimpleTarget;
+import com.dante.girls.R;
 import com.dante.girls.base.App;
 
 /**
@@ -28,6 +30,16 @@ public class Imager {
         Glide.with(context)
                 .load(url)
                 .asBitmap()
+                .diskCacheStrategy(DiskCacheStrategy.SOURCE)
+                .into(target);
+    }
+
+    public static void load(final Context context, String url, ImageView target, RequestListener<String, Bitmap> listener) {
+        Glide.with(context)
+                .load(url)
+                .asBitmap()
+                .animate(R.anim.fade_in)
+                .listener(listener)
                 .diskCacheStrategy(DiskCacheStrategy.SOURCE)
                 .into(target);
     }

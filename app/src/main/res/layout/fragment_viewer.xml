@@ -14,11 +14,9 @@
         android:id="@+id/likeBtn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="end|bottom"
-        android:layout_marginBottom="8dp"
-        android:visibility="visible"
-        app:circle_start_color="@color/colorPrimary"
-        app:anim_scale_factor="2.5"
+        android:layout_gravity="center|bottom"
+        android:layout_marginBottom="10dp"
+        android:visibility="invisible"
         app:icon_size="48dp"
         app:icon_type="heart"/>
 </FrameLayout>

@@ -16,7 +16,7 @@
     <string name="my_email" translatable="false">danteandroi@gmail.com</string>
     <string name="contact_me">联系我</string>
     <string name="set_clear_cache">清除缓存</string>
-    <string name="set_current_cache">当前缓存为</string>
+    <string name="set_current_cache">将清理所有图片缓存。当前缓存为</string>
     <string name="set_check_version">检查更新</string>
     <string name="set_feedback">应用反馈</string>
     <string name="set_post_feedback">提建议或反馈bug</string>

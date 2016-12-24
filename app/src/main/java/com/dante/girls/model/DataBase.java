@@ -69,7 +69,8 @@ public class DataBase {
         return realm.where(Image.class)
                 .equalTo("type", type)
                 .findAll()
-                .sort("publishedAt", Sort.DESCENDING);
+                .sort("publishedAt", Sort.DESCENDING)
+                ;
     }
 
     public static RealmResults<Image> findFavoriteImages(Realm realm) {

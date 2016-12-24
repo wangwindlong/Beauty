@@ -134,10 +134,8 @@ public abstract class PictureFragment extends RecyclerFragment {
     @Override
     protected void AlwaysInit() {
         super.AlwaysInit();
-//        page = SPUtil.getInt(imageType + Constants.PAGE, 1);
         initTitle();
         images = DataBase.findImages(realm, imageType);
-
         log("AlwaysInit: ", imageType);
     }
 

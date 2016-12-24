@@ -13,7 +13,6 @@ import org.jsoup.select.Elements;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.regex.Pattern;
 
 import okhttp3.ResponseBody;
 import rx.Observable;
@@ -79,7 +78,7 @@ public class DataFetcher {
                             Elements elements = document.select("div[class=thumbnail] div[class=img_single] img");
                             final int size = elements.size();
                             for (int i = 0; i < size; i++) {
-                                String src = elements.get(i).attr("src");
+                                String src = elements.get(i).attr("src").trim();
                                 images.add(new Image(src, type));
                             }
                         } catch (IOException e) {
@@ -104,31 +103,8 @@ public class DataFetcher {
                             Document document = Jsoup.parse(responseBody.string());
                             Elements elements = document.select("div[class=content]  a");
 //                            final int size = elements.size();
-                            Log.i(TAG, "call: " + type + elements.size());
-                            if (elements == null || elements.size() == 0) {
-                                //fuli页面解析失败，经发现，HTML结构跟其他页面不同，这是临时办法
-                                elements = document.select("article[class=angela--post-home]");
-                                Log.i(TAG, "call: posts size " + elements.size());
-
-                                for (Element e : elements) {
-                                    Element thumb = e.getElementsByClass("block-image").first();
-                                    Element title = e.getElementsByClass("angela-title").first();
-                                    String href = title.attr("href").replace(API.A_BASE, "");
-                                    String t = title.attr("title");
-                                    String style = thumb.attr("style");
-                                    Log.i(TAG, "call: style " + style);
-                                    String url = Pattern.compile("\\(([^)]+)\\)").matcher(style).group(1);
-                                    Log.i(TAG, "call: style url " + url);
-                                    Log.i(TAG, "call: style url group " + Pattern.compile("\\(([^)]+)\\)").matcher(style).group());
-                                    Image image = new Image(url, type);
-                                    image.setInfo(href);
-                                    image.setTitle(t);
-                                    images.add(image);
-                                }
-                                return images;
-                            }
-
-                            String url = elements.last().select("img").first().attr("src");
+                            Log.i(TAG, "getAPosts: " + type + elements.size());
+//                            String url = elements.last().select("img").first().attr("src");
 //                            if (DataBase.getByUrl(url) != null) {
 //                                Log.i(TAG, "getAPosts: find saved image!");
 //                                return null;//最后一个元素在数据库里已经保存了，那么不需要继续解析。
@@ -138,7 +114,7 @@ public class DataFetcher {
                                 Element link = elements.get(i);
                                 String postUrl = link.attr("href").replace(API.A_BASE, "");
                                 String title = link.attr("title");
-                                String src = link.select("img").first().attr("src");
+                                String src = link.select("img").first().attr("src").trim();
                                 if (src.endsWith("!thumb")) {
                                     src = src.replace("!thumb", "");
                                 }
@@ -146,9 +122,6 @@ public class DataFetcher {
                                 image.setInfo(postUrl);
                                 image.setTitle(title);
                                 images.add(image);
-                                if (i == elements.size()) {
-
-                                }
 
                             }
                         } catch (IOException e) {
@@ -178,16 +151,15 @@ public class DataFetcher {
                             Elements test = document.select("div[class=post] > p > a > img");
                             final int size = elements.size();
                             Log.i(TAG, "call: test " + test.size());
-                            String url = elements.last().attr("src");
+//                            String url = elements.last().attr("src");
 //                            if (DataBase.getByUrl(url) != null) {
 //                                Log.i(TAG, "getPicturesOfPost: find saved image!");
 //                                return null;
 //                            }
 
-                            Log.i(TAG, "call: size" + size);
+                            Log.i(TAG, "getPicturesOfPost: size" + size);
                             for (int i = 0; i < size; i++) {
-                                String src = elements.get(i).attr("src");
-//                                Log.i(TAG, "Inpost imgUrl: " + src + " type-" + type);
+                                String src = elements.get(i).attr("src").trim();
                                 Image image = new Image(src, type);
                                 images.add(image);
                             }

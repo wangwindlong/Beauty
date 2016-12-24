@@ -19,7 +19,6 @@ import com.dante.girls.utils.SPUtil;
 import com.dante.girls.utils.UI;
 
 import java.util.List;
-import java.util.concurrent.ExecutionException;
 
 import io.realm.Realm;
 import rx.Observable;
@@ -47,6 +46,7 @@ import static com.dante.girls.net.API.TYPE_DB_SILK;
 
 public class CustomPictureFragment extends PictureFragment {
     private static final String TAG = "CustomPictureFragment";
+    private static final int BUFFER_SIZE = 2;
     boolean isInPost;
     boolean isA;
 
@@ -71,6 +71,7 @@ public class CustomPictureFragment extends PictureFragment {
 
     @Override
     protected void onImageClicked(View view, int position) {
+        log("isA " + isA, "::: isInpost " + isInPost);
         if (isA && !isInPost) {
             startPost(getImage(position));
             return;
@@ -122,7 +123,6 @@ public class CustomPictureFragment extends PictureFragment {
             case TYPE_A_HENTAI:
             case TYPE_A_ZATU:
             case TYPE_A_UNIFORM:
-                isA = true;
                 url = API.A_BASE;
                 fetcher = new DataFetcher(url, imageType, page);
                 source = isInPost ? fetcher.getPicturesOfPost(info) : fetcher.getAPosts();
@@ -152,18 +152,14 @@ public class CustomPictureFragment extends PictureFragment {
                 .map(new Func1<Image, Image>() {
                     @Override
                     public Image call(Image image) {
-                        if (isA) {
-                            return image;
-                        }
-                        try {
+                        if (!isA) {
+                            //不是A区，需要预加载
                             return Image.getFixedImage(context, image, imageType, page);
-                        } catch (ExecutionException | InterruptedException e) {
-                            e.printStackTrace();
                         }
                         return image;
                     }
                 })
-                .buffer(2)
+                .buffer(BUFFER_SIZE)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Subscriber<List<Image>>() {
@@ -181,21 +177,19 @@ public class CustomPictureFragment extends PictureFragment {
                     public void onCompleted() {
                         images = DataBase.findImages(realm, imageType);
                         newSize = images.size();
+                        int add = newSize - oldSize;
                         changeState(false);
                         adapter.loadMoreComplete();
-                        if (newSize == 0) {
-                            Log.w(TAG, "onCompleted: data empty");
-                            return;
-                        }
-                        sortData(newSize - oldSize);
+//                        if (isA && !isInPost) {
+//                            sortData(add);//每次刷新第一页的时候给图片排序
+//                        }
 
-                        if (oldSize == newSize) {
+                        if (add == 0) {
                             if (isInPost) adapter.loadMoreEnd(true);
-                            adapter.loadMoreComplete();
                             Log.w(TAG, "onCompleted: old new size are the same");
+                            log("newsize ", newSize);
                         } else {
                             //获取到数据了，下一页
-                            page++;
                             SPUtil.save(imageType + Constants.PAGE, page);
                             adapter.notifyItemRangeChanged(oldSize, newSize);
                         }
@@ -211,41 +205,64 @@ public class CustomPictureFragment extends PictureFragment {
 
                     @Override
                     public void onNext(List<Image> list) {
-                        imageList.addAll(0, list);
+                        if (imageList != null) imageList.addAll(0, list);
                         DataBase.save(realm, list);
+
                     }
                 });
     }
 
-    private void sortData(final int newSize) {
+    private void sortData(final int added) {
+        if (imageList == null || imageList.size() == 0) {
+            return;
+        }
+        if (page > 1) {
+            return;
+        }
+
         Log.i(TAG, "execute: before sort " + images.first().url);
-        if (page <= 1 && newSize > 0) {
-            realm.executeTransactionAsync(new Realm.Transaction() {
-                public void execute(Realm realm) {
-                    for (int i = 0; i < imageList.size(); i++) {
-                        Image image = imageList.get(i);
-                        Image data = realm.where(Image.class).equalTo(Constants.ID, image.id).findFirst();
-                        if (data != null) {
-                            data.setId(i);//id作为序号: 1, 2, 3 ...
-                        }
+        realm.executeTransactionAsync(new Realm.Transaction() {
+            public void execute(Realm realm) {
+                for (int i = 0; i < imageList.size(); i++) {
+                    Image image = imageList.get(i);
+                    Image data = realm.where(Image.class).equalTo(Constants.ID, image.id).findFirst();
+                    if (data != null) {
+                        data.setId(i);//id作为序号: 1, 2, 3 ...
                     }
                 }
+            }
 
-            }, new Realm.Transaction.OnSuccess() {
-                @Override
-                public void onSuccess() {
-                    images.sort(Constants.ID);
-                    Log.i(TAG, "execute: after sort " + images.first().url);
-                    adapter.notifyItemRangeInserted(0, newSize);
-                    Log.i(TAG, "onSuccess: sortData " + newSize + " inserted");
-                }
-            });
+        }, new Realm.Transaction.OnSuccess() {
+            @Override
+            public void onSuccess() {
+                images.sort(Constants.ID);
+                Log.i(TAG, "execute: after sort " + images.first().url);
+                adapter.notifyItemRangeInserted(0, added);
+                Log.i(TAG, "onSuccess: sortData " + added + " inserted");
+            }
+        });
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        if (!isInPost && images.size() > 8) {
+            log("10 image ", images.get(7).title);
         }
     }
 
     @Override
     protected void AlwaysInit() {
         super.AlwaysInit();
+        switch (baseType) {
+            case TYPE_A_ANIME:
+            case TYPE_A_FULI:
+            case TYPE_A_HENTAI:
+            case TYPE_A_ZATU:
+            case TYPE_A_UNIFORM:
+                isA = true;
+                recyclerView.setBackgroundColor(getColor(R.color.cardview_dark_background));
+        }
 
         //在A区帖子中，改变toolbar的样式
         AppBarLayout.LayoutParams p = (AppBarLayout.LayoutParams) toolbar.getLayoutParams();
@@ -290,6 +307,7 @@ public class CustomPictureFragment extends PictureFragment {
             @Override
             public void onLoadMoreRequested() {
                 page = SPUtil.getInt(imageType + Constants.PAGE, 1);
+                page++;
                 fetch();
             }
         });

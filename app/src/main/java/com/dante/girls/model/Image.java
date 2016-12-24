@@ -5,6 +5,7 @@ import android.graphics.Bitmap;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.bumptech.glide.request.target.SizeReadyCallback;
 import com.bumptech.glide.request.target.Target;
 
 import java.util.concurrent.ExecutionException;
@@ -45,15 +46,32 @@ public class Image extends RealmObject {
         this.id = id;
     }
 
-    public static Image getFixedImage(Context context, Image image, String type, int page) throws ExecutionException, InterruptedException {
-        Bitmap bitmap = getBitmap(context, image.url);
-        image.setWidth(bitmap.getWidth());
-        image.setHeight(bitmap.getHeight());
+    public static Image getFixedImage(Context context, Image image, String type, int page) {
         image.setType(type);
+        Bitmap bitmap;
+        try {
+            bitmap = getBitmap(context, image.url);
+            image.setWidth(bitmap.getWidth());
+            image.setHeight(bitmap.getHeight());
+        } catch (InterruptedException | ExecutionException e) {
+            e.printStackTrace();
+        }
 //        if (image.id == 0) {
 //            image.id = page + image.width + image.height;
 //        }
         return image;
+    }
+
+    public static void prefetch(Context context, final Image image, String type) {
+        image.setType(type);
+        Glide.with(context).load(image.url)
+                .preload().getSize(new SizeReadyCallback() {
+            @Override
+            public void onSizeReady(int width, int height) {
+                image.setWidth(width);
+                image.setHeight(height);
+            }
+        });
     }
 
     public static Bitmap getBitmap(Context context, String url) throws InterruptedException, ExecutionException {
