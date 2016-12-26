@@ -93,8 +93,8 @@ public class DataFetcher {
     public Observable<List<Image>> getAPosts() {
         //get all posts' pictures
         return netService.getaApi().getPosts(type, page)
-                .subscribeOn(Schedulers.computation())
-                .observeOn(Schedulers.computation())
+//                .subscribeOn(Schedulers.computation())
+//                .observeOn(Schedulers.computation())
                 .map(new Func1<ResponseBody, List<Image>>() {
                     @Override
                     public List<Image> call(ResponseBody responseBody) {
@@ -109,15 +109,15 @@ public class DataFetcher {
 //                                Log.i(TAG, "getAPosts: find saved image!");
 //                                return null;//最后一个元素在数据库里已经保存了，那么不需要继续解析。
 //                            }
-
                             for (int i = 0; i < elements.size(); i++) {
                                 Element link = elements.get(i);
                                 String postUrl = link.attr("href").replace(API.A_BASE, "");
                                 String title = link.attr("title");
                                 String src = link.select("img").first().attr("src").trim();
-                                if (src.endsWith("!thumb")) {
-                                    src = src.replace("!thumb", "");
-                                }
+//                                if (src.endsWith("!thumb")) {
+//                                    Log.i(TAG, "load image: thumb url " + src);
+//                                    src = src.replace("!thumb", "");
+//                                }
                                 Image image = new Image(src, type);
                                 image.setInfo(postUrl);
                                 image.setTitle(title);
@@ -136,18 +136,17 @@ public class DataFetcher {
 
     public Observable<List<Image>> getPicturesOfPost(String info) {
         //get all images in this post
-        Log.i(TAG, "getAPost : " + info);
-
+        Log.i(TAG, "getPicturesOfPost : " + info);
         return netService.getaApi().getPictures(info, page)
-                .subscribeOn(Schedulers.computation())
-                .observeOn(Schedulers.computation())
+//                .subscribeOn(Schedulers.computation())
+//                .observeOn(Schedulers.computation())
                 .map(new Func1<ResponseBody, List<Image>>() {
                     @Override
                     public List<Image> call(ResponseBody responseBody) {
                         List<Image> images = new ArrayList<>();
                         try {
                             Document document = Jsoup.parse(responseBody.string());
-                            Elements elements = document.select("div[class=post] img");
+                            Elements elements = document.select("div[class=post] p img");
                             Elements test = document.select("div[class=post] > p > a > img");
                             final int size = elements.size();
                             Log.i(TAG, "call: test " + test.size());
@@ -156,7 +155,6 @@ public class DataFetcher {
 //                                Log.i(TAG, "getPicturesOfPost: find saved image!");
 //                                return null;
 //                            }
-
                             Log.i(TAG, "getPicturesOfPost: size" + size);
                             for (int i = 0; i < size; i++) {
                                 String src = elements.get(i).attr("src").trim();

@@ -57,7 +57,6 @@ public abstract class PictureFragment extends RecyclerFragment {
     public void onPause() {
         firstPosition = layoutManager.findFirstVisibleItemPositions(new int[layoutManager.getSpanCount()])[0];
         super.onPause();
-        changeRefresh(false);
     }
 
 //    @Override
@@ -102,6 +101,9 @@ public abstract class PictureFragment extends RecyclerFragment {
             }
         });
         imageType = baseType;
+        initTitle();
+        log("initViews end: ", imageType);
+
     }
 
     protected void onImageClicked(View view, int position) {
@@ -134,8 +136,6 @@ public abstract class PictureFragment extends RecyclerFragment {
     @Override
     protected void AlwaysInit() {
         super.AlwaysInit();
-        initTitle();
-        images = DataBase.findImages(realm, imageType);
         log("AlwaysInit: ", imageType);
     }
 
@@ -152,6 +152,7 @@ public abstract class PictureFragment extends RecyclerFragment {
 
     @Override
     protected void initData() {
+        images = DataBase.findImages(realm, imageType);
         adapter.setNewData(images);
     }
 

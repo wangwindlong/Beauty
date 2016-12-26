@@ -74,4 +74,10 @@ public abstract class BaseFragment extends Fragment {
         }
     }
 
+    public void log(String key) {
+        if (getUserVisibleHint()) {
+            Log.i(getClass().getSimpleName(), key);
+        }
+    }
+
 }

@@ -49,6 +49,7 @@ public class CustomPictureFragment extends PictureFragment {
     private static final int BUFFER_SIZE = 2;
     boolean isInPost;
     boolean isA;
+    private Observable<List<Image>> source;
 
     public static CustomPictureFragment newInstance(String type) {
         Bundle args = new Bundle();
@@ -71,7 +72,6 @@ public class CustomPictureFragment extends PictureFragment {
 
     @Override
     protected void onImageClicked(View view, int position) {
-        log("isA " + isA, "::: isInpost " + isInPost);
         if (isA && !isInPost) {
             startPost(getImage(position));
             return;
@@ -101,11 +101,9 @@ public class CustomPictureFragment extends PictureFragment {
         if (isFetching) {
             return;
         }
-        if (page <= 1) {
-            imageList = realm.copyFromRealm(images);
-        }
-
-        Observable<List<Image>> source;
+//        if (page <= 1) {
+//            imageList = realm.copyFromRealm(images);
+//        }
         DataFetcher fetcher;
         switch (baseType) {
             case TYPE_DB_BREAST:
@@ -142,6 +140,9 @@ public class CustomPictureFragment extends PictureFragment {
 
     //预加载Image，然后刷新列表
     protected void fetchImages(final Observable<List<Image>> source) {
+        if (isInPost) {
+            source.skip(1);
+        }
         subscription = source
                 .flatMap(new Func1<List<Image>, Observable<Image>>() {
                     @Override
@@ -149,6 +150,7 @@ public class CustomPictureFragment extends PictureFragment {
                         return Observable.from(images);
                     }
                 })
+                .distinct()
                 .map(new Func1<Image, Image>() {
                     @Override
                     public Image call(Image image) {
@@ -168,7 +170,6 @@ public class CustomPictureFragment extends PictureFragment {
 
                     @Override
                     public void onStart() {
-                        isFetching = true;
                         oldSize = images.size();
                         log("old size", oldSize);
                     }
@@ -183,16 +184,15 @@ public class CustomPictureFragment extends PictureFragment {
 //                        if (isA && !isInPost) {
 //                            sortData(add);//每次刷新第一页的时候给图片排序
 //                        }
-
                         if (add == 0) {
-                            if (isInPost) adapter.loadMoreEnd(true);
-                            Log.w(TAG, "onCompleted: old new size are the same");
                             log("newsize ", newSize);
-                        } else {
-                            //获取到数据了，下一页
-                            SPUtil.save(imageType + Constants.PAGE, page);
-                            adapter.notifyItemRangeChanged(oldSize, newSize);
+                            log("onCompleted: old new size are the same");
+                            if (isInPost) adapter.loadMoreEnd(true);
                         }
+                        //获取到数据了，下一页
+                        log("save page" + page);
+                        SPUtil.save(imageType + Constants.PAGE, page);
+                        adapter.notifyItemRangeChanged(oldSize, add);
                     }
 
                     @Override
@@ -207,7 +207,6 @@ public class CustomPictureFragment extends PictureFragment {
                     public void onNext(List<Image> list) {
                         if (imageList != null) imageList.addAll(0, list);
                         DataBase.save(realm, list);
-
                     }
                 });
     }
@@ -286,7 +285,7 @@ public class CustomPictureFragment extends PictureFragment {
         transaction.setCustomAnimations(android.R.anim.slide_in_left, android.R.anim.slide_out_right
                 , android.R.anim.slide_in_left, android.R.anim.slide_out_right);
         transaction.replace(R.id.container, fragment, "aPost");
-        transaction.addToBackStack("");
+        transaction.addToBackStack(null);
         transaction.commit();
     }
 
@@ -303,6 +302,7 @@ public class CustomPictureFragment extends PictureFragment {
             public void onLoadMoreRequested() {
                 page = SPUtil.getInt(imageType + Constants.PAGE, 1);
                 page++;
+                log("loadmore ", page);
                 fetch();
             }
         });

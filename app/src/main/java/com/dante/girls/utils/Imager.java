@@ -38,6 +38,7 @@ public class Imager {
         Glide.with(context)
                 .load(url)
                 .asBitmap()
+                .thumbnail(0.5f)
                 .animate(R.anim.fade_in)
                 .listener(listener)
                 .diskCacheStrategy(DiskCacheStrategy.SOURCE)

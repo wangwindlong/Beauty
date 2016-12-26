@@ -48,6 +48,7 @@ public abstract class RecyclerFragment extends BaseFragment implements SwipeRefr
     @Override
     public void onPause() {
         super.onPause();
+        changeRefresh(false);
         SPUtil.save(imageType + Constants.POSITION, firstPosition);
     }
 

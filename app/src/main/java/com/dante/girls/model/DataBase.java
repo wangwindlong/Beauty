@@ -21,7 +21,7 @@ public class DataBase {
     }
 
     public static Realm initRealm(Realm realm) {
-        if (realm.isClosed()) {
+        if (realm == null || realm.isClosed()) {
             realm = Realm.getDefaultInstance();
         }
         return realm;
