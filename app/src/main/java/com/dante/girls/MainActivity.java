@@ -202,6 +202,21 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
         return true;
     }
 
+    public void changeNavigator(boolean enable) {
+        if (enable) {
+            toggle.setDrawerIndicatorEnabled(true);
+        } else {
+            toggle.setDrawerIndicatorEnabled(false);
+            toggle.setToolbarNavigationClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    onBackPressed();
+                }
+            });
+        }
+
+    }
+
     public String getCurrentMenuTitle() {
         if (item == null) {
             item = navView.getMenu().getItem(0);

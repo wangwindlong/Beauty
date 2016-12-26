@@ -15,6 +15,11 @@ import com.dante.girls.utils.UI;
 
 public class FavoriteFragment extends PictureFragment {
 
+//    @Override
+//    protected int initAdapterLayout() {
+//        return R.layout.picture_item_fixed;
+//    }
+
     @Override
     public void fetch() {
         adapter.notifyDataSetChanged();

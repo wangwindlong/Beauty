@@ -268,16 +268,11 @@ public class CustomPictureFragment extends PictureFragment {
         AppBarLayout.LayoutParams p = (AppBarLayout.LayoutParams) toolbar.getLayoutParams();
         if (isInPost) {
             p.setScrollFlags(0);
-            ((MainActivity) context).toggle.setDrawerIndicatorEnabled(false);
-            ((MainActivity) context).toggle.setToolbarNavigationClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    context.onBackPressed();
-                }
-            });
+            ((MainActivity) context).changeNavigator(false);
+
         } else {
             p.setScrollFlags(SCROLL_FLAG_SCROLL | SCROLL_FLAG_ENTER_ALWAYS_COLLAPSED);
-            ((MainActivity) context).toggle.setDrawerIndicatorEnabled(true);
+            ((MainActivity) context).changeNavigator(true);
         }
         toolbar.setLayoutParams(p);
     }

@@ -24,13 +24,13 @@ class PictureAdapter extends BaseQuickAdapter<Image, BaseViewHolder> {
 
     PictureAdapter(int layoutId) {
         super(layoutId, null);
-//        setHasStableIds(true);
+        setHasStableIds(true);
     }
 
-//    @Override
-//    public long getItemId(int position) {
-//        return super.getItemId(position) + 87;
-//    }
+    @Override
+    public long getItemId(int position) {
+        return super.getItemId(position) + 87;
+    }
 
     @Override
     protected void convert(final BaseViewHolder holder, final Image image) {
