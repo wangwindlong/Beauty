@@ -2,15 +2,17 @@
 <resources>
     <color name="colorPrimary">#FF5722</color>
     <color name="colorPrimaryDark">#E64A19</color>
-    <color name="colorPrimaryLight">#FFCCBC</color>
+    <color name="colorPrimaryLight">#dfcac4</color>
     <color name="colorAccent">#8BC34A</color>
     <color name="halfer_transparent">#66000000</color>
     <color name="dark_transparent">#ba000000</color>
-    <color name="lighter_gray">#edebeb</color>
+    <color name="lighter_gray">#FAFAFA</color>
     <color name="line_gray">#ccc</color>
     <color name="darker_gray">#aaa</color>
     <color name="pink">#F06292</color>
 
     <color name="black_overlay">#66000000</color>
     <color name="black_back">#131313</color>
+    <color name="black_87pc">#DD000000</color>
+
 </resources>

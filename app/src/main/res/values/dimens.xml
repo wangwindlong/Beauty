@@ -10,4 +10,7 @@
     <dimen name="app_bar_height">180dp</dimen>
     <dimen name="app_bar_large">230dp</dimen>
     <dimen name="item_margin">3dp</dimen>
+    <dimen name="dialog_corners">2dp</dimen>
+    <dimen name="text_body">16sp</dimen>
+
 </resources>

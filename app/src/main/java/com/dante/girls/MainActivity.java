@@ -1,17 +1,24 @@
 package com.dante.girls;
 
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
+import android.app.ActivityOptions;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.NonNull;
+import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
+import android.support.v4.content.ContextCompat;
+import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -20,19 +27,26 @@ import android.widget.ImageView;
 
 import com.dante.girls.base.BaseActivity;
 import com.dante.girls.base.Constants;
+import com.dante.girls.lib.PopupDialogActivity;
 import com.dante.girls.picture.FavoriteFragment;
 import com.dante.girls.ui.SettingFragment;
 import com.dante.girls.ui.SettingsActivity;
 import com.dante.girls.utils.Imager;
+import com.dante.girls.utils.RevealHelper;
 import com.dante.girls.utils.SPUtil;
 import com.dante.girls.utils.Share;
 import com.dante.girls.utils.UI;
 import com.mikepenz.google_material_typeface_library.GoogleMaterial;
 import com.mikepenz.iconics.IconicsDrawable;
 
-import butterknife.BindView;
-import moe.feng.alipay.zerosdk.AlipayZeroSdk;
+import org.polaric.colorful.Colorful;
 
+import java.util.Random;
+
+import butterknife.BindView;
+
+import static android.support.design.widget.AppBarLayout.LayoutParams.SCROLL_FLAG_ENTER_ALWAYS_COLLAPSED;
+import static android.support.design.widget.AppBarLayout.LayoutParams.SCROLL_FLAG_SCROLL;
 import static com.dante.girls.net.API.TYPE_A_ANIME;
 import static com.dante.girls.net.API.TYPE_A_FULI;
 import static com.dante.girls.net.API.TYPE_A_HENTAI;
@@ -44,6 +58,7 @@ import static com.dante.girls.net.API.TYPE_DB_LEG;
 import static com.dante.girls.net.API.TYPE_DB_RANK;
 import static com.dante.girls.net.API.TYPE_DB_SILK;
 import static com.dante.girls.net.API.TYPE_GANK;
+import static com.dante.girls.utils.AppUtils.donate;
 
 public class MainActivity extends BaseActivity implements NavigationView.OnNavigationItemSelectedListener {
     public static final String MAIN_FRAGMENT_TAG = "main";
@@ -57,6 +72,8 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
     DrawerLayout drawerLayout;
     @BindView(R.id.container)
     FrameLayout container;
+    @BindView(R.id.reveal)
+    FrameLayout revealView;
     private boolean backPressed;
     private MenuItem item;
 
@@ -72,19 +89,54 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
         setupDrawer();
         initNavigationView();
         initMain();
-
-
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View view) {
-                UI.showSnack(fab, R.string.donate);
-                if (AlipayZeroSdk.hasInstalledAlipayClient(getApplicationContext())) {
-                    AlipayZeroSdk.startAlipayClient(MainActivity.this, Constants.ALI_PAY);
-                }
+            public void onClick(View v) {
+                Log.i(TAG, "onClick: ");
             }
         });
-
+        initFab();
     }
+
+    private void initFab() {
+        if (new Random().nextBoolean()) {
+            //Morph transition
+            fab.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent login = PopupDialogActivity.getStartIntent(MainActivity.this, PopupDialogActivity.MORPH_TYPE_FAB);
+                    ActivityOptions options = ActivityOptions.makeSceneTransitionAnimation
+                            (MainActivity.this, fab, getString(R.string.transition_morph_view));
+                    startActivity(login, options.toBundle());
+                }
+            });
+        } else {
+            //Reveal animation
+            final RevealHelper helper = new RevealHelper(this, revealView)
+                    .hide(container)
+                    .button(fab)
+                    .onRevealEnd(new AnimatorListenerAdapter() {
+                        @Override
+                        public void onAnimationEnd(Animator animation) {
+                            toggleToolbarFlag(false);
+                            toggle.setDrawerIndicatorEnabled(false);
+                            donate(MainActivity.this);
+                        }
+                    }).onUnrevealEnd(new AnimatorListenerAdapter() {
+                        @Override
+                        public void onAnimationEnd(Animator animation) {
+                            changeNavigator(true);
+                        }
+                    }).build();
+            toggle.setToolbarNavigationClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    helper.unreveal();
+                }
+            });
+        }
+    }
+
 
     @Override
     protected void onSaveInstanceState(Bundle outState) {
@@ -125,6 +177,11 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
 
     @Override
     public void onBackPressed() {
+        if (drawerLayout.isDrawerOpen(GravityCompat.START)) {
+            drawerLayout.closeDrawers();
+            return;
+        }
+
         if (getSupportFragmentManager().getBackStackEntryCount() > 0) {
             getSupportFragmentManager().popBackStack();
         } else {
@@ -147,19 +204,23 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
         }, 2000);
     }
 
+    @TargetApi(Build.VERSION_CODES.M)
     private void initNavigationView() {
+        Colorful.config(this)
+                .translucent(true)
+                .apply();
+
         //load headerView's image
         Imager.load(this, R.drawable.head, (ImageView) navView.getHeaderView(0).findViewById(R.id.headImage));
         navView.setNavigationItemSelectedListener(this);
         boolean isSecretOn = SPUtil.getBoolean(SettingFragment.SECRET_MODE);
         navView.inflateMenu(R.menu.menu_main);
 //        navView.setCheckedItem(R.id.nav_beauty);
-
         Menu menu = navView.getMenu();
         menu.getItem(0).setChecked(true);
         menu.getItem(0).setIcon(new IconicsDrawable(this).
                 icon(GoogleMaterial.Icon.gmd_face)
-                .color(getColor(R.color.pink)));
+                .color(ContextCompat.getColor(this, R.color.pink)));
 
         menu.getItem(1).setIcon(new IconicsDrawable(this)
                 .icon(GoogleMaterial.Icon.gmd_collections));
@@ -196,7 +257,6 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
         } else if (id == R.id.nav_favorite) {
             replaceFragment(new FavoriteFragment(), Constants.FAVORITE);
         }
-
         this.item = item;
         drawerLayout.closeDrawers();
         return true;
@@ -214,7 +274,16 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
                 }
             });
         }
+    }
 
+    public void toggleToolbarFlag(boolean scroll) {
+        AppBarLayout.LayoutParams p = (AppBarLayout.LayoutParams) toolbar.getLayoutParams();
+        if (scroll) {
+            p.setScrollFlags(SCROLL_FLAG_SCROLL | SCROLL_FLAG_ENTER_ALWAYS_COLLAPSED);
+        } else {
+            p.setScrollFlags(0);
+        }
+        toolbar.setLayoutParams(p);
     }
 
     public String getCurrentMenuTitle() {
@@ -223,5 +292,4 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
         }
         return item.getTitle().toString();
     }
-
 }

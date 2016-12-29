@@ -42,6 +42,7 @@ public class SettingFragment extends PreferenceFragment implements Preference.On
     public static final String ORIGINAL_SPLASH = "original_splash";
     public static final String LIKE_DOWNLOAD = "like_download";
     public static final String SECRET_MODE = "secret_mode";
+    public static final String THEME_COLOR = "theme_color";
     public static final String ABOUT = "about";
     private static final long DURATION = 300;
 
@@ -55,6 +56,7 @@ public class SettingFragment extends PreferenceFragment implements Preference.On
     private long startTime;
     private boolean first = true;
     private int secretIndex;
+    private Preference theme;
 
     public static boolean isIntentSafe(Intent intent) {
         PackageManager packageManager = App.context.getPackageManager();
@@ -72,6 +74,7 @@ public class SettingFragment extends PreferenceFragment implements Preference.On
         about = findPreference(ABOUT);
         version = findPreference(APP_VERSION);
         splash = findPreference(ORIGINAL_SPLASH);
+        theme = findPreference(THEME_COLOR);
         refreshCache();
         splash.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
             @Override
@@ -97,6 +100,22 @@ public class SettingFragment extends PreferenceFragment implements Preference.On
         });
         clearCache.setOnPreferenceClickListener(this);
         feedback.setOnPreferenceClickListener(this);
+        theme.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+            @Override
+            public boolean onPreferenceClick(Preference preference) {
+//                ColorPickerDialog dialog = new ColorPickerDialog(getActivity());
+//                dialog.setOnColorSelectedListener(new ColorPickerDialog.OnColorSelectedListener() {
+//                    @Override
+//                    public void onColorSelected(Colorful.ThemeColor color) {
+//                        Colorful.config(getActivity())
+//                                .primaryColor(color)
+//                                .apply();
+//                    }
+//                });
+//                dialog.show();
+                return true;
+            }
+        });
     }
 
     private void refreshCache() {

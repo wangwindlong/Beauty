@@ -72,6 +72,7 @@ public class CustomPictureFragment extends PictureFragment {
 
     @Override
     protected void onImageClicked(View view, int position) {
+        log("isA " + isA, "::: isInpost " + isInPost);
         if (isA && !isInPost) {
             startPost(getImage(position));
             return;
@@ -140,9 +141,7 @@ public class CustomPictureFragment extends PictureFragment {
 
     //预加载Image，然后刷新列表
     protected void fetchImages(final Observable<List<Image>> source) {
-        if (isInPost) {
-            source.skip(1);
-        }
+
         subscription = source
                 .flatMap(new Func1<List<Image>, Observable<Image>>() {
                     @Override
@@ -264,6 +263,7 @@ public class CustomPictureFragment extends PictureFragment {
         }
 
         //在A区帖子中，改变toolbar的样式
+
         AppBarLayout.LayoutParams p = (AppBarLayout.LayoutParams) toolbar.getLayoutParams();
         if (isInPost) {
             p.setScrollFlags(0);

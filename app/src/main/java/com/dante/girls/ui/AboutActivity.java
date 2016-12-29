@@ -15,9 +15,10 @@ import butterknife.BindView;
  * about the author and so on.
  */
 public class AboutActivity extends BaseActivity {
+    private static final String TAG = "AboutActivity";
     @BindView(R.id.versionName)
     TextView versionName;
-    private static final String TAG = "AboutActivity";
+
     @Override
     protected int initLayoutId() {
         return R.layout.activity_about;
@@ -26,8 +27,7 @@ public class AboutActivity extends BaseActivity {
     @Override
     protected void initViews() {
         super.initViews();
-        versionName.setText(String.format(R.string.version + " %s", BuildConfig.VERSION_NAME));
-        versionName.append(" " + BuildConfig.VERSION_NAME);
+        versionName.setText(String.format(getString(R.string.version) + " %s", BuildConfig.VERSION_NAME));
     }
 
     @Override

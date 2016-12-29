@@ -1,6 +1,7 @@
 package com.dante.girls.picture;
 
 import android.graphics.Bitmap;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewCompat;
 import android.support.v7.graphics.Palette;
 import android.util.Log;
@@ -73,7 +74,7 @@ class PictureAdapter extends BaseQuickAdapter<Image, BaseViewHolder> {
                 Palette.from(resource).generate(new Palette.PaletteAsyncListener() {
                     @Override
                     public void onGenerated(Palette palette) {
-                        int color = palette.getDarkMutedColor(mContext.getColor(R.color.cardview_dark_background));
+                        int color = palette.getDarkMutedColor(ContextCompat.getColor(mContext, R.color.cardview_dark_background));
                         if (post != null) {
                             title.setBackgroundColor(color);
                             title.setVisibility(View.VISIBLE);

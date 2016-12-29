@@ -27,7 +27,9 @@
     <string name="about_me_description">我是个热爱Google的android开发者，现在上海，如果有好的Job可以推荐给我~</string>
     <string name="feedback_description">如果你有好的idea或建议，不要犹豫，发送邮件跟我交流吧~</string>
     <string name="license">免责声明</string>
-    <string name="license_description">本APP仅供学习交流使用，资源全部来源于网络，如有侵权请联系数据来源网站，包括http://www.dbmeinv.com, http://www.apic.in/</string>
+    <string name="license_description">
+        本APP仅供学习交流使用，资源全部来源于网络，如有侵权请联系数据来源网站，包括http://www.dbmeinv.com, http://www.apic.in/
+    </string>
     <string name="column_not_available">栏目未完成，请更新或联系作者 :D</string>
     <string name="clear_cache_success">缓存已清理</string>
     <string name="clear_cache_failed">缓存删除失败</string>
@@ -84,13 +86,17 @@
     <string name="deep_clean">深度清理</string>
     <string name="app_info">应用信息</string>
     <string name="app_name">五次元妹子</string>
-    <string name="donate">您的赞助会让app变得更好，非常感谢</string>
     <string name="nav_a_zone">二次元</string>
     <string name="nav_beauty">妹子</string>
     <string name="favorite">我的收藏</string>
     <string name="images_empty">啊哦，没有内容，赶快去收藏吧~</string>
     <string name="set_like_download">收藏时保存图片</string>
     <string name="empty_content">啥也没有</string>
+    <string name="thanks_for_donation">感谢您的支持，您的赞助会让app变得更好~\n祝您有个好心情~</string>
+    <string name="transition_morph_view" translatable="false">morph_view_transition</string>
+    <string name="donate">捐贈</string>
+    <string name="theme_color">主题颜色</string>
+    <string name="theme_choose">选择你喜欢的各式各样颜色吧~</string>
 
 
 </resources>

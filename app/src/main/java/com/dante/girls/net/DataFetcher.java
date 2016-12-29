@@ -122,8 +122,8 @@ public class DataFetcher {
                                 image.setInfo(postUrl);
                                 image.setTitle(title);
                                 images.add(image);
-
                             }
+
                         } catch (IOException e) {
                             e.printStackTrace();
                         }
@@ -161,6 +161,8 @@ public class DataFetcher {
                                 Image image = new Image(src, type);
                                 images.add(image);
                             }
+
+
                         } catch (IOException e) {
                             e.printStackTrace();
                         }

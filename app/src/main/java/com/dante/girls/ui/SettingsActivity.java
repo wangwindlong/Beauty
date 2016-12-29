@@ -11,4 +11,10 @@ public class SettingsActivity extends BaseActivity {
         return R.layout.activity_setting;
     }
 
+    @Override
+    protected void initViews() {
+        super.initViews();
+//        setSupportActionBar(((Toolbar) findViewById(R.id.toolbar)));
+//        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+    }
 }

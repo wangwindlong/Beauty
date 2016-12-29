@@ -30,5 +30,12 @@ public class App extends Application {
         refWatcher = LeakCanary.install(this);
         Bugtags.start("1ddf7128d535505cc4adbda213e8c12f", this, Bugtags.BTGInvocationEventNone);
         Realm.init(this);
+
+//        Colorful.defaults()
+//                .primaryColor(Colorful.ThemeColor.RED)
+//                .accentColor(Colorful.ThemeColor.BLUE)
+//                .translucent(false)
+//                .dark(true);
+//        Colorful.init(this);
     }
 }

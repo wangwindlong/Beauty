@@ -1,5 +1,6 @@
 package com.dante.girls.utils;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -7,9 +8,12 @@ import android.net.Uri;
 
 import com.dante.girls.BuildConfig;
 import com.dante.girls.base.App;
+import com.dante.girls.base.Constants;
 
 import java.io.File;
 import java.util.List;
+
+import moe.feng.alipay.zerosdk.AlipayZeroSdk;
 
 /**
  * Created by Dante on 2016/2/19.
@@ -43,5 +47,12 @@ public class AppUtils {
         PackageManager packageManager = App.context.getPackageManager();
         List activities = packageManager.queryIntentActivities(intent, PackageManager.MATCH_DEFAULT_ONLY);
         return activities.size() > 0;
+    }
+
+
+    public static  void donate(Activity activity) {
+        if (AlipayZeroSdk.hasInstalledAlipayClient(activity.getApplicationContext())) {
+            AlipayZeroSdk.startAlipayClient(activity, Constants.ALI_PAY);
+        }
     }
 }
