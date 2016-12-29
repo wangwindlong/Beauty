@@ -1,10 +1,9 @@
 
-Beauty 是一款看妹子的APP ([获取apk](https://github.com/DanteAndroid/Beauty/Release)）
+**五次元妹子** 是一款看妹子的APP ([获取apk](https://github.com/DanteAndroid/Beauty/Release)）
 ---
-**正在更新中...大量新妹子，敬請期待。**
 
 Update:
-- 添加了动漫栏目。
+- 添加了**动漫**栏目。
 
 ## Feature
 0. 它是我另一个库 [Knowledge](https://github.com/DanteAndroid/Knowledge) 的 Rxjava &精简版
@@ -14,7 +13,7 @@ Update:
 4. 使用[BRVAH](http://www.recyclerview.org/)，妈妈再也不用担心我写adapter头疼的问题了
 
 ## Screenshot
-<a href="./art/screenshot_main.png"><img src="./art/screenshot_main.png" width="40%"/></a><a href="./art/screenshot_menu.png"><img src="./art/screenshot_menu.png" width="40%"/></a>
+<a href="./art/screenshot_main.png"><img src="./art/screenshot_main.png" width="40%"/></a><img height="0" width="8px"/><a href="./art/screenshot_menu.png"><img src="./art/screenshot_menu.png" width="40%"/></a>
 
 ## Q&A
 - Q: 我不会Rxjava，怎么办？
