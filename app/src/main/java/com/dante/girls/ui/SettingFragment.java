@@ -118,7 +118,6 @@ public class SettingFragment extends PreferenceFragment implements Preference.On
         });
     }
 
-
     private void refreshCache() {
         String cache = String.format(getString(R.string.set_current_cache) + " %s", getDataSize());
         clearCache.setSummary(cache);
