@@ -1,20 +1,19 @@
 
-Beauty 是一款看妹子的APP (获取[apk](https://github.com/DanteAndroid/Girls/raw/master/app/app-armeabi-v7a-release.apk)）
+**五次元妹子** 是一款看妹子的APP ([获取apk](https://github.com/DanteAndroid/Beauty/releases)）
 ---
-**正在更新中...大量新妹子，敬請期待。**
 
 Update:
-- 添加了动漫栏目。
+- 添加了**动漫**栏目。
 
 ## Feature
-0. 它是我另一个库[Knowledge](https://github.com/DanteAndroid/Knowledge)的Rxjava&精简版
+0. 它是我另一个库 [Knowledge](https://github.com/DanteAndroid/Knowledge) 的 Rxjava &精简版
 1. Retrofit + Rxjava，让网络请求和解析数据更轻松、直观
-2. **NO MVP**，**没有mvp**架构，没有大量绕人的接口
-3. 只保留了Knowledge中的美图功能，结构清晰更适合新手学习
+2. **NO MVP**，没有大量绕人的接口
+3. 只保留了 Knowledge 中的美图功能，结构清晰更适合新手学习
 4. 使用[BRVAH](http://www.recyclerview.org/)，妈妈再也不用担心我写adapter头疼的问题了
 
 ## Screenshot
-<a href="./screenshot.png"><img src="./screenshot.png" width="50%"/></a>
+<a href="./art/screenshot_main.png"><img src="./art/screenshot_main.png" width="40%"/></a><img height="0" width="8px"/><a href="./art/screenshot_menu.png"><img src="./art/screenshot_menu.png" width="40%"/></a>
 
 ## Q&A
 - Q: 我不会Rxjava，怎么办？
