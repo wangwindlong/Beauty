@@ -136,7 +136,7 @@ public class DataFetcher {
 
     public Observable<List<Image>> getPicturesOfPost(String info) {
         //get all images in this post
-        Log.i(TAG, "getPicturesOfPost : " + info);
+        Log.d(TAG, "getPicturesOfPost : " + info);
         return netService.getaApi().getPictures(info, page)
 //                .subscribeOn(Schedulers.computation())
 //                .observeOn(Schedulers.computation())
@@ -149,13 +149,13 @@ public class DataFetcher {
                             Elements elements = document.select("div[class=post] p img");
                             Elements test = document.select("div[class=post] > p > a > img");
                             final int size = elements.size();
-                            Log.i(TAG, "call: test " + test.size());
+                            Log.d(TAG, "call: test " + test.size());
 //                            String url = elements.last().attr("src");
 //                            if (DataBase.getByUrl(url) != null) {
 //                                Log.i(TAG, "getPicturesOfPost: find saved image!");
 //                                return null;
 //                            }
-                            Log.i(TAG, "getPicturesOfPost: size" + size);
+                            Log.d(TAG, "getPicturesOfPost: size" + size);
                             for (int i = 0; i < size; i++) {
                                 String src = elements.get(i).attr("src").trim();
                                 Image image = new Image(src, type);

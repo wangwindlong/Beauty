@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
-                  xmlns:colorpicker="http://schemas.android.com/apk/res-auto">
+>
     <PreferenceCategory android:title="@string/app">
         <Preference
             android:key="clear_cache"
@@ -17,9 +17,8 @@
             android:title="@string/set_like_download"/>
         <Preference
             android:key="theme_color"
-            android:title="@string/theme_color"
             android:summary="@string/theme_choose"
-            colorpicker:accent_color="true"/>
+            android:title="@string/theme_color"/>
     </PreferenceCategory>
 
     <PreferenceCategory android:title="@string/about">

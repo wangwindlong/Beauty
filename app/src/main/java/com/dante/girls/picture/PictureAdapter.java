@@ -59,7 +59,6 @@ class PictureAdapter extends BaseQuickAdapter<Image, BaseViewHolder> {
             title.setSelected(true);
         }
         final long start = System.currentTimeMillis();
-        Log.i(TAG, "load image-----------------");
         Imager.load(mContext, image.url, imageView, new RequestListener<String, Bitmap>() {
             @Override
             public boolean onException(Exception e, String model, Target<Bitmap> target, boolean isFirstResource) {
@@ -70,7 +69,6 @@ class PictureAdapter extends BaseQuickAdapter<Image, BaseViewHolder> {
             public boolean onResourceReady(Bitmap resource, String model, Target<Bitmap> target, boolean isFromMemoryCache, boolean isFirstResource) {
                 final long loaded = System.currentTimeMillis();
                 Log.i(TAG, "load image OK, duration: " + (loaded - start));
-
                 Palette.from(resource).generate(new Palette.PaletteAsyncListener() {
                     @Override
                     public void onGenerated(Palette palette) {

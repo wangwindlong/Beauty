@@ -89,12 +89,6 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
         setupDrawer();
         initNavigationView();
         initMain();
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Log.i(TAG, "onClick: ");
-            }
-        });
         initFab();
     }
 
@@ -141,7 +135,7 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        Log.i(TAG, "onSaveInstanceState: ");
+        Log.d(TAG, "onSaveInstanceState: ");
         if (item != null) {
             outState.putInt("itemId", item.getItemId());
         }

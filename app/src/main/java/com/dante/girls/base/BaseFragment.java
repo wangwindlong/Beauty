@@ -64,19 +64,19 @@ public abstract class BaseFragment extends Fragment {
 
     public void log(String key, String content) {
         if (getUserVisibleHint()) {
-            Log.i(getClass().getSimpleName(), key + ": " + content);
+            Log.d(getClass().getSimpleName(), key + ": " + content);
         }
     }
 
     public void log(String key, int content) {
         if (getUserVisibleHint()) {
-            Log.i(getClass().getSimpleName(), key + ": " + String.valueOf(content));
+            Log.d(getClass().getSimpleName(), key + ": " + String.valueOf(content));
         }
     }
 
     public void log(String key) {
         if (getUserVisibleHint()) {
-            Log.i(getClass().getSimpleName(), key);
+            Log.d(getClass().getSimpleName(), key);
         }
     }
 

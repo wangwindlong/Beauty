@@ -8,7 +8,6 @@ import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
-import android.util.Log;
 
 import com.dante.girls.base.BaseFragment;
 import com.dante.girls.model.MessageEvent;
@@ -19,8 +18,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.BindView;
-
-import static com.bumptech.glide.gifdecoder.GifHeaderParser.TAG;
 /**
  * A placeholder fragment containing a simple view.
  */
@@ -135,7 +132,7 @@ public class MainActivityFragment extends BaseFragment {
     }
 
     public void onReenter(MessageEvent data) {
-        Log.i(TAG, "onReenter: ");
+//        Log.i(TAG, "onReenter: ");
 //        getActivity().supportPostponeEnterTransition();
 //        final int index = data.index;
 //        final RecyclerView recyclerView = adapter.getCurrent().getRecyclerView();

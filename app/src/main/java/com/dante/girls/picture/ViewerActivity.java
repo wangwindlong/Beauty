@@ -119,7 +119,6 @@ public class ViewerActivity extends BaseActivity implements RealmChangeListener 
             public void onMapSharedElements(List<String> names, Map<String, View> sharedElements) {
                 super.onMapSharedElements(names, sharedElements);
                 names.clear();
-                Log.i(TAG, "onMapSharedElements: clear");
 //                names.add(currentUrl());
                 sharedElements.clear();
 //                sharedElements.put(currentUrl(), adapter.getCurrent().getSharedElement());

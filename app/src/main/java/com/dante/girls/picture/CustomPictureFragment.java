@@ -89,9 +89,9 @@ public class CustomPictureFragment extends PictureFragment {
             case TYPE_A_HENTAI:
             case TYPE_A_ZATU:
             case TYPE_A_UNIFORM:
-                layout = R.layout.picture_item_fixed;
-                if (!isInPost) {
-                    layout = R.layout.post_item;
+                layout = R.layout.post_item;
+                if (isInPost) {
+                    layout = R.layout.picture_item;
                 }
         }
         return layout;
@@ -141,7 +141,6 @@ public class CustomPictureFragment extends PictureFragment {
 
     //预加载Image，然后刷新列表
     protected void fetchImages(final Observable<List<Image>> source) {
-
         subscription = source
                 .flatMap(new Func1<List<Image>, Observable<Image>>() {
                     @Override
@@ -153,7 +152,7 @@ public class CustomPictureFragment extends PictureFragment {
                 .map(new Func1<Image, Image>() {
                     @Override
                     public Image call(Image image) {
-                        if (!isA) {
+                        if (!isA || isInPost) {
                             //不是A区，需要预加载
                             return Image.getFixedImage(context, image, imageType, page);
                         }
@@ -217,7 +216,6 @@ public class CustomPictureFragment extends PictureFragment {
         if (page > 1) {
             return;
         }
-
         Log.i(TAG, "execute: before sort " + images.first().url);
         realm.executeTransactionAsync(new Realm.Transaction() {
             public void execute(Realm realm) {
