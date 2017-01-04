@@ -16,7 +16,7 @@ import com.dante.girls.net.API;
 import com.dante.girls.net.NetService;
 import com.dante.girls.utils.DateUtil;
 import com.dante.girls.utils.Imager;
-import com.dante.girls.utils.SPUtil;
+import com.dante.girls.utils.SpUtil;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -49,7 +49,7 @@ public class SplashActivity extends AppCompatActivity {
 
         splash = (ImageView) findViewById(R.id.splash);
 
-        if (SPUtil.getBoolean(SettingFragment.ORIGINAL_SPLASH)) {
+        if (SpUtil.getBoolean(SettingFragment.ORIGINAL_SPLASH)) {
             Glide.with(this).load(R.drawable.splash).crossFade(1500).into(splash);
             startAppDelay();
             return;
@@ -66,7 +66,7 @@ public class SplashActivity extends AppCompatActivity {
 
     //Update url of splash, no load
     private void updateSplash() {
-        if (today.equals(SPUtil.getString(Constants.DATE)) && !SPUtil.get(SPLASH, "").isEmpty()) {
+        if (today.equals(SpUtil.getString(Constants.DATE)) && !SpUtil.get(SPLASH, "").isEmpty()) {
             return;
         }
         NetService.getInstance(API.SPLASH).getAppApi().getSplash()
@@ -85,8 +85,8 @@ public class SplashActivity extends AppCompatActivity {
                 .subscribe(new Action1<String>() {
                     @Override
                     public void call(String url) {
-                        SPUtil.save(SPLASH, url);
-                        SPUtil.save(Constants.DATE, today);
+                        SpUtil.save(SPLASH, url);
+                        SpUtil.save(Constants.DATE, today);
                     }
                 });
 
@@ -94,7 +94,7 @@ public class SplashActivity extends AppCompatActivity {
     }
 
     private void loadImage() {
-        String url = SPUtil.get(SPLASH, "");
+        String url = SpUtil.get(SPLASH, "");
         if ("".equals(url)) {
             Imager.load(this, R.drawable.splash, splash);
         } else {

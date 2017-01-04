@@ -18,7 +18,7 @@ import com.dante.girls.base.BaseActivity;
 import com.dante.girls.base.Constants;
 import com.dante.girls.model.DataBase;
 import com.dante.girls.model.Image;
-import com.dante.girls.utils.SPUtil;
+import com.dante.girls.utils.SpUtil;
 
 import java.util.List;
 
@@ -49,7 +49,7 @@ public abstract class PictureFragment extends RecyclerFragment {
     @Override
     public void onResume() {
         super.onResume();
-        lastPosition = SPUtil.getInt(imageType + Constants.POSITION);
+        lastPosition = SpUtil.getInt(imageType + Constants.POSITION);
         recyclerView.scrollToPosition(lastPosition > 0 ? lastPosition : 0);
     }
 

@@ -15,7 +15,7 @@ import com.dante.girls.base.BaseActivity;
 import com.dante.girls.base.Constants;
 import com.dante.girls.model.DataBase;
 import com.dante.girls.model.Image;
-import com.dante.girls.utils.SPUtil;
+import com.dante.girls.utils.SpUtil;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -45,7 +45,7 @@ public class ViewerActivity extends BaseActivity implements RealmChangeListener 
     @Override
     protected void onPause() {
         super.onPause();
-        SPUtil.save(type + Constants.POSITION, currentPosition);
+        SpUtil.save(type + Constants.POSITION, currentPosition);
     }
 
     @Override

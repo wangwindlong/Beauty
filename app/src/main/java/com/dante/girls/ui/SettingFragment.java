@@ -19,7 +19,7 @@ import com.dante.girls.R;
 import com.dante.girls.base.App;
 import com.dante.girls.model.Image;
 import com.dante.girls.utils.AppUtil;
-import com.dante.girls.utils.SPUtil;
+import com.dante.girls.utils.SpUtil;
 import com.dante.girls.utils.UiUtils;
 
 import java.io.File;
@@ -131,12 +131,12 @@ public class SettingFragment extends PreferenceFragment implements Preference.On
             }
         }
         if (secretIndex == 6) {
-            if (SPUtil.getBoolean(SECRET_MODE)) {
-                SPUtil.save(SECRET_MODE, false);
+            if (SpUtil.getBoolean(SECRET_MODE)) {
+                SpUtil.save(SECRET_MODE, false);
                 secretIndex = 0;
                 UiUtils.showSnack(rootView, R.string.secret_mode_closed);
             } else {
-                SPUtil.save(SECRET_MODE, true);
+                SpUtil.save(SECRET_MODE, true);
                 secretIndex = 0;
                 UiUtils.showSnackLong(rootView, R.string.secret_mode_opened);
             }

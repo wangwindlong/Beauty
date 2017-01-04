@@ -33,8 +33,8 @@ import com.dante.girls.picture.FavoriteFragment;
 import com.dante.girls.ui.SettingFragment;
 import com.dante.girls.ui.SettingsActivity;
 import com.dante.girls.utils.Imager;
-import com.dante.girls.utils.SPUtil;
 import com.dante.girls.utils.Share;
+import com.dante.girls.utils.SpUtil;
 import com.dante.girls.utils.UiUtils;
 import com.mikepenz.google_material_typeface_library.GoogleMaterial;
 import com.mikepenz.iconics.IconicsDrawable;
@@ -221,7 +221,7 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
         //load headerView's image
         Imager.load(this, R.drawable.head, (ImageView) navView.getHeaderView(0).findViewById(R.id.headImage));
         navView.setNavigationItemSelectedListener(this);
-        boolean isSecretOn = SPUtil.getBoolean(SettingFragment.SECRET_MODE);
+        boolean isSecretOn = SpUtil.getBoolean(SettingFragment.SECRET_MODE);
         navView.inflateMenu(R.menu.menu_main);
 //        navView.setCheckedItem(R.id.nav_beauty);
         Menu menu = navView.getMenu();

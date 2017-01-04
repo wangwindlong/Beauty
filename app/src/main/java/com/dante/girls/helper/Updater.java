@@ -12,7 +12,7 @@ import com.dante.girls.model.AppInfo;
 import com.dante.girls.net.API;
 import com.dante.girls.net.NetService;
 import com.dante.girls.ui.SettingFragment;
-import com.dante.girls.utils.SPUtil;
+import com.dante.girls.utils.SpUtil;
 import com.tbruyelle.rxpermissions.RxPermissions;
 
 import rx.Subscription;
@@ -87,7 +87,7 @@ public class Updater {
     }
 
     private void showDialog(final AppInfo appInfo) {
-        boolean needUpdate = appInfo.isForceUpdate() || SPUtil.getBoolean(SettingFragment.CHECK_VERSION);
+        boolean needUpdate = appInfo.isForceUpdate() || SpUtil.getBoolean(SettingFragment.CHECK_VERSION);
         new AlertDialog.Builder(context).setTitle(R.string.new_version)
                 .setCancelable(!needUpdate)//需要更新就不可取消
                 .setMessage(String.format(context.getString(R.string.update_message), appInfo.getMessage()))

@@ -22,8 +22,8 @@ import com.dante.girls.model.DataBase;
 import com.dante.girls.ui.SettingFragment;
 import com.dante.girls.utils.BitmapUtil;
 import com.dante.girls.utils.Imager;
-import com.dante.girls.utils.SPUtil;
 import com.dante.girls.utils.Share;
+import com.dante.girls.utils.SpUtil;
 import com.dante.girls.utils.UiUtils;
 import com.like.LikeButton;
 import com.like.OnLikeListener;
@@ -82,7 +82,7 @@ public class ViewerFragment extends BaseFragment implements View.OnLongClickList
                 DataBase.getByUrl(realm, url).setLiked(true);
                 realm.commitTransaction();
 
-                if (SPUtil.getBoolean(SettingFragment.LIKE_DOWNLOAD)) {
+                if (SpUtil.getBoolean(SettingFragment.LIKE_DOWNLOAD)) {
                     save(bitmap);
                 }
             }
@@ -226,9 +226,9 @@ public class ViewerFragment extends BaseFragment implements View.OnLongClickList
 
     @Override
     public void onClick(View v) {
-        if (!SPUtil.getBoolean(Constants.HAS_HINT)) {
+        if (!SpUtil.getBoolean(Constants.HAS_HINT)) {
 //            showHint();
-            SPUtil.save(Constants.HAS_HINT, true);
+            SpUtil.save(Constants.HAS_HINT, true);
         } else {
             context.supportFinishAfterTransition();
         }

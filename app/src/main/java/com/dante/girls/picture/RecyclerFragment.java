@@ -9,7 +9,7 @@ import android.support.v7.widget.RecyclerView;
 import com.dante.girls.R;
 import com.dante.girls.base.BaseFragment;
 import com.dante.girls.base.Constants;
-import com.dante.girls.utils.SPUtil;
+import com.dante.girls.utils.SpUtil;
 
 import butterknife.BindView;
 import rx.Subscription;
@@ -40,7 +40,7 @@ public abstract class RecyclerFragment extends BaseFragment implements SwipeRefr
         super.onViewStateRestored(savedInstanceState);
         if (savedInstanceState == null) {
             //restoring position when reentering fragment.
-            lastPosition = SPUtil.getInt(imageType + Constants.POSITION);
+            lastPosition = SpUtil.getInt(imageType + Constants.POSITION);
             if (lastPosition > 0) {
                 recyclerView.scrollToPosition(lastPosition);
             }
@@ -51,7 +51,7 @@ public abstract class RecyclerFragment extends BaseFragment implements SwipeRefr
     public void onPause() {
         super.onPause();
         changeRefresh(false);
-        SPUtil.save(imageType + Constants.POSITION, firstPosition);
+        SpUtil.save(imageType + Constants.POSITION, firstPosition);
     }
 
     @Override

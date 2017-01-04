@@ -15,7 +15,7 @@ import com.dante.girls.model.DataBase;
 import com.dante.girls.model.Image;
 import com.dante.girls.net.API;
 import com.dante.girls.net.DataFetcher;
-import com.dante.girls.utils.SPUtil;
+import com.dante.girls.utils.SpUtil;
 import com.dante.girls.utils.UiUtils;
 
 import java.util.List;
@@ -190,7 +190,7 @@ public class CustomPictureFragment extends PictureFragment {
                         }
                         //获取到数据了，下一页
                         log("save page" + page);
-                        SPUtil.save(imageType + Constants.PAGE, page);
+                        SpUtil.save(imageType + Constants.PAGE, page);
                         adapter.notifyItemRangeChanged(oldSize, add);
                         adapter.loadMoreComplete();
                     }
@@ -291,7 +291,7 @@ public class CustomPictureFragment extends PictureFragment {
         adapter.setOnLoadMoreListener(new BaseQuickAdapter.RequestLoadMoreListener() {
             @Override
             public void onLoadMoreRequested() {
-                page = SPUtil.getInt(imageType + Constants.PAGE, 1);
+                page = SpUtil.getInt(imageType + Constants.PAGE, 1);
                 page++;
                 log("loadmore ", page);
                 fetch();

@@ -8,7 +8,7 @@ import com.dante.girls.base.App;
 /**
  * Helps with shared preference.
  */
-public class SPUtil {
+public class SpUtil {
 
     private static SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(App.context);
     private static SharedPreferences.Editor editor = sp.edit();
@@ -39,6 +39,7 @@ public class SPUtil {
     public static int getInt(String key) {
         return sp.getInt(key, 0);
     }
+
     public static int getInt(String key, int def) {
         return sp.getInt(key, def);
     }
