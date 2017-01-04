@@ -16,7 +16,7 @@ import com.dante.girls.model.Image;
 import com.dante.girls.net.API;
 import com.dante.girls.net.DataFetcher;
 import com.dante.girls.utils.SPUtil;
-import com.dante.girls.utils.UI;
+import com.dante.girls.utils.UiUtils;
 
 import java.util.List;
 
@@ -89,6 +89,7 @@ public class CustomPictureFragment extends PictureFragment {
             case TYPE_A_HENTAI:
             case TYPE_A_ZATU:
             case TYPE_A_UNIFORM:
+                isA = true;
                 layout = R.layout.post_item;
                 if (isInPost) {
                     layout = R.layout.picture_item;
@@ -178,7 +179,6 @@ public class CustomPictureFragment extends PictureFragment {
                         newSize = images.size();
                         int add = newSize - oldSize;
                         changeState(false);
-                        adapter.loadMoreComplete();
 //                        if (isA && !isInPost) {
 //                            sortData(add);//每次刷新第一页的时候给图片排序
 //                        }
@@ -186,18 +186,20 @@ public class CustomPictureFragment extends PictureFragment {
                             log("newsize ", newSize);
                             log("onCompleted: old new size are the same");
                             if (isInPost) adapter.loadMoreEnd(true);
+                            adapter.loadMoreFail();
                         }
                         //获取到数据了，下一页
                         log("save page" + page);
                         SPUtil.save(imageType + Constants.PAGE, page);
                         adapter.notifyItemRangeChanged(oldSize, add);
+                        adapter.loadMoreComplete();
                     }
 
                     @Override
                     public void onError(Throwable e) {
                         changeState(false);
                         adapter.loadMoreComplete();
-                        UI.showSnack(rootView, R.string.load_fail);
+                        UiUtils.showSnack(rootView, R.string.load_fail);
                         e.printStackTrace();
                     }
 
@@ -207,6 +209,7 @@ public class CustomPictureFragment extends PictureFragment {
                         DataBase.save(realm, list);
                     }
                 });
+        compositeSubscription.add(subscription);
     }
 
     private void sortData(final int added) {
@@ -250,23 +253,13 @@ public class CustomPictureFragment extends PictureFragment {
     @Override
     protected void AlwaysInit() {
         super.AlwaysInit();
-        switch (baseType) {
-            case TYPE_A_ANIME:
-            case TYPE_A_FULI:
-            case TYPE_A_HENTAI:
-            case TYPE_A_ZATU:
-            case TYPE_A_UNIFORM:
-                isA = true;
-                recyclerView.setBackgroundColor(getColor(R.color.cardview_dark_background));
-        }
+        if (isA) recyclerView.setBackgroundColor(getColor(R.color.cardview_dark_background));
 
         //在A区帖子中，改变toolbar的样式
-
         AppBarLayout.LayoutParams p = (AppBarLayout.LayoutParams) toolbar.getLayoutParams();
         if (isInPost) {
             p.setScrollFlags(0);
             ((MainActivity) context).changeNavigator(false);
-
         } else {
             p.setScrollFlags(SCROLL_FLAG_SCROLL | SCROLL_FLAG_ENTER_ALWAYS_COLLAPSED);
             ((MainActivity) context).changeNavigator(true);

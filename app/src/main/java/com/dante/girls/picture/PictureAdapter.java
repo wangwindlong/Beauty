@@ -4,7 +4,6 @@ import android.graphics.Bitmap;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewCompat;
 import android.support.v7.graphics.Palette;
-import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -58,7 +57,6 @@ class PictureAdapter extends BaseQuickAdapter<Image, BaseViewHolder> {
             title.setText(text);
             title.setSelected(true);
         }
-        final long start = System.currentTimeMillis();
         Imager.load(mContext, image.url, imageView, new RequestListener<String, Bitmap>() {
             @Override
             public boolean onException(Exception e, String model, Target<Bitmap> target, boolean isFirstResource) {
@@ -67,8 +65,6 @@ class PictureAdapter extends BaseQuickAdapter<Image, BaseViewHolder> {
 
             @Override
             public boolean onResourceReady(Bitmap resource, String model, Target<Bitmap> target, boolean isFromMemoryCache, boolean isFirstResource) {
-                final long loaded = System.currentTimeMillis();
-                Log.i(TAG, "load image OK, duration: " + (loaded - start));
                 Palette.from(resource).generate(new Palette.PaletteAsyncListener() {
                     @Override
                     public void onGenerated(Palette palette) {
@@ -76,7 +72,6 @@ class PictureAdapter extends BaseQuickAdapter<Image, BaseViewHolder> {
                         if (post != null) {
                             title.setBackgroundColor(color);
                             title.setVisibility(View.VISIBLE);
-                            Log.i(TAG, "load image Palette generated: " + (System.currentTimeMillis() - loaded));
                         }
                     }
                 });

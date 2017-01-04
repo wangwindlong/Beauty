@@ -6,8 +6,8 @@ import android.widget.TextView;
 import com.dante.girls.BuildConfig;
 import com.dante.girls.R;
 import com.dante.girls.base.BaseActivity;
-import com.dante.girls.utils.AppUtils;
-import com.dante.girls.utils.UI;
+import com.dante.girls.utils.AppUtil;
+import com.dante.girls.utils.UiUtils;
 
 import butterknife.BindView;
 
@@ -27,15 +27,15 @@ public class AboutActivity extends BaseActivity {
     @Override
     protected void initViews() {
         super.initViews();
-        versionName.setText(String.format(getString(R.string.version) + " %s", BuildConfig.VERSION_NAME));
+        versionName.setText(String.format(getString(R.string.version) + " %s(%s)", BuildConfig.VERSION_NAME, BuildConfig.VERSION_CODE));
     }
 
     @Override
     public void startActivity(Intent intent) {
-        if (AppUtils.isIntentSafe(intent)) {
+        if (AppUtil.isIntentSafe(intent)) {
             super.startActivity(intent);
         } else {
-            UI.showSnack(versionName, R.string.email_not_install);
+            UiUtils.showSnack(versionName, R.string.email_not_install);
         }
     }
 

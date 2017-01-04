@@ -21,7 +21,7 @@ import butterknife.BindView;
 /**
  * A placeholder fragment containing a simple view.
  */
-public class MainActivityFragment extends BaseFragment {
+public class MainTabsFragment extends BaseFragment {
     private static final int SMOOTH_SCROLL_POSITION = 50;
     private static final String TITLES = "titles";
     private static final String TYPES = "types";
@@ -32,11 +32,11 @@ public class MainActivityFragment extends BaseFragment {
     private List<RecyclerFragment> fragments = new ArrayList<>();
     private TabPagerAdapter adapter;
 
-    public static MainActivityFragment newInstance(String[] titles, String[] types) {
+    public static MainTabsFragment newInstance(String[] titles, String[] types) {
         Bundle args = new Bundle();
         args.putStringArray(TYPES, types);
         args.putStringArray(TITLES, titles);
-        MainActivityFragment fragment = new MainActivityFragment();
+        MainTabsFragment fragment = new MainTabsFragment();
         fragment.setArguments(args);
         return fragment;
     }

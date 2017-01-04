@@ -6,8 +6,7 @@ import android.view.ViewGroup;
 
 import com.dante.girls.R;
 import com.dante.girls.base.Constants;
-import com.dante.girls.model.DataBase;
-import com.dante.girls.utils.UI;
+import com.dante.girls.utils.UiUtils;
 
 /**
  * A picture fragment for users' liked items.
@@ -36,11 +35,11 @@ public class FavoriteFragment extends PictureFragment {
 
     @Override
     protected void initData() {
-        images = DataBase.findFavoriteImages(realm);
-        adapter.setNewData(images);
         imageType = Constants.FAVORITE;
+        super.initData();
+
         if (images.isEmpty()) {
-            UI.showSnackLong(rootView, R.string.images_empty);
+            UiUtils.showSnackLong(rootView, R.string.images_empty);
         }
         adapter.setEmptyView(LayoutInflater.from(context).inflate(R.layout.empty, (ViewGroup) rootView, false));
     }

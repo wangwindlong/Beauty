@@ -18,7 +18,7 @@ import moe.feng.alipay.zerosdk.AlipayZeroSdk;
 /**
  * Created by Dante on 2016/2/19.
  */
-public class AppUtils {
+public class AppUtil {
 
     public static String getVersionName() {
         return BuildConfig.VERSION_NAME;
@@ -50,7 +50,7 @@ public class AppUtils {
     }
 
 
-    public static  void donate(Activity activity) {
+    public static void donate(Activity activity) {
         if (AlipayZeroSdk.hasInstalledAlipayClient(activity.getApplicationContext())) {
             AlipayZeroSdk.startAlipayClient(activity, Constants.ALI_PAY);
         }

@@ -14,6 +14,5 @@ public interface DBApi {
     @GET("rank.htm")
     Observable<ResponseBody> getRank(@Query("pager_offset") int page);
 
-    @GET("4/start-image/1080*1920")
-    Observable<ResponseBody> getSplash();
+
 }

@@ -23,6 +23,7 @@ public class NetService {
     private GankApi gankApi;
     private DBApi dbApi;
     private AApi aApi;
+    private AppApi appApi;
     private Retrofit retrofit;
     private String baseUrl;
 
@@ -53,13 +54,7 @@ public class NetService {
 
     public GankApi getGankApi() {
         if (gankApi == null) {
-            retrofit = new Retrofit.Builder()
-                    .baseUrl(baseUrl)
-                    .client(client)
-                    .addConverterFactory(GsonConverterFactory.create(Json.gson))
-                    .addCallAdapterFactory(RxJavaCallAdapterFactory.create())
-                    .build();
-            return retrofit.create(GankApi.class);
+            return createServiceWithGson(GankApi.class);
         }
         return gankApi;
     }
@@ -78,11 +73,28 @@ public class NetService {
         return aApi;
     }
 
-    public  <T> T createService(Class<T> className) {
+    public AppApi getAppApi() {
+        if (dbApi == null) {
+            return createServiceWithGson(AppApi.class);
+        }
+        return appApi;
+    }
+
+    public <T> T createService(Class<T> className) {
         retrofit = new Retrofit.Builder()
                 .baseUrl(baseUrl)
                 .client(client)
                 .addCallAdapterFactory(RxJavaCallAdapterFactory.create())
+                .build();
+        return retrofit.create(className);
+    }
+
+    public <T> T createServiceWithGson(Class<T> className) {
+        retrofit = new Retrofit.Builder()
+                .baseUrl(baseUrl)
+                .client(client)
+                .addCallAdapterFactory(RxJavaCallAdapterFactory.create())
+                .addConverterFactory(GsonConverterFactory.create())
                 .build();
         return retrofit.create(className);
     }

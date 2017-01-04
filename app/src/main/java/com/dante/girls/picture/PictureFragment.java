@@ -92,7 +92,7 @@ public abstract class PictureFragment extends RecyclerFragment {
         recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
             public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
-                if (dy < 50) {
+                if (dy < 30) {
                     return;
                 }
                 int[] spans = new int[layoutManager.getSpanCount()];
@@ -103,7 +103,6 @@ public abstract class PictureFragment extends RecyclerFragment {
         imageType = baseType;
         initTitle();
         log("initViews end: ", imageType);
-
     }
 
     protected void onImageClicked(View view, int position) {

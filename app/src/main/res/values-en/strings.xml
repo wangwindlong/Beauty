@@ -89,4 +89,10 @@
     <string name="thanks_for_donation">Thanks for your support!</string>
     <string name="theme_choose">Choose color you like</string>
     <string name="theme_color">Theme color</string>
+    <string name="update_message">Update log：\n\n%s</string>
+    <string name="downloading">Downloading…</string>
+    <string name="new_version">New version found</string>
+    <string name="install_hint">Current version is debug, update will fail because of different
+        signature. Uninstall and reinstall then.
+    </string>
 </resources>

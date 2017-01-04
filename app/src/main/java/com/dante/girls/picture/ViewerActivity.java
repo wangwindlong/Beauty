@@ -7,7 +7,6 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.app.SharedElementCallback;
 import android.support.v4.view.ViewPager;
-import android.util.Log;
 import android.view.View;
 import android.widget.FrameLayout;
 
@@ -65,10 +64,6 @@ public class ViewerActivity extends BaseActivity implements RealmChangeListener 
 
         type = getIntent().getStringExtra(Constants.TYPE);
         images = DataBase.findImages(realm, type);
-
-        if (Constants.FAVORITE.equals(type)) {
-            images = DataBase.findFavoriteImages(realm);
-        }
 
         for (int i = 0; i < images.size(); i++) {
             fragments.add(ViewerFragment.newInstance(images.get(i).url));

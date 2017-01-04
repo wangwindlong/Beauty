@@ -69,7 +69,7 @@ public class SplashActivity extends AppCompatActivity {
         if (today.equals(SPUtil.getString(Constants.DATE)) && !SPUtil.get(SPLASH, "").isEmpty()) {
             return;
         }
-        NetService.getInstance(API.SPLASH).getDbApi().getSplash()
+        NetService.getInstance(API.SPLASH).getAppApi().getSplash()
                 .map(new Func1<ResponseBody, String>() {
                     @Override
                     public String call(ResponseBody responseBody) {

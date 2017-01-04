@@ -13,6 +13,7 @@ import com.dante.girls.utils.SPUtil;
 
 import butterknife.BindView;
 import rx.Subscription;
+import rx.subscriptions.CompositeSubscription;
 
 /**
  * All fragments have recyclerView & swipeRefresh must implement this.
@@ -27,6 +28,7 @@ public abstract class RecyclerFragment extends BaseFragment implements SwipeRefr
     int lastPosition;       //last visible position
     int firstPosition;      //first visible position
     Subscription subscription;
+    CompositeSubscription compositeSubscription = new CompositeSubscription();
 
     @Override
     protected int initLayoutId() {
@@ -54,9 +56,7 @@ public abstract class RecyclerFragment extends BaseFragment implements SwipeRefr
 
     @Override
     public void onDestroyView() {
-        if (subscription != null) {
-            subscription.unsubscribe();
-        }
+        compositeSubscription.unsubscribe();
         super.onDestroyView();
     }
 

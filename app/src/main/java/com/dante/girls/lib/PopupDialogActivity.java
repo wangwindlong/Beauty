@@ -16,7 +16,7 @@ import android.view.animation.AnimationUtils;
 import android.view.animation.Interpolator;
 
 import com.dante.girls.R;
-import com.dante.girls.utils.AppUtils;
+import com.dante.girls.utils.AppUtil;
 
 public class PopupDialogActivity extends Activity {
     public static final String EXTRA_MORPH_TYPE = "morph_type";
@@ -83,6 +83,6 @@ public class PopupDialogActivity extends Activity {
     }
 
     public void ok(View view) {
-        AppUtils.donate(this);
+        AppUtil.donate(this);
     }
 }

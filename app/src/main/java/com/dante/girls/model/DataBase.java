@@ -1,6 +1,8 @@
 package com.dante.girls.model;
 
 
+import com.dante.girls.base.Constants;
+
 import java.util.List;
 
 import io.realm.Realm;
@@ -66,6 +68,9 @@ public class DataBase {
 
     public static RealmResults<Image> findImages(Realm realm, String type) {
         realm = initRealm(realm);
+        if (Constants.TYPE.equals(type)) {
+            return findFavoriteImages(realm);
+        }
         return realm.where(Image.class)
                 .equalTo("type", type)
                 .findAll()

@@ -97,6 +97,10 @@
     <string name="donate">捐贈</string>
     <string name="theme_color">主题颜色</string>
     <string name="theme_choose">选择你喜欢的各式各样颜色吧~</string>
+    <string name="update_message">更新内容:\n\n %s</string>
+    <string name="downloading">可劲下载中…</string>
+    <string name="new_version">发现新版本</string>
+    <string name="install_hint">当前是debug版本，由于正式版签名不同更新会失败。卸载重装即可</string>
 
 
 </resources>

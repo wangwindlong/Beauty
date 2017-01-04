@@ -1,4 +1,4 @@
-package com.dante.girls.utils;
+package com.dante.girls.helper;
 
 import android.graphics.Bitmap;
 

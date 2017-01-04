@@ -7,18 +7,17 @@ import android.app.ActivityOptions;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Build;
-import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
+import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
-import android.util.Log;
-import android.view.Gravity;
+import android.util.SparseArray;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -27,15 +26,16 @@ import android.widget.ImageView;
 
 import com.dante.girls.base.BaseActivity;
 import com.dante.girls.base.Constants;
+import com.dante.girls.helper.RevealHelper;
+import com.dante.girls.helper.Updater;
 import com.dante.girls.lib.PopupDialogActivity;
 import com.dante.girls.picture.FavoriteFragment;
 import com.dante.girls.ui.SettingFragment;
 import com.dante.girls.ui.SettingsActivity;
 import com.dante.girls.utils.Imager;
-import com.dante.girls.utils.RevealHelper;
 import com.dante.girls.utils.SPUtil;
 import com.dante.girls.utils.Share;
-import com.dante.girls.utils.UI;
+import com.dante.girls.utils.UiUtils;
 import com.mikepenz.google_material_typeface_library.GoogleMaterial;
 import com.mikepenz.iconics.IconicsDrawable;
 
@@ -58,7 +58,7 @@ import static com.dante.girls.net.API.TYPE_DB_LEG;
 import static com.dante.girls.net.API.TYPE_DB_RANK;
 import static com.dante.girls.net.API.TYPE_DB_SILK;
 import static com.dante.girls.net.API.TYPE_GANK;
-import static com.dante.girls.utils.AppUtils.donate;
+import static com.dante.girls.utils.AppUtil.donate;
 
 public class MainActivity extends BaseActivity implements NavigationView.OnNavigationItemSelectedListener {
     public static final String MAIN_FRAGMENT_TAG = "main";
@@ -76,6 +76,8 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
     FrameLayout revealView;
     private boolean backPressed;
     private MenuItem item;
+    private SparseArray<Fragment> fragmentSparseArray;
+    private Updater updater;
 
     @Override
     protected int initLayoutId() {
@@ -86,11 +88,14 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
     @Override
     protected void initViews() {
         super.initViews();
+        updater = Updater.getInstance(this);
+        updater.check();
         setupDrawer();
         initNavigationView();
-        initMain();
+        initFragments();
         initFab();
     }
+
 
     private void initFab() {
         if (new Random().nextBoolean()) {
@@ -131,35 +136,44 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
         }
     }
 
+//    @Override
+//    protected void onSaveInstanceState(Bundle outState) {
+//        super.onSaveInstanceState(outState);
+//        Log.d(TAG, "onSaveInstanceState: ");
+//        if (item != null) {
+//            outState.putInt("itemId", item.getItemId());
+//        }
+//    }
+//
+//    @Override
+//    protected void onRestoreInstanceState(Bundle savedInstanceState) {
+//        super.onRestoreInstanceState(savedInstanceState);
+//        int itemId = savedInstanceState.getInt("itemId", R.id.nav_beauty);
+//        Log.i(TAG, "onRestoreInstanceState: ");
+//        MenuItem item = navView.getMenu().findItem(itemId);
+//        navView.setCheckedItem(itemId);
+//        if (item != null) {
+//            onNavigationItemSelected(item);
+//        }
+//    }
 
-    @Override
-    protected void onSaveInstanceState(Bundle outState) {
-        super.onSaveInstanceState(outState);
-        Log.d(TAG, "onSaveInstanceState: ");
-        if (item != null) {
-            outState.putInt("itemId", item.getItemId());
-        }
+    private void initFragments() {
+        fragmentSparseArray = new SparseArray<>();
+        //Gank & Douban
+        String[] titles = getResources().getStringArray(R.array.db_titles);
+        String[] types = {TYPE_GANK, TYPE_DB_RANK, TYPE_DB_BREAST, TYPE_DB_BUTT, TYPE_DB_LEG, TYPE_DB_SILK};
+        putFragment(R.id.nav_beauty, titles, types);
+        //二次元
+        titles = getResources().getStringArray(R.array.a_titles);
+        types = new String[]{TYPE_A_ANIME, TYPE_A_FULI, TYPE_A_HENTAI, TYPE_A_UNIFORM, TYPE_A_ZATU};
+        putFragment(R.id.nav_a, titles, types);
+        //Main
+        replaceFragment(fragmentSparseArray.get(R.id.nav_beauty), "main");
     }
 
-    @Override
-    protected void onRestoreInstanceState(Bundle savedInstanceState) {
-        super.onRestoreInstanceState(savedInstanceState);
-        int itemId = savedInstanceState.getInt("itemId", R.id.nav_beauty);
-        Log.i(TAG, "onRestoreInstanceState: ");
-        MenuItem item = navView.getMenu().findItem(itemId);
-        navView.setCheckedItem(itemId);
-        if (item != null) {
-            onNavigationItemSelected(item);
-        }
-    }
 
-    private void initMain() {
-        MenuItem item = navView.getMenu().findItem(R.id.nav_beauty);
-        onNavigationItemSelected(item);
-    }
-
-    private void replace(String[] titles, String[] types) {
-        replaceFragment(MainActivityFragment.newInstance(titles, types), "");
+    private void putFragment(int navId, String[] titles, String[] types) {
+        fragmentSparseArray.put(navId, MainTabsFragment.newInstance(titles, types));
     }
 
     private void setupDrawer() {
@@ -189,7 +203,7 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
             return;
         }
         backPressed = true;
-        UI.showSnack(fab, R.string.leave_app);
+        UiUtils.showSnack(fab, R.string.leave_app);
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
@@ -235,21 +249,22 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
         int id = item.getItemId();
-        if (id == R.id.nav_beauty) {
-            String[] titles = getResources().getStringArray(R.array.db_titles);
-            String[] types = {TYPE_GANK, TYPE_DB_RANK, TYPE_DB_BREAST, TYPE_DB_BUTT, TYPE_DB_LEG, TYPE_DB_SILK};
-            replace(titles, types);
-        } else if (id == R.id.nav_a) {
-            String[] titles = getResources().getStringArray(R.array.a_titles);
-            String[] types = {TYPE_A_ANIME, TYPE_A_FULI, TYPE_A_HENTAI, TYPE_A_UNIFORM, TYPE_A_ZATU};
-            replace(titles, types);
-        } else if (id == R.id.nav_setting) {
-            startActivity(new Intent(getApplicationContext(), SettingsActivity.class));
-            return true;
-        } else if (id == R.id.nav_share) {
-            Share.shareText(this, getString(R.string.share_app_description));
-        } else if (id == R.id.nav_favorite) {
-            replaceFragment(new FavoriteFragment(), Constants.FAVORITE);
+        switch (id) {
+            case R.id.nav_setting:
+                startActivity(new Intent(getApplicationContext(), SettingsActivity.class));
+                break;
+            case R.id.nav_share:
+                Share.shareText(this, getString(R.string.share_app_description));
+                break;
+            case R.id.nav_favorite:
+                replaceFragment(new FavoriteFragment(), Constants.FAVORITE);
+                break;
+            default:
+                Fragment fragment = fragmentSparseArray.get(id);
+                if (fragment != null) {
+                    replaceFragment(fragment, item.getTitle().toString());
+                }
+                break;
         }
         this.item = item;
         drawerLayout.closeDrawers();
@@ -285,5 +300,11 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
             item = navView.getMenu().getItem(0);
         }
         return item.getTitle().toString();
+    }
+
+    @Override
+    protected void onDestroy() {
+        updater.release();
+        super.onDestroy();
     }
 }

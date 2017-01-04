@@ -18,9 +18,9 @@ import com.blankj.utilcode.utils.FileUtils;
 import com.dante.girls.R;
 import com.dante.girls.base.App;
 import com.dante.girls.model.Image;
-import com.dante.girls.utils.AppUtils;
+import com.dante.girls.utils.AppUtil;
 import com.dante.girls.utils.SPUtil;
-import com.dante.girls.utils.UI;
+import com.dante.girls.utils.UiUtils;
 
 import java.io.File;
 import java.util.List;
@@ -38,7 +38,7 @@ import rx.schedulers.Schedulers;
 public class SettingFragment extends PreferenceFragment implements Preference.OnPreferenceClickListener {
     public static final String CLEAR_CACHE = "clear_cache";
     public static final String FEED_BACK = "feedback";
-    public static final String APP_VERSION = "check_version";
+    public static final String CHECK_VERSION = "check_version";
     public static final String ORIGINAL_SPLASH = "original_splash";
     public static final String LIKE_DOWNLOAD = "like_download";
     public static final String SECRET_MODE = "secret_mode";
@@ -72,7 +72,7 @@ public class SettingFragment extends PreferenceFragment implements Preference.On
         clearCache = findPreference(CLEAR_CACHE);
         feedback = findPreference(FEED_BACK);
         about = findPreference(ABOUT);
-        version = findPreference(APP_VERSION);
+        version = findPreference(CHECK_VERSION);
         splash = findPreference(ORIGINAL_SPLASH);
         theme = findPreference(THEME_COLOR);
         refreshCache();
@@ -134,11 +134,11 @@ public class SettingFragment extends PreferenceFragment implements Preference.On
             if (SPUtil.getBoolean(SECRET_MODE)) {
                 SPUtil.save(SECRET_MODE, false);
                 secretIndex = 0;
-                UI.showSnack(rootView, R.string.secret_mode_closed);
+                UiUtils.showSnack(rootView, R.string.secret_mode_closed);
             } else {
                 SPUtil.save(SECRET_MODE, true);
                 secretIndex = 0;
-                UI.showSnackLong(rootView, R.string.secret_mode_opened);
+                UiUtils.showSnackLong(rootView, R.string.secret_mode_opened);
             }
             secretIndex++;
         }
@@ -169,7 +169,7 @@ public class SettingFragment extends PreferenceFragment implements Preference.On
 
     private String getDataSize() {
         File file = getActivity().getApplicationContext().getCacheDir();
-        long size = AppUtils.folderSize(file);
+        long size = AppUtil.folderSize(file);
         if (size == 0) {
             return getString(R.string.empty);
         }
@@ -194,11 +194,11 @@ public class SettingFragment extends PreferenceFragment implements Preference.On
                                             .setAction(R.string.deep_clean, new View.OnClickListener() {
                                                 @Override
                                                 public void onClick(View view) {
-                                                    AppUtils.openAppInfo(getActivity());
+                                                    AppUtil.openAppInfo(getActivity());
                                                 }
                                             }).show();
                                 } else {
-                                    UI.showSnack(rootView, R.string.clear_cache_failed);
+                                    UiUtils.showSnack(rootView, R.string.clear_cache_failed);
                                 }
                             }
                         });
@@ -227,13 +227,13 @@ public class SettingFragment extends PreferenceFragment implements Preference.On
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             email = new Intent(Intent.ACTION_VIEW);
         }
-        if (AppUtils.isIntentSafe(email)) {
+        if (AppUtil.isIntentSafe(email)) {
             email.setData(Uri.parse("mailto:danteandroi@gmail.com"));
             email.putExtra(Intent.EXTRA_SUBJECT, "'Girls' Feedback");
             email.putExtra(Intent.EXTRA_TEXT, "Hi，");
             startActivity(email);
         } else {
-            UI.showSnack(rootView, R.string.email_not_install);
+            UiUtils.showSnack(rootView, R.string.email_not_install);
         }
     }
 

@@ -16,22 +16,20 @@ import com.bumptech.glide.request.target.SimpleTarget;
 import com.dante.girls.R;
 import com.dante.girls.base.BaseFragment;
 import com.dante.girls.base.Constants;
+import com.dante.girls.helper.BlurBuilder;
 import com.dante.girls.lib.TouchImageView;
 import com.dante.girls.model.DataBase;
 import com.dante.girls.ui.SettingFragment;
 import com.dante.girls.utils.BitmapUtil;
-import com.dante.girls.utils.BlurBuilder;
 import com.dante.girls.utils.Imager;
 import com.dante.girls.utils.SPUtil;
 import com.dante.girls.utils.Share;
-import com.dante.girls.utils.UI;
+import com.dante.girls.utils.UiUtils;
 import com.like.LikeButton;
 import com.like.OnLikeListener;
 import com.tbruyelle.rxpermissions.RxPermissions;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
 
 import butterknife.BindView;
 import rx.Observable;
@@ -40,6 +38,7 @@ import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Action1;
 import rx.functions.Func1;
 import rx.schedulers.Schedulers;
+import rx.subscriptions.CompositeSubscription;
 
 
 /**
@@ -50,7 +49,7 @@ public class ViewerFragment extends BaseFragment implements View.OnLongClickList
     private static final String TAG = "test";
     @BindView(R.id.headImage)
     TouchImageView imageView;
-    List<Subscription> tasks = new ArrayList<>();
+    CompositeSubscription tasks = new CompositeSubscription();
     @BindView(R.id.likeBtn)
     LikeButton likeBtn;
     private ViewerActivity context;
@@ -190,11 +189,11 @@ public class ViewerFragment extends BaseFragment implements View.OnLongClickList
                     @Override
                     public void call(File file) {
                         if (file != null && file.exists()) {
-                            UI.showSnack(rootView, getString(R.string.save_img_success)
+                            UiUtils.showSnack(rootView, getString(R.string.save_img_success)
                                     + file.getPath());
 
                         } else {
-                            UI.showSnack(rootView, R.string.save_img_failed);
+                            UiUtils.showSnack(rootView, R.string.save_img_failed);
                         }
                     }
                 });
@@ -242,9 +241,7 @@ public class ViewerFragment extends BaseFragment implements View.OnLongClickList
     @Override
     public void onDestroyView() {
         super.onDestroyView();
-        for (Subscription s : tasks) {
-            s.unsubscribe();
-        }
+        tasks.unsubscribe();
     }
 
 }
