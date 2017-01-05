@@ -4,5 +4,6 @@
 	"former_version": "v1.0",
 	"forceUpdate": true,
 	"message": " - Fix fragment replace bug;\n  - UI adjusted.",
+	"share_app_description": "这个软件不错，图片适合做壁纸。https://github.com/DanteAndroid/Beauty/",
 	"apk_name":"app-armeabi-v7a-release.apk"
 }
