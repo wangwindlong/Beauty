@@ -68,7 +68,7 @@ public class DataBase {
 
     public static RealmResults<Image> findImages(Realm realm, String type) {
         realm = initRealm(realm);
-        if (Constants.TYPE.equals(type)) {
+        if (Constants.FAVORITE.equals(type)) {
             return findFavoriteImages(realm);
         }
         return realm.where(Image.class)

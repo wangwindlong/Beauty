@@ -74,7 +74,7 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
     @BindView(R.id.reveal)
     FrameLayout revealView;
     private boolean backPressed;
-    private MenuItem item;
+    private MenuItem currentMenu;
     private SparseArray<Fragment> fragmentSparseArray;
     private Updater updater;
 
@@ -139,8 +139,8 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
 //    protected void onSaveInstanceState(Bundle outState) {
 //        super.onSaveInstanceState(outState);
 //        Log.d(TAG, "onSaveInstanceState: ");
-//        if (item != null) {
-//            outState.putInt("itemId", item.getItemId());
+//        if (currentMenu != null) {
+//            outState.putInt("itemId", currentMenu.getItemId());
 //        }
 //    }
 //
@@ -149,10 +149,10 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
 //        super.onRestoreInstanceState(savedInstanceState);
 //        int itemId = savedInstanceState.getInt("itemId", R.id.nav_beauty);
 //        Log.i(TAG, "onRestoreInstanceState: ");
-//        MenuItem item = navView.getMenu().findItem(itemId);
+//        MenuItem currentMenu = navView.getMenu().findItem(itemId);
 //        navView.setCheckedItem(itemId);
-//        if (item != null) {
-//            onNavigationItemSelected(item);
+//        if (currentMenu != null) {
+//            onNavigationItemSelected(currentMenu);
 //        }
 //    }
 
@@ -259,13 +259,14 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
                 Share.shareText(this, getString(R.string.share_app_description));
                 break;
             default:
+                currentMenu = item;
                 Fragment fragment = fragmentSparseArray.get(id);
                 if (fragment != null) {
+                    setToolbarTitle(getCurrentMenuTitle());
                     setFragment(fragment);
                 }
                 break;
         }
-        this.item = item;
         drawerLayout.closeDrawers();
         return true;
     }
@@ -299,10 +300,10 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
     }
 
     public String getCurrentMenuTitle() {
-        if (item == null) {
-            item = navView.getMenu().getItem(0);
+        if (currentMenu == null) {
+            currentMenu = navView.getMenu().getItem(0);
         }
-        return item.getTitle().toString();
+        return currentMenu.getTitle().toString();
     }
 
     @Override

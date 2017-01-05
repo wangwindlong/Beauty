@@ -8,6 +8,7 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SimpleItemAnimator;
 import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 
 import com.chad.library.adapter.base.BaseQuickAdapter;
@@ -18,7 +19,6 @@ import com.dante.girls.base.BaseActivity;
 import com.dante.girls.base.Constants;
 import com.dante.girls.model.DataBase;
 import com.dante.girls.model.Image;
-import com.dante.girls.utils.SpUtil;
 
 import java.util.List;
 
@@ -45,13 +45,17 @@ public abstract class PictureFragment extends RecyclerFragment {
     PictureAdapter adapter;
     RealmResults<Image> images;
     List<Image> imageList;
+//
+//    @Override
+//    public void onResume() {
+//        super.onResume();
+//        lastPosition = SpUtil.getInt(imageType + Constants.POSITION);
+//        recyclerView.scrollToPosition(lastPosition > 0 ? lastPosition : 0);
+//        if (getUserVisibleHint()) {
+//            initTitle();
+//        }
+//    }
 
-    @Override
-    public void onResume() {
-        super.onResume();
-        lastPosition = SpUtil.getInt(imageType + Constants.POSITION);
-        recyclerView.scrollToPosition(lastPosition > 0 ? lastPosition : 0);
-    }
 
     @Override
     public void onPause() {
@@ -100,7 +104,6 @@ public abstract class PictureFragment extends RecyclerFragment {
             }
         });
         imageType = baseType;
-        initTitle();
         log("initViews end: ", imageType);
     }
 
@@ -137,10 +140,13 @@ public abstract class PictureFragment extends RecyclerFragment {
         log("AlwaysInit: ", imageType);
     }
 
+
     private void initTitle() {
         if (TextUtils.isEmpty(title)) {
             title = ((MainActivity) context).getCurrentMenuTitle();
         }
+        Log.i(TAG, "initTitle: " + title);
+        Log.i(TAG, "initTitle: " + getUserVisibleHint());
         context.setToolbarTitle(title);
     }
 

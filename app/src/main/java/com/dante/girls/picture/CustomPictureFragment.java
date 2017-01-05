@@ -261,9 +261,11 @@ public class CustomPictureFragment extends PictureFragment {
         if (isInPost) {
             p.setScrollFlags(0);
             ((MainActivity) context).changeNavigator(false);
+            context.setToolbarTitle(title);
         } else {
             p.setScrollFlags(SCROLL_FLAG_SCROLL | SCROLL_FLAG_ENTER_ALWAYS_COLLAPSED);
             ((MainActivity) context).changeNavigator(true);
+            context.setToolbarTitle(((MainActivity) context).getCurrentMenuTitle());
         }
         toolbar.setLayoutParams(p);
     }

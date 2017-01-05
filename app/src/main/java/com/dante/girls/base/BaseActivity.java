@@ -6,6 +6,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.animation.AccelerateInterpolator;
 import android.view.animation.DecelerateInterpolator;
@@ -110,8 +111,8 @@ public abstract class BaseActivity extends AppCompatActivity {
     public void setToolbarTitle(String title) {
         if (toolbar != null) {
             toolbar.setTitle(title);
+            Log.i(TAG, "setToolbarTitle: " + title);
         }
-
     }
 
     @Override
