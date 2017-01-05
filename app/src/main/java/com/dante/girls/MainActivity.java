@@ -25,7 +25,6 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 
 import com.dante.girls.base.BaseActivity;
-import com.dante.girls.base.Constants;
 import com.dante.girls.helper.RevealHelper;
 import com.dante.girls.helper.Updater;
 import com.dante.girls.lib.PopupDialogActivity;
@@ -167,8 +166,11 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
         titles = getResources().getStringArray(R.array.a_titles);
         types = new String[]{TYPE_A_ANIME, TYPE_A_FULI, TYPE_A_HENTAI, TYPE_A_UNIFORM, TYPE_A_ZATU};
         putFragment(R.id.nav_a, titles, types);
+        //favorite
+        fragmentSparseArray.put(R.id.nav_favorite, new FavoriteFragment());
         //Main
-        replaceFragment(fragmentSparseArray.get(R.id.nav_beauty), "main");
+        Fragment main = fragmentSparseArray.get(R.id.nav_beauty);
+        setFragment(main);
     }
 
 
@@ -256,19 +258,20 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
             case R.id.nav_share:
                 Share.shareText(this, getString(R.string.share_app_description));
                 break;
-            case R.id.nav_favorite:
-                replaceFragment(new FavoriteFragment(), Constants.FAVORITE);
-                break;
             default:
                 Fragment fragment = fragmentSparseArray.get(id);
                 if (fragment != null) {
-                    replaceFragment(fragment, item.getTitle().toString());
+                    setFragment(fragment);
                 }
                 break;
         }
         this.item = item;
         drawerLayout.closeDrawers();
         return true;
+    }
+
+    private void replace(String[] titles, String[] types) {
+        replaceFragment(MainTabsFragment.newInstance(titles, types), "");
     }
 
     public void changeNavigator(boolean enable) {

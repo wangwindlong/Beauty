@@ -24,6 +24,7 @@ public abstract class BaseActivity extends AppCompatActivity {
     public Realm realm;
     public Toolbar toolbar;
     private boolean isShowToolbar = true;
+    private Fragment currentFragment;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -106,8 +107,8 @@ public abstract class BaseActivity extends AppCompatActivity {
         realm.close();
     }
 
-    public void setToolbarTitle(String title){
-        if (toolbar!=null){
+    public void setToolbarTitle(String title) {
+        if (toolbar != null) {
             toolbar.setTitle(title);
         }
 
@@ -119,5 +120,22 @@ public abstract class BaseActivity extends AppCompatActivity {
         return super.dispatchTouchEvent(ev);
     }
 
-
+    public void setFragment(Fragment fragment) {
+        Fragment old = currentFragment;
+        if (old == fragment) {
+            return;
+        }
+        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+        transaction.setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out);
+        if (old != null) {
+            transaction.hide(old);
+        }
+        if (fragment.isAdded()) {
+            transaction.show(fragment);
+        } else {
+            transaction.add(R.id.container, fragment);
+        }
+        transaction.commit();
+        this.currentFragment = fragment;
+    }
 }

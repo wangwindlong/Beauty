@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 
+import com.blankj.utilcode.utils.IntentUtils;
 import com.dante.girls.R;
 
 
@@ -12,35 +13,19 @@ import com.dante.girls.R;
  */
 public class Share {
 
-    public static Intent getShareIntent(String shareText) {
-        Intent textIntent = new Intent();
-        textIntent.setAction(Intent.ACTION_SEND);
-        textIntent.putExtra(Intent.EXTRA_TEXT, shareText);
-        textIntent.setType("text/plain");
-        return textIntent;
-    }
-    public static Intent getShareImageIntent(Uri uri) {
-        Intent image = new Intent();
-        image.setAction(Intent.ACTION_SEND);
-        image.putExtra(Intent.EXTRA_STREAM, uri);
-        image.setType("image/*");
-        return image;
-    }
-
     public static void shareText(Context context, String text) {
         context.startActivity(
-                Intent.createChooser(getShareIntent(text),
+                Intent.createChooser(IntentUtils.getShareTextIntent(text),
                         context.getString(R.string.share_to)));
     }
 
-    public static void shareImage(Context context, Uri uri){
+    public static void shareImage(Context context, Uri uri) {
         if (uri == null) {
             return;
         }
         context.startActivity(
-                Intent.createChooser(getShareImageIntent(uri),
+                Intent.createChooser(IntentUtils.getShareImageIntent("", uri),
                         context.getString(R.string.share_to)));
     }
-
 
 }

@@ -28,6 +28,7 @@ public abstract class BaseFragment extends Fragment {
             rootView = inflater.inflate(initLayoutId(), container, false);
             ButterKnife.bind(this, rootView);
             initViews();
+
         }
         AlwaysInit();
         return rootView;

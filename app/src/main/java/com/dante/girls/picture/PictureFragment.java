@@ -68,9 +68,8 @@ public abstract class PictureFragment extends RecyclerFragment {
     @Override
     protected void initViews() {
         super.initViews();
-        //baseType is for base url
         initFab();
-
+        //baseType is for base url
         baseType = getArguments() == null ? "" : getArguments().getString(Constants.TYPE);
         context = (BaseActivity) getActivity();
         layoutManager = new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL);

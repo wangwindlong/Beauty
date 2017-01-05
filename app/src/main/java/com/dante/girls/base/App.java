@@ -4,6 +4,7 @@ import android.annotation.SuppressLint;
 import android.app.Application;
 import android.content.Context;
 
+import com.blankj.utilcode.utils.Utils;
 import com.bugtags.library.Bugtags;
 import com.dante.girls.BuildConfig;
 import com.squareup.leakcanary.LeakCanary;
@@ -32,6 +33,7 @@ public class App extends Application {
         refWatcher = LeakCanary.install(this);
         Bugtags.start("1ddf7128d535505cc4adbda213e8c12f", this, Bugtags.BTGInvocationEventNone);
         Realm.init(this);
+        Utils.init(this);
 
         if (BuildConfig.DEBUG) {
             Timber.plant(new Timber.DebugTree());

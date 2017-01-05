@@ -84,4 +84,11 @@ public class DataBase {
                 .equalTo("isLiked", true)
                 .findAll();
     }
+
+    public static void clearAllImages() {
+        Realm realm = Realm.getDefaultInstance();
+        realm.beginTransaction();
+        realm.delete(Image.class);
+        realm.commitTransaction();
+    }
 }

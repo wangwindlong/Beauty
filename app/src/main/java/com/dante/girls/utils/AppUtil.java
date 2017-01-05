@@ -10,7 +10,6 @@ import com.dante.girls.BuildConfig;
 import com.dante.girls.base.App;
 import com.dante.girls.base.Constants;
 
-import java.io.File;
 import java.util.List;
 
 import moe.feng.alipay.zerosdk.AlipayZeroSdk;
@@ -30,17 +29,6 @@ public class AppUtil {
         i.addCategory(Intent.CATEGORY_DEFAULT);
         i.setData(Uri.parse("package:" + context.getApplicationContext().getPackageName()));
         context.startActivity(i);
-    }
-
-    public static long folderSize(File directory) {
-        long length = 0;
-        for (File file : directory.listFiles()) {
-            if (file.isFile())
-                length += file.length();
-            else
-                length += folderSize(file);
-        }
-        return length;
     }
 
     public static boolean isIntentSafe(Intent intent) {

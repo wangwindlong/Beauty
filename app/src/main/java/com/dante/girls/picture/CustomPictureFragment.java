@@ -186,13 +186,14 @@ public class CustomPictureFragment extends PictureFragment {
                             log("newsize ", newSize);
                             log("onCompleted: old new size are the same");
                             if (isInPost) adapter.loadMoreEnd(true);
-                            adapter.loadMoreFail();
+                            if (page != 1) adapter.loadMoreFail();
+                        } else {
+                            //获取到数据了，下一页
+                            log("save page" + page);
+                            SpUtil.save(imageType + Constants.PAGE, page);
+                            adapter.notifyItemRangeChanged(oldSize, add);
+                            adapter.loadMoreComplete();
                         }
-                        //获取到数据了，下一页
-                        log("save page" + page);
-                        SpUtil.save(imageType + Constants.PAGE, page);
-                        adapter.notifyItemRangeChanged(oldSize, add);
-                        adapter.loadMoreComplete();
                     }
 
                     @Override

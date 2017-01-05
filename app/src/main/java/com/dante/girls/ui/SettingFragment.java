@@ -13,11 +13,11 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.blankj.utilcode.utils.ConvertUtils;
+import com.blankj.utilcode.utils.CleanUtils;
 import com.blankj.utilcode.utils.FileUtils;
 import com.dante.girls.R;
 import com.dante.girls.base.App;
-import com.dante.girls.model.Image;
+import com.dante.girls.model.DataBase;
 import com.dante.girls.utils.AppUtil;
 import com.dante.girls.utils.SpUtil;
 import com.dante.girls.utils.UiUtils;
@@ -25,11 +25,12 @@ import com.dante.girls.utils.UiUtils;
 import java.io.File;
 import java.util.List;
 
-import io.realm.Realm;
 import rx.Observable;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Action1;
 import rx.schedulers.Schedulers;
+
+import static com.dante.girls.base.App.context;
 
 
 /**
@@ -59,7 +60,7 @@ public class SettingFragment extends PreferenceFragment implements Preference.On
     private Preference theme;
 
     public static boolean isIntentSafe(Intent intent) {
-        PackageManager packageManager = App.context.getPackageManager();
+        PackageManager packageManager = context.getPackageManager();
         List activities = packageManager.queryIntentActivities(intent,
                 PackageManager.MATCH_DEFAULT_ONLY);
         return activities.size() > 0;
@@ -168,13 +169,8 @@ public class SettingFragment extends PreferenceFragment implements Preference.On
     }
 
     private String getDataSize() {
-        File file = getActivity().getApplicationContext().getCacheDir();
-        long size = AppUtil.folderSize(file);
-        if (size == 0) {
-            return getString(R.string.empty);
-        }
-
-        return ConvertUtils.byte2FitSize(size);
+        File file = App.context.getCacheDir();
+        return FileUtils.getDirSize(file);
     }
 
     @Override
@@ -212,11 +208,8 @@ public class SettingFragment extends PreferenceFragment implements Preference.On
     }
 
     private boolean clearCache() {
-        Realm realm = Realm.getDefaultInstance();
-        realm.beginTransaction();
-        realm.delete(Image.class);
-        realm.commitTransaction();
-        return FileUtils.deleteDir(App.context.getCacheDir());
+        DataBase.clearAllImages();
+        return CleanUtils.cleanInternalCache();
     }
 
     private void sendEmailFeedback() {

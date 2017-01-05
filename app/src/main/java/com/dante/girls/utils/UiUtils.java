@@ -29,6 +29,12 @@ public class UiUtils {
         }
     }
 
+    public static void showSnackLong(View rootView, String text) {
+        if (null != rootView) {
+            Snackbar.make(rootView, text, Snackbar.LENGTH_LONG).show();
+        }
+    }
+
     public static void sleep(int seconds) {
         try {
             Log.i(TAG, "Start sleep...");
