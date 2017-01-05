@@ -22,7 +22,7 @@ public class DataBase {
         realm.commitTransaction();
     }
 
-    public static Realm initRealm(Realm realm) {
+    private static Realm initRealm(Realm realm) {
         if (realm == null || realm.isClosed()) {
             realm = Realm.getDefaultInstance();
         }
