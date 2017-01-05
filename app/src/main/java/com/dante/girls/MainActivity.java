@@ -25,6 +25,7 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 
 import com.dante.girls.base.BaseActivity;
+import com.dante.girls.base.Constants;
 import com.dante.girls.helper.RevealHelper;
 import com.dante.girls.helper.Updater;
 import com.dante.girls.lib.PopupDialogActivity;
@@ -100,6 +101,7 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
         if (new Random().nextBoolean()) {
             //Morph transition
             fab.setOnClickListener(new View.OnClickListener() {
+                @TargetApi(Build.VERSION_CODES.LOLLIPOP)
                 @Override
                 public void onClick(View v) {
                     Intent login = PopupDialogActivity.getStartIntent(MainActivity.this, PopupDialogActivity.MORPH_TYPE_FAB);
@@ -256,7 +258,8 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
                 startActivity(new Intent(getApplicationContext(), SettingsActivity.class));
                 break;
             case R.id.nav_share:
-                Share.shareText(this, getString(R.string.share_app_description));
+                String text = SpUtil.get(Constants.SHARE_APP, getString(R.string.share_app_description));
+                Share.shareText(this, text);
                 break;
             default:
                 currentMenu = item;

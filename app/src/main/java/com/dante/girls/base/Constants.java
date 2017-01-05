@@ -16,5 +16,6 @@ public class Constants {
     public static final String ALI_PAY = "aex00371u7j5qknwdj0yu11";
 
     public static final String INFO = "info";
+    public static final String SHARE_APP = "share_app";
     public static final String FAVORITE = "favorite";
 }

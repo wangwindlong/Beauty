@@ -7,8 +7,6 @@ import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SimpleItemAnimator;
 import android.support.v7.widget.StaggeredGridLayoutManager;
-import android.text.TextUtils;
-import android.util.Log;
 import android.view.View;
 
 import com.chad.library.adapter.base.BaseQuickAdapter;
@@ -140,15 +138,6 @@ public abstract class PictureFragment extends RecyclerFragment {
         log("AlwaysInit: ", imageType);
     }
 
-
-    private void initTitle() {
-        if (TextUtils.isEmpty(title)) {
-            title = ((MainActivity) context).getCurrentMenuTitle();
-        }
-        Log.i(TAG, "initTitle: " + title);
-        Log.i(TAG, "initTitle: " + getUserVisibleHint());
-        context.setToolbarTitle(title);
-    }
 
     protected void setTitle(String title) {
         this.title = title;

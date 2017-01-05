@@ -35,7 +35,7 @@
     <string name="clear_cache_failed">缓存删除失败</string>
     <string name="original_splash">原始启动图</string>
     <string name="set_original_splash">使用原始启动图而不是从网络获取</string>
-    <string name="share_app_description">这个Android项目很不错 https://github.com/DanteAndroid/Beauty/
+    <string name="share_app_description">这个软件很不错，图片适合做壁纸 https://github.com/DanteAndroid/Beauty/
     </string>
     <string name="share_app">分享应用</string>
     <string name="tips">贴士</string>

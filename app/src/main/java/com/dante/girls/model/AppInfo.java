@@ -3,7 +3,7 @@ package com.dante.girls.model;
 import com.google.gson.annotations.SerializedName;
 
 /**
- * Created by yons on 17/1/3.
+ * For app update
  */
 
 public class AppInfo {
@@ -17,6 +17,7 @@ public class AppInfo {
      * apkName : app-armeabi-v7a-release.apk
      * forceUpdate : true
      * former_version : v1.0
+     * share_app_description : 这个软件不错，图片适合做壁纸。https://github.com/DanteAndroid/Beauty/
      */
 
     @SerializedName("lastest_version")
@@ -26,11 +27,11 @@ public class AppInfo {
     private String message;
     @SerializedName("apk_name")
     private String apkName;
-
-
     private boolean forceUpdate;
     @SerializedName("former_version")
     private String formerVersion;
+    @SerializedName("share_app_description")
+    private String shareApp;
 
     public String getVersion() {
         return version;
@@ -78,5 +79,13 @@ public class AppInfo {
 
     public void setFormerVersion(String formerVersion) {
         this.formerVersion = formerVersion;
+    }
+
+    public String getShareApp() {
+        return shareApp;
+    }
+
+    public void setShareApp(String shareApp) {
+        this.shareApp = shareApp;
     }
 }

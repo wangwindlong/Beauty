@@ -8,6 +8,7 @@ import android.util.Log;
 
 import com.dante.girls.BuildConfig;
 import com.dante.girls.R;
+import com.dante.girls.base.Constants;
 import com.dante.girls.model.AppInfo;
 import com.dante.girls.net.API;
 import com.dante.girls.net.NetService;
@@ -24,7 +25,7 @@ import rx.schedulers.Schedulers;
 import static com.bumptech.glide.gifdecoder.GifHeaderParser.TAG;
 
 /**
- * Created by yons on 17/1/3.
+ * Update app helper.
  */
 
 public class Updater {
@@ -41,7 +42,7 @@ public class Updater {
 
     }
 
-    public void downloadAndInstall(final AppInfo appInfo) {
+    private void downloadAndInstall(final AppInfo appInfo) {
         subscription = new RxPermissions(context)
                 .request(Manifest.permission.WRITE_EXTERNAL_STORAGE)
                 .filter(new Func1<Boolean, Boolean>() {
@@ -69,6 +70,12 @@ public class Updater {
                     public Boolean call(AppInfo appInfo) {
                         Log.i(TAG, "call: appInfo " + appInfo.toString());
                         return appInfo.getVersionCode() > BuildConfig.VERSION_CODE;//版本有更新
+                    }
+                })
+                .doOnNext(new Action1<AppInfo>() {
+                    @Override
+                    public void call(AppInfo appInfo) {
+                        SpUtil.save(Constants.SHARE_APP, appInfo.getShareApp());
                     }
                 })
                 .subscribeOn(Schedulers.io())
