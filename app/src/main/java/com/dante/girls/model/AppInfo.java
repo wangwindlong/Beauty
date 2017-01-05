@@ -88,4 +88,17 @@ public class AppInfo {
     public void setShareApp(String shareApp) {
         this.shareApp = shareApp;
     }
+
+    @Override
+    public String toString() {
+        return "AppInfo{" +
+                "version='" + version + '\'' +
+                ", versionCode=" + versionCode +
+                ", message='" + message + '\'' +
+                ", apkName='" + apkName + '\'' +
+                ", forceUpdate=" + forceUpdate +
+                ", formerVersion='" + formerVersion + '\'' +
+                ", shareApp='" + shareApp + '\'' +
+                '}';
+    }
 }

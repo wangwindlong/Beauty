@@ -62,7 +62,6 @@ public class Updater {
                 });
     }
 
-
     public void check() {
         NetService.getInstance(API.GITHUB_RAW).getAppApi().getAppInfo()
                 .filter(new Func1<AppInfo, Boolean>() {

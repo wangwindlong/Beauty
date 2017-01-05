@@ -7,7 +7,6 @@ import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 
-import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.dante.girls.MainActivity;
 import com.dante.girls.R;
 import com.dante.girls.base.Constants;
@@ -20,12 +19,9 @@ import com.dante.girls.utils.UiUtils;
 
 import java.util.List;
 
-import io.realm.Realm;
 import rx.Observable;
 import rx.Subscriber;
-import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Func1;
-import rx.schedulers.Schedulers;
 
 import static android.support.design.widget.AppBarLayout.LayoutParams.SCROLL_FLAG_ENTER_ALWAYS_COLLAPSED;
 import static android.support.design.widget.AppBarLayout.LayoutParams.SCROLL_FLAG_SCROLL;
@@ -150,19 +146,15 @@ public class CustomPictureFragment extends PictureFragment {
                     }
                 })
                 .distinct()
-                .map(new Func1<Image, Image>() {
-                    @Override
-                    public Image call(Image image) {
-                        if (!isA || isInPost) {
-                            //不是A区，需要预加载
-                            return Image.getFixedImage(context, image, imageType, page);
-                        }
-                        return image;
+                .map(image -> {
+                    if (!isA || isInPost) {
+                        //不是A区，需要预加载
+                        return Image.getFixedImage(context, image, imageType, page);
                     }
+                    return image;
                 })
                 .buffer(BUFFER_SIZE)
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
+                .compose(applySchedulers())
                 .subscribe(new Subscriber<List<Image>>() {
                     int oldSize;
                     int newSize;
@@ -221,25 +213,19 @@ public class CustomPictureFragment extends PictureFragment {
             return;
         }
         Log.i(TAG, "execute: before sort " + images.first().url);
-        realm.executeTransactionAsync(new Realm.Transaction() {
-            public void execute(Realm realm) {
-                for (int i = 0; i < imageList.size(); i++) {
-                    Image image = imageList.get(i);
-                    Image data = realm.where(Image.class).equalTo(Constants.ID, image.id).findFirst();
-                    if (data != null) {
-                        data.setId(i);//id作为序号: 1, 2, 3 ...
-                    }
+        realm.executeTransactionAsync(realm1 -> {
+            for (int i = 0; i < imageList.size(); i++) {
+                Image image = imageList.get(i);
+                Image data = realm1.where(Image.class).equalTo(Constants.ID, image.id).findFirst();
+                if (data != null) {
+                    data.setId(i);//id作为序号: 1, 2, 3 ...
                 }
             }
-
-        }, new Realm.Transaction.OnSuccess() {
-            @Override
-            public void onSuccess() {
-                images.sort(Constants.ID);
-                Log.i(TAG, "execute: after sort " + images.first().url);
-                adapter.notifyItemRangeInserted(0, added);
-                Log.i(TAG, "onSuccess: sortData " + added + " inserted");
-            }
+        }, () -> {
+            images.sort(Constants.ID);
+            Log.i(TAG, "execute: after sort " + images.first().url);
+            adapter.notifyItemRangeInserted(0, added);
+            Log.i(TAG, "onSuccess: sortData " + added + " inserted");
         });
     }
 
@@ -291,14 +277,11 @@ public class CustomPictureFragment extends PictureFragment {
             fetch();
             changeState(true);
         }
-        adapter.setOnLoadMoreListener(new BaseQuickAdapter.RequestLoadMoreListener() {
-            @Override
-            public void onLoadMoreRequested() {
-                page = SpUtil.getInt(imageType + Constants.PAGE, 1);
-                page++;
-                log("loadmore ", page);
-                fetch();
-            }
+        adapter.setOnLoadMoreListener(() -> {
+            page = SpUtil.getInt(imageType + Constants.PAGE, 1);
+            page++;
+            log("loadmore ", page);
+            fetch();
         });
     }
 

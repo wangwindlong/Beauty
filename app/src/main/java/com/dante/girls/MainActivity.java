@@ -96,7 +96,6 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
         initFab();
     }
 
-
     private void initFab() {
         if (new Random().nextBoolean()) {
             //Morph transition

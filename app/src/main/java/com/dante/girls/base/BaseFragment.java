@@ -11,6 +11,9 @@ import android.view.ViewGroup;
 
 import butterknife.ButterKnife;
 import io.realm.Realm;
+import rx.Observable;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.schedulers.Schedulers;
 
 /**
  * BaseFragment helps onCreateView, and initViews(when root is null), init data on Activity Created.
@@ -62,6 +65,11 @@ public abstract class BaseFragment extends Fragment {
     protected abstract void initViews();
 
     protected abstract void initData();
+
+    public <T> Observable.Transformer<T, T> applySchedulers() {
+        return observable -> observable.subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread());
+    }
 
     public void log(String key, String content) {
         if (getUserVisibleHint()) {

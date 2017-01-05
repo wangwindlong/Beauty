@@ -15,6 +15,13 @@ android {
         ndk {
             abiFilters 'armeabi-v7a', 'x86'
         }
+        jackOptions {
+            enabled true
+        }
+    }
+    compileOptions {
+        targetCompatibility JavaVersion.VERSION_1_8
+        sourceCompatibility JavaVersion.VERSION_1_8
     }
     buildTypes {
         debug {
@@ -27,6 +34,7 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
 
         }
+
     }
     splits {
         abi {
