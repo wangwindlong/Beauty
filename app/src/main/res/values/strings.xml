@@ -92,7 +92,8 @@
     <string name="images_empty">啊哦，没有内容，赶快去收藏吧~</string>
     <string name="set_like_download">收藏时保存图片</string>
     <string name="empty_content">啥也没有</string>
-    <string name="thanks_for_donation">感谢您的支持，您的赞助会让app变得更好~\n祝您有个好心情~</string>
+    <string name="thanks_for_donation">赞助后可以开启隐藏图区哦~（请把您的赞助账号如支付宝账号发送到502273376@qq.com即可收到开启方式）
+    </string>
     <string name="transition_morph_view" translatable="false">morph_view_transition</string>
     <string name="donate">捐贈</string>
     <string name="theme_color">主题颜色</string>
@@ -101,6 +102,8 @@
     <string name="downloading">可劲下载中…</string>
     <string name="new_version">发现新版本</string>
     <string name="install_hint">当前是debug版本，由于正式版签名不同更新会失败。卸载重装即可</string>
+    <string name="alipay_not_found">您没有安装支付宝，请加作者微信赞助，微信号已经复制到粘贴板~</string>
+    <string name="wechat" translatable="false">lightear</string>
 
 
 </resources>

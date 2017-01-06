@@ -85,3 +85,6 @@
 -keep class com.dante.girls.model.** { *; }
 -keep class android.support.v7.widget.ShareActionProvider { *; }
 -keep class com.dante.girls.net.** { *; }
+
+##retrolambda
+-dontwarn java.lang.invoke.*

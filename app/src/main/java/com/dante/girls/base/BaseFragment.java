@@ -68,7 +68,8 @@ public abstract class BaseFragment extends Fragment {
 
     public <T> Observable.Transformer<T, T> applySchedulers() {
         return observable -> observable.subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread());
+                .observeOn(AndroidSchedulers.mainThread())
+                .distinct();
     }
 
     public void log(String key, String content) {

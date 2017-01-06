@@ -16,7 +16,6 @@ import java.util.List;
 
 import okhttp3.ResponseBody;
 import rx.Observable;
-import rx.functions.Func1;
 import rx.schedulers.Schedulers;
 
 import static com.bumptech.glide.gifdecoder.GifHeaderParser.TAG;
@@ -43,19 +42,8 @@ public class DataFetcher {
     public Observable<List<Image>> getGank() {
         return netService.getGankApi().get(CustomPictureFragment.LOAD_COUNT, page)
                 .subscribeOn(Schedulers.computation())
-                .observeOn(Schedulers.computation())
-                .filter(new Func1<GankApi.Result<List<Image>>, Boolean>() {
-                    @Override
-                    public Boolean call(GankApi.Result<List<Image>> listResult) {
-                        return !listResult.error;
-                    }
-                })
-                .map(new Func1<GankApi.Result<List<Image>>, List<Image>>() {
-                    @Override
-                    public List<Image> call(GankApi.Result<List<Image>> listResult) {
-                        return listResult.results;
-                    }
-                });
+                .filter(listResult -> !listResult.error)
+                .map(listResult -> listResult.results);
     }
 
     public Observable<List<Image>> getDouban() {
@@ -67,25 +55,21 @@ public class DataFetcher {
         }
         return data
                 .subscribeOn(Schedulers.computation())
-                .observeOn(Schedulers.computation())
-                .map(new Func1<ResponseBody, List<Image>>() {
-                    @Override
-                    public List<Image> call(ResponseBody responseBody) {
-                        List<Image> images = new ArrayList<>();
-                        try {
-                            Document document = Jsoup.parse(responseBody.string());
+                .map(responseBody -> {
+                    List<Image> images = new ArrayList<>();
+                    try {
+                        Document document = Jsoup.parse(responseBody.string());
 //                            Elements elements = document.select("div[class=thumbnail] > div[class=img_single] > a > img");
-                            Elements elements = document.select("div[class=thumbnail] div[class=img_single] img");
-                            final int size = elements.size();
-                            for (int i = 0; i < size; i++) {
-                                String src = elements.get(i).attr("src").trim();
-                                images.add(new Image(src, type));
-                            }
-                        } catch (IOException e) {
-                            e.printStackTrace();
+                        Elements elements = document.select("div[class=thumbnail] div[class=img_single] img");
+                        final int size = elements.size();
+                        for (int i = 0; i < size; i++) {
+                            String src = elements.get(i).attr("src").trim();
+                            images.add(new Image(src, type));
                         }
-                        return images;
+                    } catch (IOException e) {
+                        e.printStackTrace();
                     }
+                    return images;
                 });
     }
 
@@ -93,42 +77,38 @@ public class DataFetcher {
     public Observable<List<Image>> getAPosts() {
         //get all posts' pictures
         return netService.getaApi().getPosts(type, page)
-//                .subscribeOn(Schedulers.computation())
-//                .observeOn(Schedulers.computation())
-                .map(new Func1<ResponseBody, List<Image>>() {
-                    @Override
-                    public List<Image> call(ResponseBody responseBody) {
-                        List<Image> images = new ArrayList<>();
-                        try {
-                            Document document = Jsoup.parse(responseBody.string());
-                            Elements elements = document.select("div[class=content]  a");
+                .subscribeOn(Schedulers.computation())
+                .map(responseBody -> {
+                    List<Image> images = new ArrayList<>();
+                    try {
+                        Document document = Jsoup.parse(responseBody.string());
+                        Elements elements = document.select("div[class=content]  a");
 //                            final int size = elements.size();
-                            Log.i(TAG, "getAPosts: " + type + elements.size());
+                        Log.i(TAG, "getAPosts: " + type + elements.size());
 //                            String url = elements.last().select("img").first().attr("src");
 //                            if (DataBase.getByUrl(url) != null) {
 //                                Log.i(TAG, "getAPosts: find saved image!");
 //                                return null;//最后一个元素在数据库里已经保存了，那么不需要继续解析。
 //                            }
-                            for (int i = 0; i < elements.size(); i++) {
-                                Element link = elements.get(i);
-                                String postUrl = link.attr("href").replace(API.A_BASE, "");
-                                String title = link.attr("title");
-                                String src = link.select("img").first().attr("src").trim();
+                        for (int i = 0; i < elements.size(); i++) {
+                            Element link = elements.get(i);
+                            String postUrl = link.attr("href").replace(API.A_BASE, "");
+                            String title = link.attr("title");
+                            String src = link.select("img").first().attr("src").trim();
 //                                if (src.endsWith("!thumb")) {
 //                                    Log.i(TAG, "load image: thumb url " + src);
 //                                    src = src.replace("!thumb", "");
 //                                }
-                                Image image = new Image(src, type);
-                                image.setInfo(postUrl);
-                                image.setTitle(title);
-                                images.add(image);
-                            }
-
-                        } catch (IOException e) {
-                            e.printStackTrace();
+                            Image image = new Image(src, type);
+                            image.setInfo(postUrl);
+                            image.setTitle(title);
+                            images.add(image);
                         }
-                        return images;
+
+                    } catch (IOException e) {
+                        e.printStackTrace();
                     }
+                    return images;
                 });
 
 
@@ -138,36 +118,32 @@ public class DataFetcher {
         //get all images in this post
         Log.d(TAG, "getPicturesOfPost : " + info);
         return netService.getaApi().getPictures(info, page)
-//                .subscribeOn(Schedulers.computation())
-//                .observeOn(Schedulers.computation())
-                .map(new Func1<ResponseBody, List<Image>>() {
-                    @Override
-                    public List<Image> call(ResponseBody responseBody) {
-                        List<Image> images = new ArrayList<>();
-                        try {
-                            Document document = Jsoup.parse(responseBody.string());
-                            Elements elements = document.select("div[class=post] p img");
-                            Elements test = document.select("div[class=post] > p > a > img");
-                            final int size = elements.size();
-                            Log.d(TAG, "call: test " + test.size());
+                .subscribeOn(Schedulers.computation())
+                .map(responseBody -> {
+                    List<Image> images = new ArrayList<>();
+                    try {
+                        Document document = Jsoup.parse(responseBody.string());
+                        Elements elements = document.select("div[class=post] p img");
+                        Elements test = document.select("div[class=post] > p > a > img");
+                        final int size = elements.size();
+                        Log.d(TAG, "call: test " + test.size());
 //                            String url = elements.last().attr("src");
 //                            if (DataBase.getByUrl(url) != null) {
 //                                Log.i(TAG, "getPicturesOfPost: find saved image!");
 //                                return null;
 //                            }
-                            Log.d(TAG, "getPicturesOfPost: size" + size);
-                            for (int i = 0; i < size; i++) {
-                                String src = elements.get(i).attr("src").trim();
-                                Image image = new Image(src, type);
-                                images.add(image);
-                            }
-
-
-                        } catch (IOException e) {
-                            e.printStackTrace();
+                        Log.d(TAG, "getPicturesOfPost: size" + size);
+                        for (int i = 0; i < size; i++) {
+                            String src = elements.get(i).attr("src").trim();
+                            Image image = new Image(src, type);
+                            images.add(image);
                         }
-                        return images;
+
+
+                    } catch (IOException e) {
+                        e.printStackTrace();
                     }
+                    return images;
                 });
 
     }

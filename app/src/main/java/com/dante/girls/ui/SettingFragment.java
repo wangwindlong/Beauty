@@ -77,33 +77,22 @@ public class SettingFragment extends PreferenceFragment implements Preference.On
         splash = findPreference(ORIGINAL_SPLASH);
         theme = findPreference(THEME_COLOR);
         refreshCache();
-        splash.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
-            @Override
-            public boolean onPreferenceChange(Preference preference, Object o) {
-                secretStepOne();
-                return true;
-            }
+        splash.setOnPreferenceChangeListener((preference, o) -> {
+            secretStepOne();
+            return true;
         });
-        version.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
-            @Override
-            public boolean onPreferenceChange(Preference preference, Object newValue) {
-                Log.i("test", secretIndex + ">>>>");
-                secretStepTwo();
-                return true;
-            }
+        version.setOnPreferenceChangeListener((preference, newValue) -> {
+            Log.i("test", secretIndex + ">>>>");
+            secretStepTwo();
+            return true;
         });
-        about.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
-            @Override
-            public boolean onPreferenceClick(Preference preference) {
-                startActivity(new Intent(getActivity().getApplicationContext(), AboutActivity.class));
-                return true;
-            }
+        about.setOnPreferenceClickListener(preference -> {
+            startActivity(new Intent(getActivity().getApplicationContext(), AboutActivity.class));
+            return true;
         });
         clearCache.setOnPreferenceClickListener(this);
         feedback.setOnPreferenceClickListener(this);
-        theme.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
-            @Override
-            public boolean onPreferenceClick(Preference preference) {
+        theme.setOnPreferenceClickListener(preference -> {
 //                ColorPickerDialog dialog = new ColorPickerDialog(getActivity());
 //                dialog.setOnColorSelectedListener(new ColorPickerDialog.OnColorSelectedListener() {
 //                    @Override
@@ -114,8 +103,7 @@ public class SettingFragment extends PreferenceFragment implements Preference.On
 //                    }
 //                });
 //                dialog.show();
-                return true;
-            }
+            return true;
         });
     }
 

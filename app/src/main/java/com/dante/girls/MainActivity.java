@@ -20,7 +20,6 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.util.SparseArray;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 
@@ -97,17 +96,16 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
     }
 
     private void initFab() {
+        if (SpUtil.getBoolean(SettingFragment.SECRET_MODE)) {
+            return;
+        }
         if (new Random().nextBoolean()) {
             //Morph transition
-            fab.setOnClickListener(new View.OnClickListener() {
-                @TargetApi(Build.VERSION_CODES.LOLLIPOP)
-                @Override
-                public void onClick(View v) {
-                    Intent login = PopupDialogActivity.getStartIntent(MainActivity.this, PopupDialogActivity.MORPH_TYPE_FAB);
-                    ActivityOptions options = ActivityOptions.makeSceneTransitionAnimation
-                            (MainActivity.this, fab, getString(R.string.transition_morph_view));
-                    startActivity(login, options.toBundle());
-                }
+            fab.setOnClickListener(v -> {
+                Intent login = PopupDialogActivity.getStartIntent(MainActivity.this, PopupDialogActivity.MORPH_TYPE_FAB);
+                ActivityOptions options = ActivityOptions.makeSceneTransitionAnimation
+                        (MainActivity.this, fab, getString(R.string.transition_morph_view));
+                startActivity(login, options.toBundle());
             });
         } else {
             //Reveal animation
@@ -127,12 +125,7 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
                             changeNavigator(true);
                         }
                     }).build();
-            toggle.setToolbarNavigationClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    helper.unreveal();
-                }
-            });
+            toggle.setToolbarNavigationClickListener(v -> helper.unreveal());
         }
     }
 
@@ -158,10 +151,17 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
 //    }
 
     private void initFragments() {
+        String[] titles, types;
         fragmentSparseArray = new SparseArray<>();
-        //Gank & Douban
-        String[] titles = getResources().getStringArray(R.array.db_titles);
-        String[] types = {TYPE_GANK, TYPE_DB_RANK, TYPE_DB_BREAST, TYPE_DB_BUTT, TYPE_DB_LEG, TYPE_DB_SILK};
+        String[] all = getResources().getStringArray(R.array.db_titles);
+        if (SpUtil.getBoolean(SettingFragment.SECRET_MODE)) {
+            //Gank & Douban
+            titles = all;
+            types = new String[]{TYPE_GANK, TYPE_DB_RANK, TYPE_DB_BREAST, TYPE_DB_BUTT, TYPE_DB_LEG, TYPE_DB_SILK};
+        } else {
+            titles = new String[]{all[0]};
+            types = new String[]{TYPE_GANK};
+        }
         putFragment(R.id.nav_beauty, titles, types);
         //二次元
         titles = getResources().getStringArray(R.array.a_titles);
@@ -207,12 +207,7 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
         }
         backPressed = true;
         UiUtils.showSnack(fab, R.string.leave_app);
-        new Handler().postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                backPressed = false;
-            }
-        }, 2000);
+        new Handler().postDelayed(() -> backPressed = false, 2000);
     }
 
     @TargetApi(Build.VERSION_CODES.M)
@@ -282,12 +277,7 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
             toggle.setDrawerIndicatorEnabled(true);
         } else {
             toggle.setDrawerIndicatorEnabled(false);
-            toggle.setToolbarNavigationClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    onBackPressed();
-                }
-            });
+            toggle.setToolbarNavigationClickListener(v -> onBackPressed());
         }
     }
 

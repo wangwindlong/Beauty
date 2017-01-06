@@ -1,6 +1,7 @@
 apply plugin: 'com.android.application'
 apply plugin: 'realm-android'
 apply plugin: 'com.bugtags.library.plugin'
+apply plugin: 'me.tatarka.retrolambda'
 
 android {
     compileSdkVersion 25
@@ -15,9 +16,7 @@ android {
         ndk {
             abiFilters 'armeabi-v7a', 'x86'
         }
-        jackOptions {
-            enabled true
-        }
+
     }
     compileOptions {
         targetCompatibility JavaVersion.VERSION_1_8

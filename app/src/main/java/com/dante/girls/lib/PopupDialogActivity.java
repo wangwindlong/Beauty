@@ -42,7 +42,6 @@ public class PopupDialogActivity extends Activity {
                     getResources().getDimensionPixelSize(R.dimen.dialog_corners));
         }
         container = (ViewGroup) findViewById(R.id.container);
-//        container.setOnClickListener(null);
     }
 
     @TargetApi(Build.VERSION_CODES.LOLLIPOP)

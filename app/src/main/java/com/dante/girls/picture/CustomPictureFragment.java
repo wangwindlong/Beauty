@@ -22,6 +22,7 @@ import java.util.List;
 import rx.Observable;
 import rx.Subscriber;
 import rx.functions.Func1;
+import rx.schedulers.Schedulers;
 
 import static android.support.design.widget.AppBarLayout.LayoutParams.SCROLL_FLAG_ENTER_ALWAYS_COLLAPSED;
 import static android.support.design.widget.AppBarLayout.LayoutParams.SCROLL_FLAG_SCROLL;
@@ -139,13 +140,13 @@ public class CustomPictureFragment extends PictureFragment {
     //预加载Image，然后刷新列表
     protected void fetchImages(final Observable<List<Image>> source) {
         subscription = source
+                .observeOn(Schedulers.io())
                 .flatMap(new Func1<List<Image>, Observable<Image>>() {
                     @Override
                     public Observable<Image> call(List<Image> images) {
                         return Observable.from(images);
                     }
                 })
-                .distinct()
                 .map(image -> {
                     if (!isA || isInPost) {
                         //不是A区，需要预加载

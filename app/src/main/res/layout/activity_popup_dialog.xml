@@ -12,8 +12,8 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:background="@android:color/white"
-        android:elevation="38dp"
         android:clickable="true"
+        android:elevation="38dp"
         android:orientation="vertical"
         android:transitionName="@string/transition_morph_view">
 
@@ -29,6 +29,7 @@
             style="@style/ContentTextStyle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:autoLink="email"
             android:gravity="center"
             android:text="@string/thanks_for_donation"
             android:textSize="18sp"/>
