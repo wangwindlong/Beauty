@@ -33,6 +33,16 @@
 
     <style name="ViewerTheme.TransNav">
     </style>
+
+    <style name="SlideDialog" parent="@android:style/Theme.Dialog">
+        <item name="android:windowAnimationStyle">@style/SlideDialogAnimation</item>
+    </style>
+
+    <style name="SlideDialogAnimation">
+        <item name="android:windowEnterAnimation">@android:anim/slide_in_left</item>
+        <item name="android:windowExitAnimation">@android:anim/slide_out_right</item>
+    </style>
+
     <style name="ContentTextStyle">
         <item name="android:padding">16dp</item>
         <item name="android:textSize">@dimen/text_body</item>

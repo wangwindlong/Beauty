@@ -44,7 +44,6 @@ public class PopupDialogActivity extends Activity {
         container = (ViewGroup) findViewById(R.id.container);
     }
 
-    @TargetApi(Build.VERSION_CODES.LOLLIPOP)
     public void setupSharedElementTransitionsFab(@NonNull Activity activity,
                                                  @Nullable View target,
                                                  int dialogCornerRadius) {

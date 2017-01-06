@@ -114,12 +114,7 @@ public class RevealHelper {
                 .addListener(new AnimatorListenerAdapter() {
                     @Override
                     public void onAnimationEnd(Animator animation) {
-                        View.OnClickListener onClickListener = new View.OnClickListener() {
-                            @Override
-                            public void onClick(View v) {
-                                unreveal();
-                            }
-                        };
+                        View.OnClickListener onClickListener = v -> unreveal();
                         revealView.setOnClickListener(onClickListener);
                         if (onRevealEnd != null) {
                             onRevealEnd.onAnimationEnd(animation);

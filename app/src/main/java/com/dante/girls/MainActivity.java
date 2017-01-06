@@ -3,7 +3,7 @@ package com.dante.girls;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
-import android.app.ActivityOptions;
+import android.app.AlertDialog;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Build;
@@ -12,6 +12,7 @@ import android.support.annotation.NonNull;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
+import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.GravityCompat;
@@ -83,7 +84,6 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
         return R.layout.activity_main;
     }
 
-    @TargetApi(Build.VERSION_CODES.LOLLIPOP)
     @Override
     protected void initViews() {
         super.initViews();
@@ -97,13 +97,27 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
 
     private void initFab() {
         if (SpUtil.getBoolean(SettingFragment.SECRET_MODE)) {
+            fab.hide();
+            return;
+        }
+        if (android.os.Build.VERSION.SDK_INT < android.os.Build.VERSION_CODES.LOLLIPOP) {
+            fab.setOnClickListener(v -> {
+                AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
+                AlertDialog alertDialog = builder.setTitle(R.string.hint)
+                        .setMessage(R.string.thanks_for_donation)
+                        .setPositiveButton(R.string.donate, (dialogInterface, i) -> donate(MainActivity.this))
+                        .create();
+                alertDialog.getWindow().getAttributes().windowAnimations = R.style.SlideDialog;
+                alertDialog.show();
+            });
             return;
         }
         if (new Random().nextBoolean()) {
             //Morph transition
             fab.setOnClickListener(v -> {
                 Intent login = PopupDialogActivity.getStartIntent(MainActivity.this, PopupDialogActivity.MORPH_TYPE_FAB);
-                ActivityOptions options = ActivityOptions.makeSceneTransitionAnimation
+                ActivityOptionsCompat options = null;
+                options = ActivityOptionsCompat.makeSceneTransitionAnimation
                         (MainActivity.this, fab, getString(R.string.transition_morph_view));
                 startActivity(login, options.toBundle());
             });

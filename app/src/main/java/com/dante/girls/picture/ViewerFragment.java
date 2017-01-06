@@ -3,7 +3,6 @@ package com.dante.girls.picture;
 import android.Manifest;
 import android.annotation.TargetApi;
 import android.app.AlertDialog;
-import android.content.DialogInterface;
 import android.graphics.Bitmap;
 import android.os.Build;
 import android.os.Bundle;
@@ -105,12 +104,7 @@ public class ViewerFragment extends BaseFragment implements View.OnLongClickList
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
         builder.setTitle(R.string.hint).
                 setMessage(R.string.browse_picture_hint).
-                setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialogInterface, int i) {
-                        dialogInterface.dismiss();
-                    }
-                }).
+                setPositiveButton(R.string.ok, (dialogInterface, i) -> dialogInterface.dismiss()).
                 create().show();
     }
 
