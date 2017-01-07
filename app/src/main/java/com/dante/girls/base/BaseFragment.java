@@ -9,6 +9,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.dante.girls.BuildConfig;
+
 import butterknife.ButterKnife;
 import io.realm.Realm;
 import rx.Observable;
@@ -31,9 +33,8 @@ public abstract class BaseFragment extends Fragment {
             rootView = inflater.inflate(initLayoutId(), container, false);
             ButterKnife.bind(this, rootView);
             initViews();
-
         }
-        AlwaysInit();
+        onCreateView();
         return rootView;
     }
 
@@ -56,7 +57,7 @@ public abstract class BaseFragment extends Fragment {
 
     protected abstract int initLayoutId();
 
-    protected void AlwaysInit() {
+    protected void onCreateView() {
         ButterKnife.bind(this, rootView);
         realm = ((BaseActivity) getActivity()).realm;
         toolbar = ((BaseActivity) getActivity()).toolbar;
@@ -73,21 +74,17 @@ public abstract class BaseFragment extends Fragment {
     }
 
     public void log(String key, String content) {
-        if (getUserVisibleHint()) {
-            Log.d(getClass().getSimpleName(), key + ": " + content);
+        if (BuildConfig.DEBUG && getUserVisibleHint()) {
+            Log.d(getClass().getSimpleName(), key + "  " + content);
         }
     }
 
     public void log(String key, int content) {
-        if (getUserVisibleHint()) {
-            Log.d(getClass().getSimpleName(), key + ": " + String.valueOf(content));
-        }
+        log(key, String.valueOf(content));
     }
 
     public void log(String key) {
-        if (getUserVisibleHint()) {
-            Log.d(getClass().getSimpleName(), key);
-        }
+        log(key, "");
     }
 
 }

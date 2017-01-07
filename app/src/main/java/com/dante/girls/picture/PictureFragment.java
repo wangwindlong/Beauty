@@ -133,9 +133,9 @@ public abstract class PictureFragment extends RecyclerFragment {
     }
 
     @Override
-    protected void AlwaysInit() {
-        super.AlwaysInit();
-        log("AlwaysInit: ", imageType);
+    protected void onCreateView() {
+        super.onCreateView();
+        log("onCreateView: ", imageType);
     }
 
 

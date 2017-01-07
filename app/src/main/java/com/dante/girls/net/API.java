@@ -8,7 +8,6 @@ public class API {
     public static final String GITHUB_RAW = "https://raw.githubusercontent.com/DanteAndroid/Beauty/master/";
     public static final String DOWNLOAD_BASE = "https://github.com/DanteAndroid/Beauty/releases/download/";
 
-
     //Gank
     public static final String TYPE_GANK = "0";
     //豆瓣

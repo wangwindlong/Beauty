@@ -8,7 +8,6 @@ import java.util.List;
 import io.realm.Realm;
 import io.realm.RealmObject;
 import io.realm.RealmResults;
-import io.realm.Sort;
 
 /**
  * Deals with cache, data
@@ -74,7 +73,8 @@ public class DataBase {
         return realm.where(Image.class)
                 .equalTo("type", type)
                 .findAll()
-                .sort("publishedAt", Sort.DESCENDING)
+//                .sort("publishedAt", Sort.DESCENDING)
+                .sort(Constants.ID)
                 ;
     }
 

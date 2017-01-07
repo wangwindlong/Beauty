@@ -100,4 +100,5 @@
     <string name="alipay_not_found">Alipay not found. Please add my wechat, which has been copied to
         the clipboard:)
     </string>
+    <string name="update">Update now</string>
 </resources>

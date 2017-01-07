@@ -7,6 +7,7 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.util.SparseArray;
 import android.view.MotionEvent;
 import android.view.animation.AccelerateInterpolator;
 import android.view.animation.DecelerateInterpolator;
@@ -121,11 +122,36 @@ public abstract class BaseActivity extends AppCompatActivity {
         return super.dispatchTouchEvent(ev);
     }
 
-    public void setFragment(Fragment fragment) {
-        Fragment old = currentFragment;
-        if (old == fragment) {
+    public void setFragment(int id, SparseArray<Fragment> array) {
+        Fragment fragment = array.get(id);
+        if (fragment == null || currentFragment == fragment) {
             return;
         }
+
+        Fragment old = currentFragment;
+        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+        transaction.setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out);
+        if (old != null) {
+            transaction.hide(old);
+        }
+        if (fragment.isAdded()) {
+            transaction.show(fragment);
+        } else {
+            transaction.add(R.id.container, fragment);
+        }
+        transaction.commit();
+        this.currentFragment = fragment;
+    }
+
+    public void setFragment(Fragment fragment) {
+        if (currentFragment == fragment) {
+            return;
+        }
+        if (fragment == null) {
+            fragment = currentFragment;
+        }
+
+        Fragment old = currentFragment;
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
         transaction.setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out);
         if (old != null) {

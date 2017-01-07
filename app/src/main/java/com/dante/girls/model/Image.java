@@ -5,7 +5,6 @@ import android.graphics.Bitmap;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
-import com.bumptech.glide.request.target.SizeReadyCallback;
 import com.bumptech.glide.request.target.Target;
 
 import java.util.concurrent.ExecutionException;
@@ -65,12 +64,9 @@ public class Image extends RealmObject {
     public static void prefetch(Context context, final Image image, String type) {
         image.setType(type);
         Glide.with(context).load(image.url)
-                .preload().getSize(new SizeReadyCallback() {
-            @Override
-            public void onSizeReady(int width, int height) {
-                image.setWidth(width);
-                image.setHeight(height);
-            }
+                .preload().getSize((width1, height1) -> {
+            image.setWidth(width1);
+            image.setHeight(height1);
         });
     }
 

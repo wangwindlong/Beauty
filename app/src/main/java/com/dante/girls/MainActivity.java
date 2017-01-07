@@ -78,6 +78,7 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
     private MenuItem currentMenu;
     private SparseArray<Fragment> fragmentSparseArray;
     private Updater updater;
+    private Fragment currentFragment;
 
     @Override
     protected int initLayoutId() {
@@ -184,8 +185,7 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
         //favorite
         fragmentSparseArray.put(R.id.nav_favorite, new FavoriteFragment());
         //Main
-        Fragment main = fragmentSparseArray.get(R.id.nav_beauty);
-        setFragment(main);
+        setFragment(R.id.nav_beauty, fragmentSparseArray);
     }
 
 
@@ -207,15 +207,11 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
             return;
         }
 
-        if (getSupportFragmentManager().getBackStackEntryCount() > 0) {
-            getSupportFragmentManager().popBackStack();
-        } else {
-            doublePressBackToQuit();
-        }
+        doublePressBackToQuit();
     }
 
     private void doublePressBackToQuit() {
-        if (backPressed) {
+        if (backPressed || getSupportFragmentManager().getBackStackEntryCount() > 0) {
             super.onBackPressed();
             return;
         }
@@ -271,11 +267,8 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
                 break;
             default:
                 currentMenu = item;
-                Fragment fragment = fragmentSparseArray.get(id);
-                if (fragment != null) {
-                    setToolbarTitle(getCurrentMenuTitle());
-                    setFragment(fragment);
-                }
+                setToolbarTitle(getCurrentMenuTitle());
+                setFragment(id, fragmentSparseArray);
                 break;
         }
         drawerLayout.closeDrawers();

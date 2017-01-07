@@ -100,9 +100,9 @@ public class CustomPictureFragment extends PictureFragment {
         if (isFetching) {
             return;
         }
-//        if (page <= 1) {
-//            imageList = realm.copyFromRealm(images);
-//        }
+        if (page <= 1) {
+            imageList = realm.copyFromRealm(images);
+        }
         DataFetcher fetcher;
         switch (baseType) {
             case TYPE_DB_BREAST:
@@ -172,19 +172,24 @@ public class CustomPictureFragment extends PictureFragment {
                         newSize = images.size();
                         int add = newSize - oldSize;
                         changeState(false);
-//                        if (isA && !isInPost) {
-//                            sortData(add);//每次刷新第一页的时候给图片排序
-//                        }
+
+                        sortData(add);
                         if (add == 0) {
-                            log("newsize ", newSize);
                             log("onCompleted: old new size are the same");
                             if (isInPost) adapter.loadMoreEnd(true);
                             if (page != 1) adapter.loadMoreFail();
+
                         } else {
-                            //获取到数据了，下一页
-                            log("save page" + page);
-                            SpUtil.save(imageType + Constants.PAGE, page);
-                            adapter.notifyItemRangeChanged(oldSize, add);
+                            log("newsize ", newSize);
+                            if (page <= 1 && !isInPost) {
+                                //每次刷新第一页的时候给图片排序
+                                sortData(add);
+                            } else {
+                                //获取到数据了，下一页
+                                log("save page" + page);
+                                SpUtil.save(imageType + Constants.PAGE, page);
+                                adapter.notifyItemRangeChanged(oldSize, add);
+                            }
                             adapter.loadMoreComplete();
                         }
                     }
@@ -193,13 +198,17 @@ public class CustomPictureFragment extends PictureFragment {
                     public void onError(Throwable e) {
                         changeState(false);
                         adapter.loadMoreComplete();
+                        if (page != 1) adapter.loadMoreFail();
                         UiUtils.showSnack(rootView, R.string.load_fail);
                         e.printStackTrace();
                     }
 
                     @Override
                     public void onNext(List<Image> list) {
-                        if (imageList != null) imageList.addAll(0, list);
+                        if (imageList != null) {
+                            if (imageList.containsAll(list)) return;
+                            imageList.addAll(0, list);//新数据加到0的位置
+                        }
                         DataBase.save(realm, list);
                     }
                 });
@@ -207,19 +216,17 @@ public class CustomPictureFragment extends PictureFragment {
     }
 
     private void sortData(final int added) {
-        if (imageList == null || imageList.size() == 0) {
-            return;
-        }
-        if (page > 1) {
+        if (imageList.size() == 0) {
             return;
         }
         Log.i(TAG, "execute: before sort " + images.first().url);
-        realm.executeTransactionAsync(realm1 -> {
+        realm.executeTransactionAsync(realm -> {
             for (int i = 0; i < imageList.size(); i++) {
                 Image image = imageList.get(i);
-                Image data = realm1.where(Image.class).equalTo(Constants.ID, image.id).findFirst();
+                Image data = realm.where(Image.class).equalTo(Constants.URL, image.url).findFirst();
                 if (data != null) {
                     data.setId(i);//id作为序号: 1, 2, 3 ...
+                    Log.i(TAG, "sortData: id: " + i + "   url:" + data.url);
                 }
             }
         }, () -> {
@@ -239,10 +246,22 @@ public class CustomPictureFragment extends PictureFragment {
     }
 
     @Override
-    protected void AlwaysInit() {
-        super.AlwaysInit();
+    protected void onCreateView() {
+        super.onCreateView();
         if (isA) recyclerView.setBackgroundColor(getColor(R.color.cardview_dark_background));
+        setupToolbar();
+    }
 
+    @Override
+    public void onHiddenChanged(boolean hidden) {
+        super.onHiddenChanged(hidden);//fragment被show或者hide时调用
+        if (!hidden) {
+            setupToolbar();
+        }
+    }
+
+
+    private void setupToolbar() {
         //在A区帖子中，改变toolbar的样式
         AppBarLayout.LayoutParams p = (AppBarLayout.LayoutParams) toolbar.getLayoutParams();
         if (isInPost) {
@@ -257,7 +276,6 @@ public class CustomPictureFragment extends PictureFragment {
         toolbar.setLayoutParams(p);
     }
 
-
     private void startPost(Image image) {
         FragmentTransaction transaction = context.getSupportFragmentManager().beginTransaction();
         CustomPictureFragment fragment = CustomPictureFragment.newInstance(imageType);
@@ -265,7 +283,8 @@ public class CustomPictureFragment extends PictureFragment {
         fragment.setTitle(image.title);//用于toolbar的标题
         transaction.setCustomAnimations(android.R.anim.slide_in_left, android.R.anim.slide_out_right
                 , android.R.anim.slide_in_left, android.R.anim.slide_out_right);
-        transaction.replace(R.id.container, fragment, "aPost");
+        transaction.hide(this);
+        transaction.add(R.id.container, fragment, "aPost");
         transaction.addToBackStack(null);
         transaction.commit();
     }
@@ -273,17 +292,17 @@ public class CustomPictureFragment extends PictureFragment {
     @Override
     protected void initData() {
         super.initData();
-        if (images.isEmpty()) {
-            page = 1;
-            fetch();
-            changeState(true);
-        }
         adapter.setOnLoadMoreListener(() -> {
             page = SpUtil.getInt(imageType + Constants.PAGE, 1);
             page++;
             log("loadmore ", page);
             fetch();
         });
+        if (images.isEmpty()) {
+            page = 1;
+            fetch();
+            changeState(true);
+        }
     }
 
 }

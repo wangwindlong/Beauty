@@ -3,7 +3,6 @@ package com.dante.girls.helper;
 import android.Manifest;
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.util.Log;
 
 import com.dante.girls.BuildConfig;
 import com.dante.girls.R;
@@ -18,8 +17,6 @@ import com.tbruyelle.rxpermissions.RxPermissions;
 import rx.Subscription;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
-
-import static com.bumptech.glide.gifdecoder.GifHeaderParser.TAG;
 
 /**
  * Update app helper.
@@ -54,7 +51,7 @@ public class Updater {
     public void check() {
         NetService.getInstance(API.GITHUB_RAW).getAppApi().getAppInfo()
                 .filter(appInfo -> {
-                    Log.i(TAG, "call: appInfo " + appInfo.toString());
+//                    Log.i(TAG, "call: appInfo " + appInfo.toString());
                     return appInfo.getVersionCode() > BuildConfig.VERSION_CODE;//版本有更新
                 })
                 .doOnNext(appInfo -> SpUtil.save(Constants.SHARE_APP, appInfo.getShareApp()))
@@ -68,7 +65,7 @@ public class Updater {
         new AlertDialog.Builder(context).setTitle(R.string.new_version)
                 .setCancelable(!needUpdate)//需要更新就不可取消
                 .setMessage(String.format(context.getString(R.string.update_message), appInfo.getMessage()))
-                .setPositiveButton("Update now", (dialog, which) -> downloadAndInstall(appInfo)).show();
+                .setPositiveButton(R.string.update, (dialog, which) -> downloadAndInstall(appInfo)).show();
     }
 
     private String getApkName(String version) {

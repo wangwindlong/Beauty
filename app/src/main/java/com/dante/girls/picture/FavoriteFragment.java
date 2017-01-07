@@ -26,8 +26,8 @@ public class FavoriteFragment extends PictureFragment {
     }
 
     @Override
-    protected void AlwaysInit() {
-        super.AlwaysInit();
+    protected void onCreateView() {
+        super.onCreateView();
         AppBarLayout.LayoutParams p = (AppBarLayout.LayoutParams) toolbar.getLayoutParams();
         p.setScrollFlags(0);
         toolbar.setLayoutParams(p);
@@ -37,7 +37,6 @@ public class FavoriteFragment extends PictureFragment {
     protected void initData() {
         imageType = Constants.FAVORITE;
         super.initData();
-
         if (images.isEmpty()) {
             UiUtils.showSnackLong(rootView, R.string.images_empty);
         }

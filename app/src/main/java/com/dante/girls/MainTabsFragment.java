@@ -18,6 +18,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.BindView;
+
 /**
  * A placeholder fragment containing a simple view.
  */
@@ -106,7 +107,6 @@ public class MainTabsFragment extends BaseFragment {
             for (String type : types) {
                 fragments.add(CustomPictureFragment.newInstance(type));
             }
-
             if (fragments.size() != titles.length)
                 throw new IllegalArgumentException("You need add all fragments! Check: " + getClass().getSimpleName());
 
@@ -117,11 +117,9 @@ public class MainTabsFragment extends BaseFragment {
     private void scrollToTop(RecyclerView list) {
         if (null != list) {
             int lastPosition;
-
             StaggeredGridLayoutManager manager = (StaggeredGridLayoutManager) list.getLayoutManager();
             lastPosition = manager.findLastVisibleItemPositions(
                     new int[manager.getSpanCount()])[1];
-
 
             if (lastPosition < SMOOTH_SCROLL_POSITION) {
                 list.smoothScrollToPosition(0);
