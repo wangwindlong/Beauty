@@ -17,6 +17,8 @@ import com.dante.girls.base.BaseActivity;
 import com.dante.girls.base.Constants;
 import com.dante.girls.model.DataBase;
 import com.dante.girls.model.Image;
+import com.dante.girls.ui.SettingFragment;
+import com.dante.girls.utils.SpUtil;
 
 import java.util.List;
 
@@ -150,6 +152,9 @@ public abstract class PictureFragment extends RecyclerFragment {
     }
 
     private void initFab() {
+        if (SpUtil.getBoolean(SettingFragment.SECRET_MODE)) {
+            return;
+        }
         final FloatingActionButton button = ((MainActivity) getActivity()).fab;
         recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override

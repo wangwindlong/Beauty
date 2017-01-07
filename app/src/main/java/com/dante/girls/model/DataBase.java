@@ -1,13 +1,19 @@
 package com.dante.girls.model;
 
 
+import android.support.annotation.Nullable;
+import android.util.Log;
+
 import com.dante.girls.base.Constants;
 
+import java.util.Collection;
 import java.util.List;
 
 import io.realm.Realm;
 import io.realm.RealmObject;
 import io.realm.RealmResults;
+
+import static com.bumptech.glide.gifdecoder.GifHeaderParser.TAG;
 
 /**
  * Deals with cache, data
@@ -39,18 +45,29 @@ public class DataBase {
     }
 
     public static <T extends RealmObject> T getById(Realm realm, int id, Class<T> realmObjectClass) {
-        return realm.where(realmObjectClass).equalTo("id", id).findFirst();
+        return realm.where(realmObjectClass).equalTo(Constants.ID, id).findFirst();
+    }
+
+    public static boolean hasImage(@Nullable Realm realm, String url) {
+        realm = initRealm(realm);
+        return realm.where(Image.class).equalTo(Constants.URL, url).findFirst() != null;
+    }
+
+    public static boolean hasImages(Realm realm, Collection<Image> list, String imageType) {
+        boolean resut = realm.where(Image.class).equalTo(Constants.TYPE, imageType).findAll().containsAll(list);
+        Log.d(TAG, "hasImages : " + resut);
+        return resut;
     }
 
 
     public static Image getByUrl(Realm realm, String url) {
         initRealm(realm);
-        return realm.where(Image.class).equalTo("url", url).findFirst();
+        return realm.where(Image.class).equalTo(Constants.URL, url).findFirst();
     }
 
     public static Image getByUrl(String url) {
         Realm realm = Realm.getDefaultInstance();
-        return realm.where(Image.class).equalTo("url", url).findFirst();
+        return realm.where(Image.class).equalTo(Constants.URL, url).findFirst();
     }
 
 
@@ -71,7 +88,7 @@ public class DataBase {
             return findFavoriteImages(realm);
         }
         return realm.where(Image.class)
-                .equalTo("type", type)
+                .equalTo(Constants.TYPE, type)
                 .findAll()
 //                .sort("publishedAt", Sort.DESCENDING)
                 .sort(Constants.ID)

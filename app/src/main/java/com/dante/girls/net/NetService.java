@@ -67,10 +67,7 @@ public class NetService {
     }
 
     public AppApi getAppApi() {
-        if (appApi == null) {
-            appApi = createServiceWithGson(AppApi.class);
-        }
-        return appApi;
+        return createServiceWithGson(AppApi.class);
     }
 
     public <T> T createService(Class<T> className) {

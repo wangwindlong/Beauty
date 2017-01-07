@@ -19,6 +19,7 @@ import com.dante.girls.utils.UiUtils;
 
 import java.util.List;
 
+import io.realm.Realm;
 import rx.Observable;
 import rx.Subscriber;
 import rx.functions.Func1;
@@ -46,7 +47,7 @@ public class CustomPictureFragment extends PictureFragment {
     private static final int BUFFER_SIZE = 2;
     boolean isInPost;
     boolean isA;
-    private Observable<List<Image>> source;
+    private boolean fresh;
 
     public static CustomPictureFragment newInstance(String type) {
         Bundle args = new Bundle();
@@ -56,7 +57,7 @@ public class CustomPictureFragment extends PictureFragment {
         return fragment;
     }
 
-    public void setInfo(String info) {
+    public void addInfo(String info) {
         this.info = info;
         isInPost = true;
     }
@@ -102,8 +103,12 @@ public class CustomPictureFragment extends PictureFragment {
         }
         if (page <= 1) {
             imageList = realm.copyFromRealm(images);
+            fresh = true;
+        } else {
+            fresh = false;
         }
         DataFetcher fetcher;
+        Observable<List<Image>> source;
         switch (baseType) {
             case TYPE_DB_BREAST:
             case TYPE_DB_BUTT:
@@ -127,7 +132,7 @@ public class CustomPictureFragment extends PictureFragment {
 
             default://imageType = 0, 代表GANK
                 url = API.GANK;
-                if (page <= 1) {
+                if (fresh) {
                     LOAD_COUNT = LOAD_COUNT_LARGE;
                 }
                 fetcher = new DataFetcher(url, imageType, page);
@@ -141,6 +146,11 @@ public class CustomPictureFragment extends PictureFragment {
     protected void fetchImages(final Observable<List<Image>> source) {
         subscription = source
                 .observeOn(Schedulers.io())
+                .filter(list -> {
+                    Realm r = Realm.getDefaultInstance();
+                    return list.size() > 0 &&
+                            !DataBase.hasImages(r, list, imageType);
+                })
                 .flatMap(new Func1<List<Image>, Observable<Image>>() {
                     @Override
                     public Observable<Image> call(List<Image> images) {
@@ -158,7 +168,6 @@ public class CustomPictureFragment extends PictureFragment {
                 .compose(applySchedulers())
                 .subscribe(new Subscriber<List<Image>>() {
                     int oldSize;
-                    int newSize;
 
                     @Override
                     public void onStart() {
@@ -168,36 +177,30 @@ public class CustomPictureFragment extends PictureFragment {
 
                     @Override
                     public void onCompleted() {
-                        images = DataBase.findImages(realm, imageType);
-                        newSize = images.size();
-                        int add = newSize - oldSize;
                         changeState(false);
-
-                        sortData(add);
+                        images = DataBase.findImages(realm, imageType);
+                        int add = images.size() - oldSize;
                         if (add == 0) {
                             log("onCompleted: old new size are the same");
                             if (isInPost) adapter.loadMoreEnd(true);
-                            if (page != 1) adapter.loadMoreFail();
-
-                        } else {
-                            log("newsize ", newSize);
-                            if (page <= 1 && !isInPost) {
-                                //每次刷新第一页的时候给图片排序
-                                sortData(add);
-                            } else {
-                                //获取到数据了，下一页
-                                log("save page" + page);
-                                SpUtil.save(imageType + Constants.PAGE, page);
-                                adapter.notifyItemRangeChanged(oldSize, add);
-                            }
-                            adapter.loadMoreComplete();
+                            if (!fresh) adapter.loadMoreFail();
+                            return;
                         }
+                        log("new size ", images.size());
+                        if (fresh && !isInPost) {
+                            //每次刷新第一页的时候给图片排序
+                            sortData(add);
+                        } else {
+                            //获取到数据了，下一页
+                            SpUtil.save(imageType + Constants.PAGE, page);
+                            adapter.notifyItemRangeChanged(oldSize, add);
+                        }
+                        adapter.loadMoreComplete();
                     }
 
                     @Override
                     public void onError(Throwable e) {
                         changeState(false);
-                        adapter.loadMoreComplete();
                         if (page != 1) adapter.loadMoreFail();
                         UiUtils.showSnack(rootView, R.string.load_fail);
                         e.printStackTrace();
@@ -206,8 +209,8 @@ public class CustomPictureFragment extends PictureFragment {
                     @Override
                     public void onNext(List<Image> list) {
                         if (imageList != null) {
-                            if (imageList.containsAll(list)) return;
-                            imageList.addAll(0, list);//新数据加到0的位置
+                            //第一页时，新数据加到0的位置,否则不用处理
+                            imageList.addAll(0, list);
                         }
                         DataBase.save(realm, list);
                     }
@@ -231,18 +234,11 @@ public class CustomPictureFragment extends PictureFragment {
             }
         }, () -> {
             images.sort(Constants.ID);
-            Log.i(TAG, "execute: after sort " + images.first().url);
             adapter.notifyItemRangeInserted(0, added);
+            Log.i(TAG, "execute: after sort " + images.first().url);
             Log.i(TAG, "onSuccess: sortData " + added + " inserted");
+            imageList = null;
         });
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-        if (!isInPost && images.size() > 8) {
-            log("10 image ", images.get(7).title);
-        }
     }
 
     @Override
@@ -279,7 +275,7 @@ public class CustomPictureFragment extends PictureFragment {
     private void startPost(Image image) {
         FragmentTransaction transaction = context.getSupportFragmentManager().beginTransaction();
         CustomPictureFragment fragment = CustomPictureFragment.newInstance(imageType);
-        fragment.setInfo(image.info);//帖子地址，也是imageType
+        fragment.addInfo(image.info);//帖子地址，也是imageType
         fragment.setTitle(image.title);//用于toolbar的标题
         transaction.setCustomAnimations(android.R.anim.slide_in_left, android.R.anim.slide_out_right
                 , android.R.anim.slide_in_left, android.R.anim.slide_out_right);
@@ -295,11 +291,10 @@ public class CustomPictureFragment extends PictureFragment {
         adapter.setOnLoadMoreListener(() -> {
             page = SpUtil.getInt(imageType + Constants.PAGE, 1);
             page++;
-            log("loadmore ", page);
+            log("load more ", page);
             fetch();
         });
         if (images.isEmpty()) {
-            page = 1;
             fetch();
             changeState(true);
         }

@@ -2,6 +2,7 @@ package com.dante.girls.net;
 
 import android.util.Log;
 
+import com.dante.girls.model.DataBase;
 import com.dante.girls.model.Image;
 import com.dante.girls.picture.CustomPictureFragment;
 
@@ -64,6 +65,10 @@ public class DataFetcher {
                         final int size = elements.size();
                         for (int i = 0; i < size; i++) {
                             String src = elements.get(i).attr("src").trim();
+                            if (DataBase.hasImage(null, src)) {
+                                Log.i(TAG, "getDouban: detect exists");
+                                continue;
+                            }
                             images.add(new Image(src, type));
                         }
                     } catch (IOException e) {
@@ -90,6 +95,7 @@ public class DataFetcher {
 //                                Log.i(TAG, "getAPosts: find saved image!");
 //                                return null;//最后一个元素在数据库里已经保存了，那么不需要继续解析。
 //                            }
+
                         for (int i = 0; i < elements.size(); i++) {
                             Element link = elements.get(i);
                             String postUrl = link.attr("href").replace(API.A_BASE, "");
@@ -99,6 +105,10 @@ public class DataFetcher {
 //                                    Log.i(TAG, "load image: thumb url " + src);
 //                                    src = src.replace("!thumb", "");
 //                                }
+                            if (DataBase.hasImage(null, src)) {
+                                Log.i(TAG, "getDouban: detect exists");
+                                continue;
+                            }
                             Image image = new Image(src, type);
                             image.setInfo(postUrl);
                             image.setTitle(title);
@@ -135,6 +145,9 @@ public class DataFetcher {
                         Log.d(TAG, "getPicturesOfPost: size" + size);
                         for (int i = 0; i < size; i++) {
                             String src = elements.get(i).attr("src").trim();
+                            if (DataBase.hasImage(null, src)) {
+                                continue;
+                            }
                             Image image = new Image(src, type);
                             images.add(image);
                         }

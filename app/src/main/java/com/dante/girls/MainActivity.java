@@ -21,6 +21,7 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.util.SparseArray;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 
@@ -98,7 +99,7 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
 
     private void initFab() {
         if (SpUtil.getBoolean(SettingFragment.SECRET_MODE)) {
-            fab.hide();
+            fab.setVisibility(View.GONE);
             return;
         }
         if (android.os.Build.VERSION.SDK_INT < android.os.Build.VERSION_CODES.LOLLIPOP) {

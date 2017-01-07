@@ -81,11 +81,6 @@ public class SettingFragment extends PreferenceFragment implements Preference.On
             secretStepOne();
             return true;
         });
-        version.setOnPreferenceChangeListener((preference, newValue) -> {
-            Log.i("test", secretIndex + ">>>>");
-            secretStepTwo();
-            return true;
-        });
         about.setOnPreferenceClickListener(preference -> {
             startActivity(new Intent(getActivity().getApplicationContext(), AboutActivity.class));
             return true;
@@ -93,6 +88,8 @@ public class SettingFragment extends PreferenceFragment implements Preference.On
         clearCache.setOnPreferenceClickListener(this);
         feedback.setOnPreferenceClickListener(this);
         theme.setOnPreferenceClickListener(preference -> {
+            Log.i("test", secretIndex + ">>>>");
+            secretStepTwo();
 //                ColorPickerDialog dialog = new ColorPickerDialog(getActivity());
 //                dialog.setOnColorSelectedListener(new ColorPickerDialog.OnColorSelectedListener() {
 //                    @Override

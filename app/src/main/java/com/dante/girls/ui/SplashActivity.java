@@ -24,9 +24,6 @@ import org.json.JSONObject;
 import java.io.IOException;
 import java.util.Date;
 
-import okhttp3.ResponseBody;
-import rx.functions.Action1;
-import rx.functions.Func1;
 import rx.schedulers.Schedulers;
 
 public class SplashActivity extends AppCompatActivity {
@@ -70,24 +67,18 @@ public class SplashActivity extends AppCompatActivity {
             return;
         }
         NetService.getInstance(API.SPLASH).getAppApi().getSplash()
-                .map(new Func1<ResponseBody, String>() {
-                    @Override
-                    public String call(ResponseBody responseBody) {
-                        try {
-                            return new JSONObject(responseBody.string()).getString("img");
-                        } catch (IOException | JSONException e) {
-                            e.printStackTrace();
-                        }
-                        return "";
+                .map(responseBody -> {
+                    try {
+                        return new JSONObject(responseBody.string()).getString("img");
+                    } catch (IOException | JSONException e) {
+                        e.printStackTrace();
                     }
+                    return "";
                 })
                 .subscribeOn(Schedulers.io())
-                .subscribe(new Action1<String>() {
-                    @Override
-                    public void call(String url) {
-                        SpUtil.save(SPLASH, url);
-                        SpUtil.save(Constants.DATE, today);
-                    }
+                .subscribe(url -> {
+                    SpUtil.save(SPLASH, url);
+                    SpUtil.save(Constants.DATE, today);
                 });
 
 
@@ -104,13 +95,10 @@ public class SplashActivity extends AppCompatActivity {
     }
 
     private void startAppDelay() {
-        splash.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                startActivity(new Intent(getApplicationContext(), MainActivity.class));
-                overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
-                finish();
-            }
+        splash.postDelayed(() -> {
+            startActivity(new Intent(getApplicationContext(), MainActivity.class));
+            overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
+            finish();
         }, SPLASH_DURATION);
     }
 
