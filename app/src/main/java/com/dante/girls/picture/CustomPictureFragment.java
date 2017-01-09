@@ -19,7 +19,8 @@ import com.dante.girls.utils.UiUtils;
 
 import java.util.List;
 
-import io.realm.Realm;
+import io.realm.RealmChangeListener;
+import io.realm.RealmResults;
 import rx.Observable;
 import rx.Subscriber;
 import rx.functions.Func1;
@@ -48,6 +49,8 @@ public class CustomPictureFragment extends PictureFragment {
     boolean isInPost;
     boolean isA;
     private boolean fresh;
+    private int size;
+    private int oldSize;
 
     public static CustomPictureFragment newInstance(String type) {
         Bundle args = new Bundle();
@@ -101,12 +104,8 @@ public class CustomPictureFragment extends PictureFragment {
         if (isFetching) {
             return;
         }
-        if (page <= 1) {
-            imageList = realm.copyFromRealm(images);
-            fresh = true;
-        } else {
-            fresh = false;
-        }
+        fresh = page <= 1;
+
         DataFetcher fetcher;
         Observable<List<Image>> source;
         switch (baseType) {
@@ -146,11 +145,7 @@ public class CustomPictureFragment extends PictureFragment {
     protected void fetchImages(final Observable<List<Image>> source) {
         subscription = source
                 .observeOn(Schedulers.io())
-                .filter(list -> {
-                    Realm r = Realm.getDefaultInstance();
-                    return list.size() > 0 &&
-                            !DataBase.hasImages(r, list, imageType);
-                })
+                .filter(list -> list.size() > 0)
                 .flatMap(new Func1<List<Image>, Observable<Image>>() {
                     @Override
                     public Observable<Image> call(List<Image> images) {
@@ -164,10 +159,21 @@ public class CustomPictureFragment extends PictureFragment {
                     }
                     return image;
                 })
-                .buffer(BUFFER_SIZE)
+                .doOnNext(image -> {
+                    if (page <= 1) {
+                        if (imageList.size() > 0) {
+                            int firstId = imageList.get(0).id;
+                            image.setId(firstId - 1);
+                            imageList.add(0, image);
+                        }
+                    } else {
+//                        image.setId(imageList.size() + 1);
+//                        imageList.add(image);
+                    }
+                })
+//                .buffer(BUFFER_SIZE)
                 .compose(applySchedulers())
-                .subscribe(new Subscriber<List<Image>>() {
-                    int oldSize;
+                .subscribe(new Subscriber<Image>() {
 
                     @Override
                     public void onStart() {
@@ -178,24 +184,19 @@ public class CustomPictureFragment extends PictureFragment {
                     @Override
                     public void onCompleted() {
                         changeState(false);
-                        images = DataBase.findImages(realm, imageType);
-                        int add = images.size() - oldSize;
+                        adapter.setEnableLoadMore(true);
+                        size = DataBase.findImages(realm, imageType).size();
+                        log("onCompleted size change", size);
+                        int add = size - oldSize;
                         if (add == 0) {
                             log("onCompleted: old new size are the same");
                             if (isInPost) adapter.loadMoreEnd(true);
                             if (!fresh) adapter.loadMoreFail();
                             return;
                         }
-                        log("new size ", images.size());
-                        if (fresh && !isInPost) {
-                            //每次刷新第一页的时候给图片排序
-                            sortData(add);
-                        } else {
-                            //获取到数据了，下一页
-                            SpUtil.save(imageType + Constants.PAGE, page);
-                            adapter.notifyItemRangeChanged(oldSize, add);
-                        }
+                        isFirst = false;
                         adapter.loadMoreComplete();
+                        SpUtil.save(imageType + Constants.PAGE, page);
                     }
 
                     @Override
@@ -207,11 +208,7 @@ public class CustomPictureFragment extends PictureFragment {
                     }
 
                     @Override
-                    public void onNext(List<Image> list) {
-                        if (imageList != null) {
-                            //第一页时，新数据加到0的位置,否则不用处理
-                            imageList.addAll(0, list);
-                        }
+                    public void onNext(Image list) {
                         DataBase.save(realm, list);
                     }
                 });
@@ -288,6 +285,23 @@ public class CustomPictureFragment extends PictureFragment {
     @Override
     protected void initData() {
         super.initData();
+        images.addChangeListener(new RealmChangeListener<RealmResults<Image>>() {
+            int old;
+
+            @Override
+            public void onChange(RealmResults<Image> element) {
+                if (old == 0) {
+                    old = oldSize;
+                }
+                size = element.size();
+                int add = size - old;
+                if (fresh && !isFirst) {
+                    old = 0;//刷新主页数据
+                }
+                adapter.notifyItemRangeInserted(old, add);
+                old = size;
+            }
+        });
         adapter.setOnLoadMoreListener(() -> {
             page = SpUtil.getInt(imageType + Constants.PAGE, 1);
             page++;
@@ -295,6 +309,8 @@ public class CustomPictureFragment extends PictureFragment {
             fetch();
         });
         if (images.isEmpty()) {
+            adapter.setEnableLoadMore(false);
+            isFirst = true;
             fetch();
             changeState(true);
         }

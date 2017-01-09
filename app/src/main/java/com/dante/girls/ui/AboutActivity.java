@@ -1,6 +1,8 @@
 package com.dante.girls.ui;
 
 import android.content.Intent;
+import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.widget.TextView;
 
 import com.dante.girls.BuildConfig;
@@ -25,8 +27,8 @@ public class AboutActivity extends BaseActivity {
     }
 
     @Override
-    protected void initViews() {
-        super.initViews();
+    protected void initViews(@Nullable Bundle savedInstanceState) {
+        super.initViews(savedInstanceState);
         versionName.setText(String.format(getString(R.string.version) + " %s(%s)", BuildConfig.VERSION_NAME, BuildConfig.VERSION_CODE));
     }
 

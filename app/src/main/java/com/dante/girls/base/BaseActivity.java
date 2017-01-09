@@ -31,7 +31,7 @@ public abstract class BaseActivity extends AppCompatActivity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        initViews();
+        initViews(savedInstanceState);
     }
 
     protected abstract int initLayoutId();
@@ -39,7 +39,7 @@ public abstract class BaseActivity extends AppCompatActivity {
     /**
      * MUST override and call the SUPER method
      */
-    protected void initViews() {
+    protected void initViews(@Nullable Bundle savedInstanceState) {
         setContentView(initLayoutId());
         ButterKnife.bind(this);
         realm = Realm.getDefaultInstance();

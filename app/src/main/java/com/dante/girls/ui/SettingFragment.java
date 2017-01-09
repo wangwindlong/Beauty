@@ -27,7 +27,6 @@ import java.util.List;
 
 import rx.Observable;
 import rx.android.schedulers.AndroidSchedulers;
-import rx.functions.Action1;
 import rx.schedulers.Schedulers;
 
 import static com.dante.girls.base.App.context;
@@ -166,21 +165,13 @@ public class SettingFragment extends PreferenceFragment implements Preference.On
                 Observable.just(clearCache())
                         .subscribeOn(Schedulers.io())
                         .observeOn(AndroidSchedulers.mainThread())
-                        .subscribe(new Action1<Boolean>() {
-                            @Override
-                            public void call(Boolean success) {
-                                if (success) {
-                                    refreshCache();
-                                    Snackbar.make(rootView, R.string.clear_finished, Snackbar.LENGTH_LONG)
-                                            .setAction(R.string.deep_clean, new View.OnClickListener() {
-                                                @Override
-                                                public void onClick(View view) {
-                                                    AppUtil.openAppInfo(getActivity());
-                                                }
-                                            }).show();
-                                } else {
-                                    UiUtils.showSnack(rootView, R.string.clear_cache_failed);
-                                }
+                        .subscribe(success -> {
+                            if (success) {
+                                refreshCache();
+                                Snackbar.make(rootView, R.string.clear_finished, Snackbar.LENGTH_LONG)
+                                        .setAction(R.string.deep_clean, view -> AppUtil.openAppInfo(getActivity())).show();
+                            } else {
+                                UiUtils.showSnack(rootView, R.string.clear_cache_failed);
                             }
                         });
 

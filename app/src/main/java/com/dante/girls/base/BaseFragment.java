@@ -73,6 +73,7 @@ public abstract class BaseFragment extends Fragment {
                 .distinct();
     }
 
+
     public void log(String key, String content) {
         if (BuildConfig.DEBUG && getUserVisibleHint()) {
             Log.d(getClass().getSimpleName(), key + "  " + content);

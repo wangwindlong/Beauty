@@ -23,7 +23,7 @@ public abstract class RecyclerFragment extends BaseFragment implements SwipeRefr
     RecyclerView recyclerView;
     @BindView(R.id.swipe_refresh)
     SwipeRefreshLayout swipeRefresh;
-    boolean isFirst = true;   //whether is first time to enter fragment
+    boolean isFirst;   //whether is first time to enter fragment
     String imageType;               // imageType of recyclerView's content
     int lastPosition;       //last visible position
     int firstPosition;      //first visible position
@@ -41,7 +41,9 @@ public abstract class RecyclerFragment extends BaseFragment implements SwipeRefr
         if (savedInstanceState == null) {
             //restoring position when reentering fragment.
             lastPosition = SpUtil.getInt(imageType + Constants.POSITION);
+            log("retore", imageType);
             if (lastPosition > 0) {
+                log("retore lastPosition", lastPosition);
                 recyclerView.scrollToPosition(lastPosition);
             }
         }

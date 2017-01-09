@@ -7,6 +7,7 @@ import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SimpleItemAnimator;
 import android.support.v7.widget.StaggeredGridLayoutManager;
+import android.util.Log;
 import android.view.View;
 
 import com.chad.library.adapter.base.BaseQuickAdapter;
@@ -45,29 +46,12 @@ public abstract class PictureFragment extends RecyclerFragment {
     PictureAdapter adapter;
     RealmResults<Image> images;
     List<Image> imageList;
-//
-//    @Override
-//    public void onResume() {
-//        super.onResume();
-//        lastPosition = SpUtil.getInt(imageType + Constants.POSITION);
-//        recyclerView.scrollToPosition(lastPosition > 0 ? lastPosition : 0);
-//        if (getUserVisibleHint()) {
-//            initTitle();
-//        }
-//    }
-
 
     @Override
     public void onPause() {
         firstPosition = layoutManager.findFirstVisibleItemPositions(new int[layoutManager.getSpanCount()])[0];
         super.onPause();
     }
-
-//    @Override
-//    public void onDestroyView() {
-//        SPUtil.save(imageType + Constants.PAGE, page);
-//        super.onDestroyView();
-//    }
 
     @Override
     protected void initViews() {
@@ -76,7 +60,7 @@ public abstract class PictureFragment extends RecyclerFragment {
         //baseType is for base url
         baseType = getArguments() == null ? "" : getArguments().getString(Constants.TYPE);
         context = (BaseActivity) getActivity();
-        layoutManager = new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL);
+        layoutManager = new WrapContentLinearLayoutManager(2, StaggeredGridLayoutManager.VERTICAL);
         recyclerView.setLayoutManager(layoutManager);
 
         adapter = new PictureAdapter(initAdapterLayout());
@@ -127,7 +111,6 @@ public abstract class PictureFragment extends RecyclerFragment {
 
     public abstract void fetch();//确定type，base url和解析数据
 
-
     //改变是否在加载数据的状态
     public void changeState(boolean fetching) {
         isFetching = fetching;
@@ -140,7 +123,6 @@ public abstract class PictureFragment extends RecyclerFragment {
         log("onCreateView: ", imageType);
     }
 
-
     protected void setTitle(String title) {
         this.title = title;
     }
@@ -148,6 +130,8 @@ public abstract class PictureFragment extends RecyclerFragment {
     @Override
     protected void initData() {
         images = DataBase.findImages(realm, imageType);
+        imageList = realm.copyFromRealm(images);
+
         adapter.setNewData(images);
     }
 
@@ -180,6 +164,26 @@ public abstract class PictureFragment extends RecyclerFragment {
 
     public Image getImage(int position) {
         return adapter.getData().get(position);
+    }
+
+    //    @Override
+//    public void onDestroyView() {
+//        SPUtil.save(imageType + Constants.PAGE, page);
+//        super.onDestroyView();
+//    }
+    public class WrapContentLinearLayoutManager extends StaggeredGridLayoutManager {
+        WrapContentLinearLayoutManager(int spanCount, int orientation) {
+            super(spanCount, orientation);
+        }
+
+        @Override
+        public void onLayoutChildren(RecyclerView.Recycler recycler, RecyclerView.State state) {
+            try {
+                super.onLayoutChildren(recycler, state);
+            } catch (IndexOutOfBoundsException e) {
+                Log.e("probe", "meet a IOOBE in RecyclerView");
+            }
+        }
     }
 
 

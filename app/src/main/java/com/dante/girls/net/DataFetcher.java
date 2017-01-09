@@ -44,7 +44,16 @@ public class DataFetcher {
         return netService.getGankApi().get(CustomPictureFragment.LOAD_COUNT, page)
                 .subscribeOn(Schedulers.computation())
                 .filter(listResult -> !listResult.error)
-                .map(listResult -> listResult.results);
+                .map(listResult -> {
+                    List<Image> data = new ArrayList<>();
+                    for (Image image :
+                            listResult.results) {
+                        if (!DataBase.hasImage(null, image.url)) {
+                            data.add(image);
+                        }
+                    }
+                    return data;
+                });
     }
 
     public Observable<List<Image>> getDouban() {
@@ -66,7 +75,6 @@ public class DataFetcher {
                         for (int i = 0; i < size; i++) {
                             String src = elements.get(i).attr("src").trim();
                             if (DataBase.hasImage(null, src)) {
-                                Log.i(TAG, "getDouban: detect exists");
                                 continue;
                             }
                             images.add(new Image(src, type));
@@ -106,7 +114,6 @@ public class DataFetcher {
 //                                    src = src.replace("!thumb", "");
 //                                }
                             if (DataBase.hasImage(null, src)) {
-                                Log.i(TAG, "getDouban: detect exists");
                                 continue;
                             }
                             Image image = new Image(src, type);

@@ -1,6 +1,9 @@
 package com.dante.girls.ui;
 
 
+import android.os.Bundle;
+import android.support.annotation.Nullable;
+
 import com.dante.girls.R;
 import com.dante.girls.base.BaseActivity;
 
@@ -12,8 +15,8 @@ public class SettingsActivity extends BaseActivity {
     }
 
     @Override
-    protected void initViews() {
-        super.initViews();
+    protected void initViews(@Nullable Bundle savedInstanceState) {
+        super.initViews(savedInstanceState);
 //        setSupportActionBar(((Toolbar) findViewById(R.id.toolbar)));
 //        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
     }

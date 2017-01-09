@@ -2,6 +2,8 @@ package com.dante.girls.picture;
 
 import android.annotation.TargetApi;
 import android.os.Build;
+import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
@@ -55,8 +57,8 @@ public class ViewerActivity extends BaseActivity implements RealmChangeListener 
 
     @TargetApi(Build.VERSION_CODES.LOLLIPOP)
     @Override
-    protected void initViews() {
-        super.initViews();
+    protected void initViews(@Nullable Bundle savedInstanceState) {
+        super.initViews(savedInstanceState);
         supportPostponeEnterTransition();
         position = getIntent().getIntExtra(Constants.POSITION, 0);
         currentPosition = position;

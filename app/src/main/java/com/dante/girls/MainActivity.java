@@ -7,8 +7,10 @@ import android.app.AlertDialog;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Build;
+import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
@@ -87,14 +89,14 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
     }
 
     @Override
-    protected void initViews() {
-        super.initViews();
+    protected void initViews(@Nullable Bundle savedInstanceState) {
+        super.initViews(savedInstanceState);
         updater = Updater.getInstance(this);
         updater.check();
         setupDrawer();
         initNavigationView();
-        initFragments();
         initFab();
+        initFragments(savedInstanceState == null);
     }
 
     private void initFab() {
@@ -109,7 +111,7 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
                         .setMessage(R.string.thanks_for_donation)
                         .setPositiveButton(R.string.donate, (dialogInterface, i) -> donate(MainActivity.this))
                         .create();
-                alertDialog.getWindow().getAttributes().windowAnimations = R.style.SlideDialog;
+//                alertDialog.getWindow().getAttributes().windowAnimations = R.style.SlideDialog;
                 alertDialog.show();
             });
             return;
@@ -166,7 +168,7 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
 //        }
 //    }
 
-    private void initFragments() {
+    private void initFragments(boolean needSetFragment) {
         String[] titles, types;
         fragmentSparseArray = new SparseArray<>();
         String[] all = getResources().getStringArray(R.array.db_titles);
@@ -186,7 +188,9 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
         //favorite
         fragmentSparseArray.put(R.id.nav_favorite, new FavoriteFragment());
         //Main
-        setFragment(R.id.nav_beauty, fragmentSparseArray);
+        if (needSetFragment) {
+            setFragment(R.id.nav_beauty, fragmentSparseArray);
+        }
     }
 
 
@@ -310,5 +314,9 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
     protected void onDestroy() {
         updater.release();
         super.onDestroy();
+    }
+
+    Intent get(Class clz) {
+        return new Intent(getApplicationContext(), clz);
     }
 }
