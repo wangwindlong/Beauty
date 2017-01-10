@@ -53,9 +53,11 @@ public abstract class PictureFragment extends RecyclerFragment {
         super.onPause();
     }
 
+
     @Override
     protected void initViews() {
         super.initViews();
+//        setRetainInstance(true);
         initFab();
         //baseType is for base url
         baseType = getArguments() == null ? "" : getArguments().getString(Constants.TYPE);
@@ -63,7 +65,7 @@ public abstract class PictureFragment extends RecyclerFragment {
         layoutManager = new WrapContentLinearLayoutManager(2, StaggeredGridLayoutManager.VERTICAL);
         recyclerView.setLayoutManager(layoutManager);
 
-        adapter = new PictureAdapter(initAdapterLayout());
+        adapter = new PictureAdapter(initAdapterLayout(), this);
         adapter.openLoadAnimation(BaseQuickAdapter.SCALEIN);
         recyclerView.setAdapter(adapter);
         RecyclerView.ItemAnimator animator = recyclerView.getItemAnimator();

@@ -20,10 +20,12 @@ import android.support.v4.content.ContextCompat;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
+import android.util.Log;
 import android.util.SparseArray;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 
@@ -74,7 +76,7 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
     @BindView(R.id.drawer_layout)
     DrawerLayout drawerLayout;
     @BindView(R.id.container)
-    FrameLayout container;
+    ViewGroup container;
     @BindView(R.id.reveal)
     FrameLayout revealView;
     private boolean backPressed;
@@ -147,28 +149,33 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
         }
     }
 
-//    @Override
-//    protected void onSaveInstanceState(Bundle outState) {
-//        super.onSaveInstanceState(outState);
-//        Log.d(TAG, "onSaveInstanceState: ");
-//        if (currentMenu != null) {
-//            outState.putInt("itemId", currentMenu.getItemId());
-//        }
-//    }
-//
-//    @Override
-//    protected void onRestoreInstanceState(Bundle savedInstanceState) {
-//        super.onRestoreInstanceState(savedInstanceState);
-//        int itemId = savedInstanceState.getInt("itemId", R.id.nav_beauty);
-//        Log.i(TAG, "onRestoreInstanceState: ");
-//        MenuItem currentMenu = navView.getMenu().findItem(itemId);
-//        navView.setCheckedItem(itemId);
-//        if (currentMenu != null) {
-//            onNavigationItemSelected(currentMenu);
-//        }
-//    }
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        Log.d(TAG, "onSaveInstanceState: ");
+        if (currentMenu != null) {
+            outState.putInt("itemId", currentMenu.getItemId());
+        }
+    }
 
-    private void initFragments(boolean needSetFragment) {
+    @Override
+    protected void onRestoreInstanceState(Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+        int itemId = savedInstanceState.getInt("itemId", R.id.nav_beauty);
+        Log.i(TAG, "onRestoreInstanceState: ");
+        MenuItem currentMenu = navView.getMenu().findItem(itemId);
+        navView.setCheckedItem(itemId);
+        if (currentMenu != null) {
+            onNavigationItemSelected(currentMenu);
+        }
+    }
+
+    private void initFragments(boolean first) {
+        if (fragmentSparseArray != null) {
+            Log.i("test", "initFragments: array not null");
+            return;
+        }
+
         String[] titles, types;
         fragmentSparseArray = new SparseArray<>();
         String[] all = getResources().getStringArray(R.array.db_titles);
@@ -188,9 +195,7 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
         //favorite
         fragmentSparseArray.put(R.id.nav_favorite, new FavoriteFragment());
         //Main
-        if (needSetFragment) {
-            setFragment(R.id.nav_beauty, fragmentSparseArray);
-        }
+        setFragment(R.id.nav_beauty, fragmentSparseArray, first);
     }
 
 
@@ -318,5 +323,9 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
 
     Intent get(Class clz) {
         return new Intent(getApplicationContext(), clz);
+    }
+
+    public void changeDrawer(boolean enable) {
+        drawerLayout.setEnabled(enable);
     }
 }

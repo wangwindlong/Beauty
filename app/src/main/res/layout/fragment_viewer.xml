@@ -15,8 +15,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="end|bottom"
-        android:layout_marginBottom="10dp"
+        android:layout_marginBottom="16dp"
         android:visibility="invisible"
-        app:icon_size="48dp"
+        app:icon_size="36dp"
         app:icon_type="heart"/>
 </FrameLayout>

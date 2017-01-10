@@ -66,6 +66,10 @@ public class MainTabsFragment extends BaseFragment {
         pager.setAdapter(adapter);
         tabs.setTabMode(TabLayout.MODE_SCROLLABLE);
         tabs.setupWithViewPager(pager);
+    }
+
+    @Override
+    protected void initData() {
         tabs.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             @Override
             public void onTabSelected(TabLayout.Tab tab) {
@@ -82,10 +86,6 @@ public class MainTabsFragment extends BaseFragment {
                 scrollToTop(fragments.get(tab.getPosition()).getRecyclerView());
             }
         });
-    }
-
-    @Override
-    protected void initData() {
 //        setExitSharedElementCallback(new SharedElementCallback() {
 //            @Override
 //            public void onMapSharedElements(List<String> names, Map<String, View> sharedElements) {

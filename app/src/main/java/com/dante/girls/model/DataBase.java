@@ -89,9 +89,8 @@ public class DataBase {
         }
         return realm.where(Image.class)
                 .equalTo(Constants.TYPE, type)
-                .findAll()
+                .findAllSorted(Constants.ID)
 //                .sort("publishedAt", Sort.DESCENDING)
-                .sort(Constants.ID)
                 ;
     }
 

@@ -1,6 +1,7 @@
 package com.dante.girls.picture;
 
 import android.graphics.Bitmap;
+import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewCompat;
 import android.support.v7.graphics.Palette;
@@ -23,8 +24,11 @@ import com.dante.girls.utils.Imager;
 
 class PictureAdapter extends BaseQuickAdapter<Image, BaseViewHolder> {
 
-    PictureAdapter(int layoutId) {
+    private Fragment context;
+
+    PictureAdapter(int layoutId, Fragment context) {
         super(layoutId, null);
+        this.context = context;
         setHasStableIds(true);
     }
 
@@ -57,7 +61,7 @@ class PictureAdapter extends BaseQuickAdapter<Image, BaseViewHolder> {
             title.setText(text);
             title.setSelected(true);
         }
-        Imager.load(mContext, image.url, imageView, new RequestListener<String, Bitmap>() {
+        Imager.load(context, image.url, imageView, new RequestListener<String, Bitmap>() {
             @Override
             public boolean onException(Exception e, String model, Target<Bitmap> target, boolean isFirstResource) {
                 return false;
@@ -65,14 +69,12 @@ class PictureAdapter extends BaseQuickAdapter<Image, BaseViewHolder> {
 
             @Override
             public boolean onResourceReady(Bitmap resource, String model, Target<Bitmap> target, boolean isFromMemoryCache, boolean isFirstResource) {
-                Palette.from(resource).generate(new Palette.PaletteAsyncListener() {
-                    @Override
-                    public void onGenerated(Palette palette) {
-                        int color = palette.getDarkMutedColor(ContextCompat.getColor(mContext, R.color.cardview_dark_background));
-                        if (post != null) {
-                            title.setBackgroundColor(color);
-                            title.setVisibility(View.VISIBLE);
-                        }
+                Palette.from(resource).generate(palette -> {
+                    int color = palette.getDarkMutedColor(ContextCompat.getColor(mContext, R.color.cardview_dark_background));
+                    if (post != null) {
+                        title.setBackgroundColor(color);
+                        title.setVisibility(View.VISIBLE);
+
                     }
                 });
                 return false;

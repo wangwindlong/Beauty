@@ -29,6 +29,12 @@ public class UiUtils {
         }
     }
 
+    public static void showSnackLong(View rootView, int textId, int actionTextId, View.OnClickListener onClickListener) {
+        if (null != rootView) {
+            Snackbar.make(rootView, textId, Snackbar.LENGTH_LONG).setAction(actionTextId, onClickListener).show();
+        }
+    }
+
     public static void showSnackLong(View rootView, String text) {
         if (null != rootView) {
             Snackbar.make(rootView, text, Snackbar.LENGTH_LONG).show();

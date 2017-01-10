@@ -34,7 +34,7 @@ public class Imager {
                 .into(target);
     }
 
-    public static void load(final Context context, String url, ImageView target, RequestListener<String, Bitmap> listener) {
+    public static void load(final Fragment context, String url, ImageView target, RequestListener<String, Bitmap> listener) {
         Glide.with(context)
                 .load(url)
                 .asBitmap()

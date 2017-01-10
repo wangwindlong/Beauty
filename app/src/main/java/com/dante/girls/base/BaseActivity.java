@@ -109,10 +109,10 @@ public abstract class BaseActivity extends AppCompatActivity {
         realm.close();
     }
 
+
     public void setToolbarTitle(String title) {
         if (toolbar != null) {
             toolbar.setTitle(title);
-            Log.i(TAG, "setToolbarTitle: " + title);
         }
     }
 
@@ -122,7 +122,7 @@ public abstract class BaseActivity extends AppCompatActivity {
         return super.dispatchTouchEvent(ev);
     }
 
-    public void setFragment(int id, SparseArray<Fragment> array) {
+    public void setFragment(int id, SparseArray<Fragment> array, boolean first) {
         Fragment fragment = array.get(id);
         if (fragment == null || currentFragment == fragment) {
             return;
@@ -131,17 +131,32 @@ public abstract class BaseActivity extends AppCompatActivity {
         Fragment old = currentFragment;
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
         transaction.setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out);
+        if (!first) {
+            Fragment saved = getSupportFragmentManager().findFragmentById(R.id.container);
+            if (saved != null) {
+                transaction.remove(saved);
+                Log.i("test", "setFragment: removed");
+                return;
+            }
+        }
+
         if (old != null) {
             transaction.hide(old);
         }
+
         if (fragment.isAdded()) {
             transaction.show(fragment);
         } else {
-            transaction.add(R.id.container, fragment);
+            transaction.add(R.id.container, fragment, String.valueOf(id));
         }
         transaction.commit();
         this.currentFragment = fragment;
     }
+
+    public void setFragment(int id, SparseArray<Fragment> array) {
+        setFragment(id, array, true);
+    }
+
 
     public void setFragment(Fragment fragment) {
         if (currentFragment == fragment) {

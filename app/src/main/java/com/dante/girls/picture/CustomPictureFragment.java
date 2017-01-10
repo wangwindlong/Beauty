@@ -51,6 +51,7 @@ public class CustomPictureFragment extends PictureFragment {
     private boolean fresh;
     private int size;
     private int oldSize;
+    private int error;
 
     public static CustomPictureFragment newInstance(String type) {
         Bundle args = new Bundle();
@@ -203,7 +204,12 @@ public class CustomPictureFragment extends PictureFragment {
                     public void onError(Throwable e) {
                         changeState(false);
                         if (page != 1) adapter.loadMoreFail();
-                        UiUtils.showSnack(rootView, R.string.load_fail);
+                        if (error > 3) {
+                            UiUtils.showSnackLong(rootView, R.string.net_error);
+                        } else {
+                            UiUtils.showSnack(rootView, R.string.load_fail);
+                        }
+                        error++;
                         e.printStackTrace();
                     }
 
@@ -295,8 +301,8 @@ public class CustomPictureFragment extends PictureFragment {
                 }
                 size = element.size();
                 int add = size - old;
-                if (fresh && !isFirst) {
-                    old = 0;//刷新主页数据
+                if (fresh && !isFirst && !isInPost) {
+                    old = 0;//刷新首页，新数据插入到开头位置
                 }
                 adapter.notifyItemRangeInserted(old, add);
                 old = size;
@@ -314,6 +320,7 @@ public class CustomPictureFragment extends PictureFragment {
             fetch();
             changeState(true);
         }
+        ((MainActivity) context).changeDrawer(!isInPost);
     }
 
 }
