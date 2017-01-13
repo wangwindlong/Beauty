@@ -6,7 +6,6 @@ import android.app.AlertDialog;
 
 import com.dante.girls.BuildConfig;
 import com.dante.girls.R;
-import com.dante.girls.base.Constants;
 import com.dante.girls.model.AppInfo;
 import com.dante.girls.net.API;
 import com.dante.girls.net.NetService;
@@ -23,6 +22,9 @@ import rx.schedulers.Schedulers;
  */
 
 public class Updater {
+
+    public static final String SHARE_APP = "share_app";
+
     private final Activity context;
     private DownloadHelper helper;
     private Subscription subscription;
@@ -54,7 +56,7 @@ public class Updater {
 //                    Log.i(TAG, "call: appInfo " + appInfo.toString());
                     return appInfo.getVersionCode() > BuildConfig.VERSION_CODE;//版本有更新
                 })
-                .doOnNext(appInfo -> SpUtil.save(Constants.SHARE_APP, appInfo.getShareApp()))
+                .doOnNext(appInfo -> SpUtil.save(Updater.SHARE_APP, appInfo.getShareApp()))
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(this::showDialog, Throwable::printStackTrace);

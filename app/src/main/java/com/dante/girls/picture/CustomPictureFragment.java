@@ -46,9 +46,9 @@ import static com.dante.girls.net.API.TYPE_DB_SILK;
 public class CustomPictureFragment extends PictureFragment {
     private static final String TAG = "CustomPictureFragment";
     private static final int BUFFER_SIZE = 2;
-    boolean isInPost;
+    boolean inAPost;
     boolean isA;
-    private boolean fresh;
+    private boolean firstPage;
     private int size;
     private int oldSize;
     private int error;
@@ -63,7 +63,7 @@ public class CustomPictureFragment extends PictureFragment {
 
     public void addInfo(String info) {
         this.info = info;
-        isInPost = true;
+        inAPost = true;
     }
 
     @Override
@@ -74,8 +74,7 @@ public class CustomPictureFragment extends PictureFragment {
 
     @Override
     protected void onImageClicked(View view, int position) {
-        log("isA " + isA, "::: isInpost " + isInPost);
-        if (isA && !isInPost) {
+        if (isA && !inAPost) {
             startPost(getImage(position));
             return;
         }
@@ -93,7 +92,7 @@ public class CustomPictureFragment extends PictureFragment {
             case TYPE_A_UNIFORM:
                 isA = true;
                 layout = R.layout.post_item;
-                if (isInPost) {
+                if (inAPost) {
                     layout = R.layout.picture_item;
                 }
         }
@@ -105,7 +104,7 @@ public class CustomPictureFragment extends PictureFragment {
         if (isFetching) {
             return;
         }
-        fresh = page <= 1;
+        firstPage = page <= 1;
 
         DataFetcher fetcher;
         Observable<List<Image>> source;
@@ -127,12 +126,12 @@ public class CustomPictureFragment extends PictureFragment {
             case TYPE_A_UNIFORM:
                 url = API.A_BASE;
                 fetcher = new DataFetcher(url, imageType, page);
-                source = isInPost ? fetcher.getPicturesOfPost(info) : fetcher.getAPosts();
+                source = inAPost ? fetcher.getPicturesOfPost(info) : fetcher.getAPosts();
                 break;
 
             default://imageType = 0, 代表GANK
                 url = API.GANK;
-                if (fresh) {
+                if (firstPage) {
                     LOAD_COUNT = LOAD_COUNT_LARGE;
                 }
                 fetcher = new DataFetcher(url, imageType, page);
@@ -154,7 +153,7 @@ public class CustomPictureFragment extends PictureFragment {
                     }
                 })
                 .map(image -> {
-                    if (!isA || isInPost) {
+                    if (!isA || inAPost) {
                         //不是A区，需要预加载
                         return Image.getFixedImage(context, image, imageType, page);
                     }
@@ -167,12 +166,8 @@ public class CustomPictureFragment extends PictureFragment {
                             image.setId(firstId - 1);
                             imageList.add(0, image);
                         }
-                    } else {
-//                        image.setId(imageList.size() + 1);
-//                        imageList.add(image);
                     }
                 })
-//                .buffer(BUFFER_SIZE)
                 .compose(applySchedulers())
                 .subscribe(new Subscriber<Image>() {
 
@@ -185,31 +180,39 @@ public class CustomPictureFragment extends PictureFragment {
                     @Override
                     public void onCompleted() {
                         changeState(false);
-                        adapter.setEnableLoadMore(true);
+                        if (!adapter.isLoadMoreEnable()) {
+                            adapter.setEnableLoadMore(true);
+                        }
                         size = DataBase.findImages(realm, imageType).size();
-                        log("onCompleted size change", size);
                         int add = size - oldSize;
                         if (add == 0) {
                             log("onCompleted: old new size are the same");
-                            if (isInPost) adapter.loadMoreEnd(true);
-                            if (!fresh) adapter.loadMoreFail();
-                            return;
+                            if (inAPost) adapter.loadMoreEnd(true);
+                            if (!firstPage) {
+                                adapter.loadMoreFail();
+                                page++;
+                            }
+                        } else {
+                            firstFetch = false;
+                            adapter.loadMoreComplete();
                         }
-                        isFirst = false;
-                        adapter.loadMoreComplete();
-                        SpUtil.save(imageType + Constants.PAGE, page);
+                        Log.i(TAG, "onCompleted: page " + page + ", size: " + size);
+                        if (!firstPage) {
+                            SpUtil.save(imageType + Constants.PAGE, page);
+                        }
                     }
 
                     @Override
                     public void onError(Throwable e) {
                         changeState(false);
-                        if (page != 1) adapter.loadMoreFail();
+                        adapter.loadMoreFail();
+                        log("onError" + page);
+                        error++;
                         if (error > 3) {
                             UiUtils.showSnackLong(rootView, R.string.net_error);
                         } else {
                             UiUtils.showSnack(rootView, R.string.load_fail);
                         }
-                        error++;
                         e.printStackTrace();
                     }
 
@@ -252,10 +255,19 @@ public class CustomPictureFragment extends PictureFragment {
     }
 
     @Override
+    public void onDestroyView() {
+        if (adapter.isLoading()) {
+            adapter.loadMoreComplete();
+        }
+        super.onDestroyView();
+    }
+
+    @Override
     public void onHiddenChanged(boolean hidden) {
         super.onHiddenChanged(hidden);//fragment被show或者hide时调用
         if (!hidden) {
             setupToolbar();
+            ((MainActivity) context).changeDrawer(!inAPost);
         }
     }
 
@@ -263,7 +275,7 @@ public class CustomPictureFragment extends PictureFragment {
     private void setupToolbar() {
         //在A区帖子中，改变toolbar的样式
         AppBarLayout.LayoutParams p = (AppBarLayout.LayoutParams) toolbar.getLayoutParams();
-        if (isInPost) {
+        if (inAPost) {
             p.setScrollFlags(0);
             ((MainActivity) context).changeNavigator(false);
             context.setToolbarTitle(title);
@@ -291,24 +303,27 @@ public class CustomPictureFragment extends PictureFragment {
     @Override
     protected void initData() {
         super.initData();
+        ((MainActivity) context).changeDrawer(!inAPost);
         images.addChangeListener(new RealmChangeListener<RealmResults<Image>>() {
-            int old;
+            int before;
 
             @Override
             public void onChange(RealmResults<Image> element) {
-                if (old == 0) {
-                    old = oldSize;
-                }
+                before = oldSize;
                 size = element.size();
-                int add = size - old;
-                if (fresh && !isFirst && !isInPost) {
-                    old = 0;//刷新首页，新数据插入到开头位置
+                int add = size - before;
+                if (!firstPage || firstFetch || inAPost || !isFetching) {
+                    adapter.notifyItemRangeInserted(before, add);
+                } else {
+                    before = 0;//刷新首页，新数据插入到开头位置
+                    adapter.notifyItemRangeInserted(before, add);
+                    recyclerView.smoothScrollToPosition(0);
                 }
-                adapter.notifyItemRangeInserted(old, add);
-                old = size;
+                before = size;
             }
         });
         adapter.setOnLoadMoreListener(() -> {
+
             page = SpUtil.getInt(imageType + Constants.PAGE, 1);
             page++;
             log("load more ", page);
@@ -316,11 +331,10 @@ public class CustomPictureFragment extends PictureFragment {
         });
         if (images.isEmpty()) {
             adapter.setEnableLoadMore(false);
-            isFirst = true;
+            firstFetch = true;
             fetch();
             changeState(true);
         }
-        ((MainActivity) context).changeDrawer(!isInPost);
     }
 
 }

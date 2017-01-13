@@ -1,6 +1,7 @@
 package com.dante.girls.picture;
 
 import android.support.design.widget.AppBarLayout;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
 
@@ -31,6 +32,7 @@ public class FavoriteFragment extends PictureFragment {
         AppBarLayout.LayoutParams p = (AppBarLayout.LayoutParams) toolbar.getLayoutParams();
         p.setScrollFlags(0);
         toolbar.setLayoutParams(p);
+        setRetainInstance(true);
     }
 
     @Override
@@ -38,7 +40,11 @@ public class FavoriteFragment extends PictureFragment {
         imageType = Constants.FAVORITE;
         super.initData();
         if (images.isEmpty()) {
-            UiUtils.showSnackLong(rootView, R.string.images_empty);
+            Log.i("test", "VisibleHint: " + getUserVisibleHint() + " isHidden " + isHidden());
+            if (isHidden()) {
+                return;
+            }
+            UiUtils.showSnack(rootView, R.string.images_empty);
         }
         adapter.setEmptyView(LayoutInflater.from(context).inflate(R.layout.empty, (ViewGroup) rootView, false));
     }

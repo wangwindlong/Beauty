@@ -9,6 +9,7 @@ import android.support.v4.view.ViewPager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
 
+import com.blankj.utilcode.utils.ScreenUtils;
 import com.dante.girls.base.BaseFragment;
 import com.dante.girls.model.MessageEvent;
 import com.dante.girls.picture.CustomPictureFragment;
@@ -64,7 +65,7 @@ public class MainTabsFragment extends BaseFragment {
         adapter = new TabPagerAdapter(getChildFragmentManager());
         initFragments();
         pager.setAdapter(adapter);
-        tabs.setTabMode(TabLayout.MODE_SCROLLABLE);
+        tabs.setTabMode(ScreenUtils.isLandscape() ? TabLayout.MODE_FIXED : TabLayout.MODE_SCROLLABLE);
         tabs.setupWithViewPager(pager);
     }
 

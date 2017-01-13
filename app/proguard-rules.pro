@@ -81,10 +81,15 @@
 -keep class * implements com.google.gson.JsonDeserializer
 ##End: configuration for Gson
 
-##Solove NullPointerException by Gson
+## Solove NullPointerException by Gson
 -keep class com.dante.girls.model.** { *; }
 -keep class android.support.v7.widget.ShareActionProvider { *; }
 -keep class com.dante.girls.net.** { *; }
 
-##retrolambda
+## retrolambda
 -dontwarn java.lang.invoke.*
+
+## AndroidUtilCode
+-keep class com.blankj.utilcode.** { *; }
+-keepclassmembers class com.blankj.utilcode.** { *; }
+-dontwarn com.blankj.utilcode.**

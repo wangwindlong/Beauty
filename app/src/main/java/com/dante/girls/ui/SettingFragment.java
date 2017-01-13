@@ -1,7 +1,6 @@
 package com.dante.girls.ui;
 
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -23,13 +22,10 @@ import com.dante.girls.utils.SpUtil;
 import com.dante.girls.utils.UiUtils;
 
 import java.io.File;
-import java.util.List;
 
 import rx.Observable;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
-
-import static com.dante.girls.base.App.context;
 
 
 /**
@@ -58,12 +54,6 @@ public class SettingFragment extends PreferenceFragment implements Preference.On
     private int secretIndex;
     private Preference theme;
 
-    public static boolean isIntentSafe(Intent intent) {
-        PackageManager packageManager = context.getPackageManager();
-        List activities = packageManager.queryIntentActivities(intent,
-                PackageManager.MATCH_DEFAULT_ONLY);
-        return activities.size() > 0;
-    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -138,7 +128,6 @@ public class SettingFragment extends PreferenceFragment implements Preference.On
             if (secretIndex < 3) {
                 secretIndex++;
             }
-
         }
     }
 
@@ -185,6 +174,7 @@ public class SettingFragment extends PreferenceFragment implements Preference.On
 
     private boolean clearCache() {
         DataBase.clearAllImages();
+        SpUtil.clear();
         return CleanUtils.cleanInternalCache();
     }
 
@@ -198,7 +188,7 @@ public class SettingFragment extends PreferenceFragment implements Preference.On
         }
         if (AppUtil.isIntentSafe(email)) {
             email.setData(Uri.parse("mailto:danteandroi@gmail.com"));
-            email.putExtra(Intent.EXTRA_SUBJECT, "'Girls' Feedback");
+            email.putExtra(Intent.EXTRA_SUBJECT, getString(R.string.app_name) + " Feedback");
             email.putExtra(Intent.EXTRA_TEXT, "Hi，");
             startActivity(email);
         } else {

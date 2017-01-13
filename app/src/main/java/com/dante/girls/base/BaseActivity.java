@@ -1,18 +1,19 @@
 package com.dante.girls.base;
 
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.util.SparseArray;
 import android.view.MotionEvent;
 import android.view.animation.AccelerateInterpolator;
 import android.view.animation.DecelerateInterpolator;
 
 import com.bugtags.library.Bugtags;
+import com.dante.girls.MainActivity;
 import com.dante.girls.R;
 
 import butterknife.ButterKnife;
@@ -109,7 +110,6 @@ public abstract class BaseActivity extends AppCompatActivity {
         realm.close();
     }
 
-
     public void setToolbarTitle(String title) {
         if (toolbar != null) {
             toolbar.setTitle(title);
@@ -127,18 +127,9 @@ public abstract class BaseActivity extends AppCompatActivity {
         if (fragment == null || currentFragment == fragment) {
             return;
         }
-
         Fragment old = currentFragment;
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
         transaction.setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out);
-        if (!first) {
-            Fragment saved = getSupportFragmentManager().findFragmentById(R.id.container);
-            if (saved != null) {
-                transaction.remove(saved);
-                Log.i("test", "setFragment: removed");
-                return;
-            }
-        }
 
         if (old != null) {
             transaction.hide(old);
@@ -146,38 +137,43 @@ public abstract class BaseActivity extends AppCompatActivity {
 
         if (fragment.isAdded()) {
             transaction.show(fragment);
-        } else {
-            transaction.add(R.id.container, fragment, String.valueOf(id));
-        }
-        transaction.commit();
-        this.currentFragment = fragment;
-    }
-
-    public void setFragment(int id, SparseArray<Fragment> array) {
-        setFragment(id, array, true);
-    }
-
-
-    public void setFragment(Fragment fragment) {
-        if (currentFragment == fragment) {
+            transaction.commit();
             return;
         }
-        if (fragment == null) {
-            fragment = currentFragment;
+        if (first) {
+            transaction.add(R.id.container, fragment, String.valueOf(id));
+        } else {
+            transaction.replace(R.id.container, fragment, String.valueOf(id));
         }
+        transaction.commit();
 
+        this.currentFragment = fragment;
+    }
+
+    public void switchMenu(int id, SparseArray<Fragment> array) {
+        Fragment fragment = array.get(id);
+        if (fragment == null || currentFragment == fragment) {
+            return;
+        }
         Fragment old = currentFragment;
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
         transaction.setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out);
+
         if (old != null) {
             transaction.hide(old);
         }
+
         if (fragment.isAdded()) {
             transaction.show(fragment);
+            transaction.commit();
         } else {
-            transaction.add(R.id.container, fragment);
+            new Handler().postDelayed(() -> {
+                transaction.add(R.id.container, fragment, String.valueOf(id));
+                transaction.commit();
+            }, MainActivity.DRAWER_CLOSE_DELAY);
         }
-        transaction.commit();
+
         this.currentFragment = fragment;
+
     }
 }

@@ -19,5 +19,6 @@ public class SettingsActivity extends BaseActivity {
         super.initViews(savedInstanceState);
 //        setSupportActionBar(((Toolbar) findViewById(R.id.toolbar)));
 //        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
     }
 }

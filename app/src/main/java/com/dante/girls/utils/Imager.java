@@ -17,14 +17,6 @@ import com.dante.girls.base.App;
  */
 public class Imager {
 
-    public static void load(Context context, String url, ImageView view) {
-        Glide.with(context)
-                .load(url)
-//                .thumbnail(0.5f)
-                .diskCacheStrategy(DiskCacheStrategy.SOURCE)
-                .crossFade()
-                .into(view);
-    }
 
     public static void loadDefer(final Fragment context, String url, SimpleTarget<Bitmap> target) {
         Glide.with(context)

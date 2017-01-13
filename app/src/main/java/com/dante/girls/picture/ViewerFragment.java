@@ -3,6 +3,8 @@ package com.dante.girls.picture;
 import android.Manifest;
 import android.annotation.TargetApi;
 import android.app.AlertDialog;
+import android.app.WallpaperManager;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Build;
 import android.os.Bundle;
@@ -27,6 +29,8 @@ import com.like.LikeButton;
 import com.like.OnLikeListener;
 import com.tbruyelle.rxpermissions.RxPermissions;
 
+import java.io.IOException;
+
 import butterknife.BindView;
 import rx.Observable;
 import rx.Subscription;
@@ -38,6 +42,8 @@ import rx.subscriptions.CompositeSubscription;
  */
 public class ViewerFragment extends BaseFragment implements View.OnLongClickListener, View.OnClickListener {
 
+    public static final String DONT_HINT = "dont_hint";
+    public static final String HINT = "first_hint";
     private static final String TAG = "test";
     @BindView(R.id.headImage)
     TouchImageView imageView;
@@ -121,19 +127,48 @@ public class ViewerFragment extends BaseFragment implements View.OnLongClickList
         blur(bitmap);
 
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
-        final String[] items = {getString(R.string.share_to), getString(R.string.save_img)};
+        final String[] items = {getString(R.string.share_to), getString(R.string.save_img), getString(R.string.set_wallpaper)};
         builder.setItems(items, (dialog, which) -> {
             if (which == 0) {
                 share(bitmap);
             } else if (which == 1) {
-                context.hideSystemUi();
                 save(bitmap);
+            } else if (which == 2) {
+                setWallpaper(bitmap);
             }
         }).setOnDismissListener(dialogInterface -> {
             imageView.setImageBitmap(bitmap);
-            context.hideSystemUi();
         }).show();
         return true;
+    }
+
+    @TargetApi(Build.VERSION_CODES.KITKAT)
+    private void setWallpaper(Bitmap bitmap) {
+        WallpaperManager manager = WallpaperManager.getInstance(context.getApplicationContext());
+        if (android.os.Build.VERSION.SDK_INT < android.os.Build.VERSION_CODES.KITKAT) {
+            try {
+                manager.setBitmap(bitmap);
+            } catch (IOException e) {
+                e.printStackTrace();
+                UiUtils.showSnack(rootView, R.string.set_wallpaper_failed);
+            }
+            return;
+        }
+        RxPermissions permissions = new RxPermissions(context);
+        Subscription subscription = permissions.request(Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                .map(granted -> BitmapUtil.writeToFile(bitmap))
+                .compose(applySchedulers())
+                .subscribe(file -> {
+                    if (file != null && file.exists()) {
+                        Intent intent = null;
+                        intent = manager.getCropAndSetWallpaperIntent(
+                                BitmapUtil.getImageContentUri(context, file.getAbsolutePath()));
+                        startActivity(intent);
+                    } else {
+                        UiUtils.showSnack(rootView, R.string.set_wallpaper_failed);
+                    }
+                });
+        tasks.add(subscription);
     }
 
     private void blur(Bitmap bitmap) {
@@ -153,8 +188,11 @@ public class ViewerFragment extends BaseFragment implements View.OnLongClickList
                 .compose(applySchedulers())
                 .subscribe(file -> {
                     if (file != null && file.exists()) {
-                        UiUtils.showSnack(rootView, getString(R.string.save_img_success)
-                                + file.getPath());
+                        if (SpUtil.getBoolean(DONT_HINT)) {
+                            return;
+                        }
+                        UiUtils.showSnack(rootView, R.string.save_img_success,
+                                R.string.dont_hint, v -> SpUtil.save(DONT_HINT, true));
 
                     } else {
                         UiUtils.showSnack(rootView, R.string.save_img_failed);
@@ -182,9 +220,9 @@ public class ViewerFragment extends BaseFragment implements View.OnLongClickList
 
     @Override
     public void onClick(View v) {
-        if (!SpUtil.getBoolean(Constants.HAS_HINT)) {
-            showHint();
-            SpUtil.save(Constants.HAS_HINT, true);
+        if (!SpUtil.getBoolean(HINT)) {
+//            showHint();
+            SpUtil.save(HINT, true);
         } else {
             context.supportFinishAfterTransition();
         }

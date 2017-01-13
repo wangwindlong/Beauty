@@ -51,7 +51,7 @@
     <string name="try_again">You must kidding</string>
     <string name="load_no_result">Oooops, girls are too shy to show.</string>
     <string name="save_img_failed">Unable to save image.</string>
-    <string name="save_img_success">Girl is saved at</string>
+    <string name="save_img_success">Girl is saved.</string>
     <string name="view_img_hint">Pull down to exit; Long press the girl to save to local.</string>
     <string name="save_img">Save</string>
     <string name="leave_app">Are you sure to leave?</string>
@@ -102,4 +102,9 @@
     </string>
     <string name="update">Update now</string>
     <string name="net_error">Load failed too much times, is your network stable?</string>
+    <string name="set_wallpaper_failed">Fail to set wallpaper</string>
+    <string name="set_wallpaper">Set as wallpaper</string>
+    <string name="net_error_detail">Learn more</string>
+    <string name="is_loading">Loading now, go have a drink</string>
+    <string name="dont_hint">No more hint</string>
 </resources>

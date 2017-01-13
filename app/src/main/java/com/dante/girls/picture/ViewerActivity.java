@@ -48,8 +48,8 @@ public class ViewerActivity extends BaseActivity implements RealmChangeListener 
 
     @Override
     protected void onPause() {
+        SpUtil.save(type + Constants.VIEW_POSITION, currentPosition);
         super.onPause();
-        SpUtil.save(type + Constants.POSITION, currentPosition);
     }
 
     @Override

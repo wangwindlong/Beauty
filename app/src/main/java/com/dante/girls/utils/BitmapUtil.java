@@ -1,5 +1,8 @@
 package com.dante.girls.utils;
 
+import android.content.ContentValues;
+import android.content.Context;
+import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.PixelFormat;
@@ -8,6 +11,7 @@ import android.media.MediaScannerConnection;
 import android.net.Uri;
 import android.os.Environment;
 import android.provider.MediaStore;
+import android.util.Log;
 
 import com.dante.girls.base.App;
 
@@ -15,6 +19,8 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+
+import static com.mikepenz.iconics.Iconics.TAG;
 
 /**
  * Bitmap convert utils
@@ -63,4 +69,28 @@ public class BitmapUtil {
         return file;
     }
 
+    public static Uri getImageContentUri(Context context, String absPath) {
+        Log.v(TAG, "getImageContentUri: " + absPath);
+
+        Cursor cursor = context.getContentResolver().query(
+                MediaStore.Images.Media.EXTERNAL_CONTENT_URI
+                , new String[]{MediaStore.Images.Media._ID}
+                , MediaStore.Images.Media.DATA + "=? "
+                , new String[]{absPath}, null);
+
+        if (cursor != null && cursor.moveToFirst()) {
+            int id = cursor.getInt(cursor.getColumnIndex(MediaStore.MediaColumns._ID));
+            return Uri.withAppendedPath(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, Integer.toString(id));
+
+        } else if (!absPath.isEmpty()) {
+            ContentValues values = new ContentValues();
+            values.put(MediaStore.Images.Media.DATA, absPath);
+            return context.getContentResolver().insert(
+                    MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values);
+        }
+        if (cursor != null) {
+            cursor.close();
+        }
+        return null;
+    }
 }

@@ -20,6 +20,7 @@ import com.dante.girls.model.DataBase;
 import com.dante.girls.model.Image;
 import com.dante.girls.ui.SettingFragment;
 import com.dante.girls.utils.SpUtil;
+import com.dante.girls.utils.UiUtils;
 
 import java.util.List;
 
@@ -50,6 +51,7 @@ public abstract class PictureFragment extends RecyclerFragment {
     @Override
     public void onPause() {
         firstPosition = layoutManager.findFirstVisibleItemPositions(new int[layoutManager.getSpanCount()])[0];
+        SpUtil.save(imageType + Constants.POSITION, firstPosition);
         super.onPause();
     }
 
@@ -90,7 +92,6 @@ public abstract class PictureFragment extends RecyclerFragment {
             }
         });
         imageType = baseType;
-        log("initViews end: ", imageType);
     }
 
     protected void onImageClicked(View view, int position) {
@@ -117,6 +118,12 @@ public abstract class PictureFragment extends RecyclerFragment {
     public void changeState(boolean fetching) {
         isFetching = fetching;
         changeRefresh(isFetching);
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        changeState(false);
     }
 
     @Override
@@ -162,17 +169,17 @@ public abstract class PictureFragment extends RecyclerFragment {
     public void onRefresh() {
         page = 1;
         fetch();
+        if (adapter.isLoading()) {
+            changeRefresh(false);
+            UiUtils.showSnack(rootView, R.string.is_loading);
+        }
     }
 
     public Image getImage(int position) {
         return adapter.getData().get(position);
     }
 
-    //    @Override
-//    public void onDestroyView() {
-//        SPUtil.save(imageType + Constants.PAGE, page);
-//        super.onDestroyView();
-//    }
+
     public class WrapContentLinearLayoutManager extends StaggeredGridLayoutManager {
         WrapContentLinearLayoutManager(int spanCount, int orientation) {
             super(spanCount, orientation);

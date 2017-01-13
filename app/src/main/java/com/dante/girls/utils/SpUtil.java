@@ -32,6 +32,10 @@ public class SpUtil {
         return sp.getString(key, defaultValue);
     }
 
+    public static void remove(String key) {
+        editor.remove(key).apply();
+    }
+
     public static String getString(String key) {
         return sp.getString(key, "");
     }
@@ -46,5 +50,9 @@ public class SpUtil {
 
     public static boolean getBoolean(String key) {
         return sp.getBoolean(key, false);
+    }
+
+    public static void clear() {
+        editor.clear().apply();
     }
 }

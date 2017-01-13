@@ -20,7 +20,6 @@ import android.support.v4.content.ContextCompat;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
-import android.util.Log;
 import android.util.SparseArray;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -30,7 +29,6 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 
 import com.dante.girls.base.BaseActivity;
-import com.dante.girls.base.Constants;
 import com.dante.girls.helper.RevealHelper;
 import com.dante.girls.helper.Updater;
 import com.dante.girls.lib.PopupDialogActivity;
@@ -52,6 +50,7 @@ import butterknife.BindView;
 
 import static android.support.design.widget.AppBarLayout.LayoutParams.SCROLL_FLAG_ENTER_ALWAYS_COLLAPSED;
 import static android.support.design.widget.AppBarLayout.LayoutParams.SCROLL_FLAG_SCROLL;
+import static android.support.v4.widget.DrawerLayout.LOCK_MODE_LOCKED_CLOSED;
 import static com.dante.girls.net.API.TYPE_A_ANIME;
 import static com.dante.girls.net.API.TYPE_A_FULI;
 import static com.dante.girls.net.API.TYPE_A_HENTAI;
@@ -67,6 +66,7 @@ import static com.dante.girls.utils.AppUtil.donate;
 
 public class MainActivity extends BaseActivity implements NavigationView.OnNavigationItemSelectedListener {
     public static final String MAIN_FRAGMENT_TAG = "main";
+    public static final int DRAWER_CLOSE_DELAY = 230;
     private static final String TAG = "MainActivity";
     @BindView(R.id.fab)
     public FloatingActionButton fab;
@@ -83,7 +83,7 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
     private MenuItem currentMenu;
     private SparseArray<Fragment> fragmentSparseArray;
     private Updater updater;
-    private Fragment currentFragment;
+    private boolean isFirst = true;
 
     @Override
     protected int initLayoutId() {
@@ -98,7 +98,7 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
         setupDrawer();
         initNavigationView();
         initFab();
-        initFragments(savedInstanceState == null);
+        initFragments(savedInstanceState);
     }
 
     private void initFab() {
@@ -152,7 +152,6 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        Log.d(TAG, "onSaveInstanceState: ");
         if (currentMenu != null) {
             outState.putInt("itemId", currentMenu.getItemId());
         }
@@ -162,7 +161,6 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
     protected void onRestoreInstanceState(Bundle savedInstanceState) {
         super.onRestoreInstanceState(savedInstanceState);
         int itemId = savedInstanceState.getInt("itemId", R.id.nav_beauty);
-        Log.i(TAG, "onRestoreInstanceState: ");
         MenuItem currentMenu = navView.getMenu().findItem(itemId);
         navView.setCheckedItem(itemId);
         if (currentMenu != null) {
@@ -170,37 +168,30 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
         }
     }
 
-    private void initFragments(boolean first) {
-        if (fragmentSparseArray != null) {
-            Log.i("test", "initFragments: array not null");
-            return;
-        }
+    private void initFragments(Bundle savedInstanceState) {
+        if (fragmentSparseArray == null) {
+            String[] titles, types;
+            fragmentSparseArray = new SparseArray<>();
+            String[] all = getResources().getStringArray(R.array.db_titles);
+            if (SpUtil.getBoolean(SettingFragment.SECRET_MODE)) {
+                //Gank & Douban
+                titles = all;
+                types = new String[]{TYPE_GANK, TYPE_DB_RANK, TYPE_DB_BREAST, TYPE_DB_BUTT, TYPE_DB_LEG, TYPE_DB_SILK};
+            } else {
+                titles = new String[]{all[0]};
+                types = new String[]{TYPE_GANK};
+            }
+            fragmentSparseArray.put(R.id.nav_beauty, MainTabsFragment.newInstance(titles, types));
 
-        String[] titles, types;
-        fragmentSparseArray = new SparseArray<>();
-        String[] all = getResources().getStringArray(R.array.db_titles);
-        if (SpUtil.getBoolean(SettingFragment.SECRET_MODE)) {
-            //Gank & Douban
-            titles = all;
-            types = new String[]{TYPE_GANK, TYPE_DB_RANK, TYPE_DB_BREAST, TYPE_DB_BUTT, TYPE_DB_LEG, TYPE_DB_SILK};
-        } else {
-            titles = new String[]{all[0]};
-            types = new String[]{TYPE_GANK};
+            //二次元
+            titles = getResources().getStringArray(R.array.a_titles);
+            types = new String[]{TYPE_A_ANIME, TYPE_A_FULI, TYPE_A_HENTAI, TYPE_A_UNIFORM, TYPE_A_ZATU};
+            fragmentSparseArray.put(R.id.nav_a, MainTabsFragment.newInstance(titles, types));
+            //favorite
+            fragmentSparseArray.put(R.id.nav_favorite, new FavoriteFragment());
         }
-        putFragment(R.id.nav_beauty, titles, types);
-        //二次元
-        titles = getResources().getStringArray(R.array.a_titles);
-        types = new String[]{TYPE_A_ANIME, TYPE_A_FULI, TYPE_A_HENTAI, TYPE_A_UNIFORM, TYPE_A_ZATU};
-        putFragment(R.id.nav_a, titles, types);
-        //favorite
-        fragmentSparseArray.put(R.id.nav_favorite, new FavoriteFragment());
         //Main
-        setFragment(R.id.nav_beauty, fragmentSparseArray, first);
-    }
-
-
-    private void putFragment(int navId, String[] titles, String[] types) {
-        fragmentSparseArray.put(navId, MainTabsFragment.newInstance(titles, types));
+        setFragment(R.id.nav_beauty, fragmentSparseArray, savedInstanceState == null);
     }
 
     private void setupDrawer() {
@@ -216,7 +207,6 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
             drawerLayout.closeDrawers();
             return;
         }
-
         doublePressBackToQuit();
     }
 
@@ -269,25 +259,28 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
         int id = item.getItemId();
         switch (id) {
             case R.id.nav_setting:
-                startActivity(new Intent(getApplicationContext(), SettingsActivity.class));
+                new Handler().postDelayed(() -> {
+                    changeDrawer(false);
+                    startActivity(new Intent(getApplicationContext(), SettingsActivity.class));
+
+                }, DRAWER_CLOSE_DELAY);
                 break;
             case R.id.nav_share:
-                String text = SpUtil.get(Constants.SHARE_APP, getString(R.string.share_app_description));
+                String text = SpUtil.get(Updater.SHARE_APP, getString(R.string.share_app_description));
                 Share.shareText(this, text);
                 break;
             default:
                 currentMenu = item;
-                setToolbarTitle(getCurrentMenuTitle());
-                setFragment(id, fragmentSparseArray);
+                if (isFirst) {
+                    setToolbarTitle(getCurrentMenuTitle());
+                    switchMenu(id, fragmentSparseArray);
+                }
                 break;
         }
         drawerLayout.closeDrawers();
         return true;
     }
 
-    private void replace(String[] titles, String[] types) {
-        replaceFragment(MainTabsFragment.newInstance(titles, types), "");
-    }
 
     public void changeNavigator(boolean enable) {
         if (enable) {
@@ -326,6 +319,8 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
     }
 
     public void changeDrawer(boolean enable) {
-        drawerLayout.setEnabled(enable);
+        drawerLayout.setDrawerLockMode(enable ?
+                DrawerLayout.LOCK_MODE_UNLOCKED : LOCK_MODE_LOCKED_CLOSED);
+
     }
 }

@@ -23,7 +23,7 @@ public abstract class RecyclerFragment extends BaseFragment implements SwipeRefr
     RecyclerView recyclerView;
     @BindView(R.id.swipe_refresh)
     SwipeRefreshLayout swipeRefresh;
-    boolean isFirst;   //whether is first time to enter fragment
+    boolean firstFetch;   //whether is first time to enter fragment
     String imageType;               // imageType of recyclerView's content
     int lastPosition;       //last visible position
     int firstPosition;      //first visible position
@@ -39,21 +39,13 @@ public abstract class RecyclerFragment extends BaseFragment implements SwipeRefr
     public void onViewStateRestored(Bundle savedInstanceState) {
         super.onViewStateRestored(savedInstanceState);
         if (savedInstanceState == null) {
-            //restoring position when reentering fragment.
+            //restoring position when reentering app.
             lastPosition = SpUtil.getInt(imageType + Constants.POSITION);
-            log("retore", imageType);
             if (lastPosition > 0) {
-                log("retore lastPosition", lastPosition);
+                log("restore lastPosition", lastPosition);
                 recyclerView.scrollToPosition(lastPosition);
             }
         }
-    }
-
-    @Override
-    public void onPause() {
-        super.onPause();
-        changeRefresh(false);
-        SpUtil.save(imageType + Constants.POSITION, firstPosition);
     }
 
     @Override
@@ -69,6 +61,22 @@ public abstract class RecyclerFragment extends BaseFragment implements SwipeRefr
                 getColor(R.color.colorPrimaryDark), getColor(R.color.colorAccent));
 
         swipeRefresh.setOnRefreshListener(this);
+    }
+
+    @Override
+    protected void initData() {
+
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        int viewPosition = SpUtil.getInt(imageType + Constants.VIEW_POSITION);
+        if (viewPosition > 0) {
+            recyclerView.scrollToPosition(viewPosition);
+            SpUtil.remove(imageType + Constants.VIEW_POSITION);
+        }
+
     }
 
     public void changeRefresh(final boolean refreshState) {
