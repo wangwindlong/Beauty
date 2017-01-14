@@ -309,7 +309,9 @@ public class CustomPictureFragment extends PictureFragment {
 
             @Override
             public void onChange(RealmResults<Image> element) {
-                before = oldSize;
+                if (before == 0) {
+                    before = oldSize;
+                }
                 size = element.size();
                 int add = size - before;
                 if (!firstPage || firstFetch || inAPost || !isFetching) {
