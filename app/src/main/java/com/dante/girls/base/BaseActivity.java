@@ -122,24 +122,23 @@ public abstract class BaseActivity extends AppCompatActivity {
         return super.dispatchTouchEvent(ev);
     }
 
-    public void setFragment(int id, SparseArray<Fragment> array, boolean first) {
+    public void setMainFragment(int id, SparseArray<Fragment> array, boolean first) {
         Fragment fragment = array.get(id);
-        if (fragment == null || currentFragment == fragment) {
-            return;
-        }
-        Fragment old = currentFragment;
+//        if (fragment == null || currentFragment == fragment) {
+//            return;
+//        }
+//        Fragment old = currentFragment;
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-        transaction.setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out);
-
-        if (old != null) {
-            transaction.hide(old);
-        }
-
-        if (fragment.isAdded()) {
-            transaction.show(fragment);
-            transaction.commit();
-            return;
-        }
+        //Main fragment 不需要动画
+        //transaction.setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out);
+//        if (old != null) {
+//            transaction.hide(old);
+//        }
+//        if (fragment.isAdded()) {
+//            transaction.show(fragment);
+//            transaction.commit();
+//            return;
+//        }
         if (first) {
             transaction.add(R.id.container, fragment, String.valueOf(id));
         } else {
@@ -172,8 +171,6 @@ public abstract class BaseActivity extends AppCompatActivity {
                 transaction.commit();
             }, MainActivity.DRAWER_CLOSE_DELAY);
         }
-
-        this.currentFragment = fragment;
-
+        currentFragment = fragment;
     }
 }

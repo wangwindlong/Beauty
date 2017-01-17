@@ -49,6 +49,12 @@ public abstract class PictureFragment extends RecyclerFragment {
     List<Image> imageList;
 
     @Override
+    public void onDestroyView() {
+        context = null;
+        super.onDestroyView();
+    }
+
+    @Override
     public void onPause() {
         firstPosition = layoutManager.findFirstVisibleItemPositions(new int[layoutManager.getSpanCount()])[0];
         SpUtil.save(imageType + Constants.POSITION, firstPosition);

@@ -2,6 +2,7 @@ package com.dante.girls;
 
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
+import android.animation.ValueAnimator;
 import android.annotation.TargetApi;
 import android.app.AlertDialog;
 import android.content.Intent;
@@ -20,14 +21,17 @@ import android.support.v4.content.ContextCompat;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
+import android.util.Log;
 import android.util.SparseArray;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 
+import com.blankj.utilcode.utils.BarUtils;
 import com.dante.girls.base.BaseActivity;
 import com.dante.girls.helper.RevealHelper;
 import com.dante.girls.helper.Updater;
@@ -84,6 +88,7 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
     private SparseArray<Fragment> fragmentSparseArray;
     private Updater updater;
     private boolean isFirst = true;
+    private int placeHolderHeight;
 
     @Override
     protected int initLayoutId() {
@@ -93,12 +98,53 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
     @Override
     protected void initViews(@Nullable Bundle savedInstanceState) {
         super.initViews(savedInstanceState);
+        initToolbar();
         updater = Updater.getInstance(this);
         updater.check();
         setupDrawer();
         initNavigationView();
         initFab();
         initFragments(savedInstanceState);
+    }
+
+    private void initToolbar() {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
+            ViewGroup.LayoutParams layoutParams = toolbar.getLayoutParams();
+            layoutParams.height = BarUtils.getActionBarHeight(this);
+            toolbar.setLayoutParams(layoutParams);
+            return;
+        }
+        toolbar.getViewTreeObserver().addOnPreDrawListener(
+                new ViewTreeObserver.OnPreDrawListener() {
+                    @Override
+                    public boolean onPreDraw() {
+                        toolbar.getViewTreeObserver().removeOnPreDrawListener(this);
+                        int widthSpec = View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED);
+                        int heightSpec = View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED);
+                        toolbar.measure(widthSpec, heightSpec);
+                        placeHolderHeight = toolbar.getHeight();
+                        collapseToolbar();
+                        return true;
+                    }
+                });
+    }
+
+    private void collapseToolbar() {
+        Log.i(TAG, "collapseToolbar: " + BarUtils.getActionBarHeight(this));
+        ValueAnimator animator = ValueAnimator.ofInt(placeHolderHeight, BarUtils.getActionBarHeight(this));
+        animator.addUpdateListener(animation -> {
+            ViewGroup.LayoutParams layoutParams = toolbar.getLayoutParams();
+            layoutParams.height = (int) animation.getAnimatedValue();
+            toolbar.setLayoutParams(layoutParams);
+
+        });
+        animator.addListener(new AnimatorListenerAdapter() {
+            @Override
+            public void onAnimationEnd(Animator animation) {
+                super.onAnimationEnd(animation);
+            }
+        });
+        animator.start();
     }
 
     private void initFab() {
@@ -149,24 +195,24 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
         }
     }
 
-    @Override
-    protected void onSaveInstanceState(Bundle outState) {
-        super.onSaveInstanceState(outState);
-        if (currentMenu != null) {
-            outState.putInt("itemId", currentMenu.getItemId());
-        }
-    }
-
-    @Override
-    protected void onRestoreInstanceState(Bundle savedInstanceState) {
-        super.onRestoreInstanceState(savedInstanceState);
-        int itemId = savedInstanceState.getInt("itemId", R.id.nav_beauty);
-        MenuItem currentMenu = navView.getMenu().findItem(itemId);
-        navView.setCheckedItem(itemId);
-        if (currentMenu != null) {
-            onNavigationItemSelected(currentMenu);
-        }
-    }
+//    @Override
+//    protected void onSaveInstanceState(Bundle outState) {
+//        super.onSaveInstanceState(outState);
+//        if (currentMenu != null) {
+//            outState.putInt("itemId", currentMenu.getItemId());
+//        }
+//    }
+//
+//    @Override
+//    protected void onRestoreInstanceState(Bundle savedInstanceState) {
+//        super.onRestoreInstanceState(savedInstanceState);
+//        int itemId = savedInstanceState.getInt("itemId", R.id.nav_beauty);
+//        MenuItem currentMenu = navView.getMenu().findItem(itemId);
+//        navView.setCheckedItem(itemId);
+//        if (currentMenu != null) {
+//            onNavigationItemSelected(currentMenu);
+//        }
+//    }
 
     private void initFragments(Bundle savedInstanceState) {
         if (fragmentSparseArray == null) {
@@ -190,8 +236,7 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
             //favorite
             fragmentSparseArray.put(R.id.nav_favorite, new FavoriteFragment());
         }
-        //Main
-        setFragment(R.id.nav_beauty, fragmentSparseArray, savedInstanceState == null);
+        setMainFragment(R.id.nav_beauty, fragmentSparseArray, savedInstanceState == null);
     }
 
     private void setupDrawer() {
@@ -207,11 +252,15 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
             drawerLayout.closeDrawers();
             return;
         }
+        if (getSupportFragmentManager().getBackStackEntryCount() > 0) {
+            super.onBackPressed();
+            return;
+        }
         doublePressBackToQuit();
     }
 
     private void doublePressBackToQuit() {
-        if (backPressed || getSupportFragmentManager().getBackStackEntryCount() > 0) {
+        if (backPressed) {
             super.onBackPressed();
             return;
         }
@@ -262,7 +311,6 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
                 new Handler().postDelayed(() -> {
                     changeDrawer(false);
                     startActivity(new Intent(getApplicationContext(), SettingsActivity.class));
-
                 }, DRAWER_CLOSE_DELAY);
                 break;
             case R.id.nav_share:
@@ -271,10 +319,8 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
                 break;
             default:
                 currentMenu = item;
-                if (isFirst) {
-                    setToolbarTitle(getCurrentMenuTitle());
-                    switchMenu(id, fragmentSparseArray);
-                }
+                setToolbarTitle(getCurrentMenuTitle());
+                switchMenu(id, fragmentSparseArray);
                 break;
         }
         drawerLayout.closeDrawers();

@@ -115,5 +115,4 @@ public class DownloadHelper {
             context.unregisterReceiver(receiver);
         }
     }
-
 }

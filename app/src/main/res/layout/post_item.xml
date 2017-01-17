@@ -26,7 +26,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:padding="5dp"
-            android:textColor="@color/lighter_gray"
+            android:textColor="@color/grey"
             android:visibility="invisible"
             tools:text="This is a test post title, must be veryveryveryveryveryvery long (28P)"/>
 

@@ -24,10 +24,9 @@ import rx.schedulers.Schedulers;
 public class Updater {
 
     public static final String SHARE_APP = "share_app";
-
+    private static Subscription subscription;
     private final Activity context;
     private DownloadHelper helper;
-    private Subscription subscription;
 
     private Updater(Activity context) {
         this.context = context;
@@ -53,7 +52,6 @@ public class Updater {
     public void check() {
         NetService.getInstance(API.GITHUB_RAW).getAppApi().getAppInfo()
                 .filter(appInfo -> {
-//                    Log.i(TAG, "call: appInfo " + appInfo.toString());
                     return appInfo.getVersionCode() > BuildConfig.VERSION_CODE;//版本有更新
                 })
                 .doOnNext(appInfo -> SpUtil.save(Updater.SHARE_APP, appInfo.getShareApp()))

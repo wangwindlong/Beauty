@@ -16,7 +16,7 @@
         android:layout_margin="16dp"
         android:gravity="center"
         android:text="@string/thanks_for_donation"
-        android:textColor="@color/lighter_gray"
+        android:textColor="@color/divider_gray"
         android:textSize="26sp"/>
 
 </FrameLayout>

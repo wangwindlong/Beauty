@@ -1,6 +1,7 @@
 package com.dante.girls;
 
 import android.os.Bundle;
+import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -31,6 +32,8 @@ public class MainTabsFragment extends BaseFragment {
     ViewPager pager;
     @BindView(R.id.tabs)
     TabLayout tabs;
+    @BindView(R.id.appBarLayout)
+    AppBarLayout appBarLayout;
     private List<RecyclerFragment> fragments = new ArrayList<>();
     private TabPagerAdapter adapter;
 
@@ -71,6 +74,8 @@ public class MainTabsFragment extends BaseFragment {
 
     @Override
     protected void initData() {
+        appBarLayout.animate().alpha(1)
+                .setStartDelay(200).start();
         tabs.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             @Override
             public void onTabSelected(TabLayout.Tab tab) {

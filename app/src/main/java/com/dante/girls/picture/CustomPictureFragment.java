@@ -155,7 +155,7 @@ public class CustomPictureFragment extends PictureFragment {
                 .map(image -> {
                     if (!isA || inAPost) {
                         //不是A区，需要预加载
-                        return Image.getFixedImage(context, image, imageType, page);
+                        return Image.getFixedImage(this, image, imageType, page);
                     }
                     return image;
                 })
@@ -251,7 +251,6 @@ public class CustomPictureFragment extends PictureFragment {
     protected void onCreateView() {
         super.onCreateView();
         if (isA) recyclerView.setBackgroundColor(getColor(R.color.cardview_dark_background));
-        setupToolbar();
     }
 
     @Override
@@ -271,6 +270,11 @@ public class CustomPictureFragment extends PictureFragment {
         }
     }
 
+    @Override
+    public void onStart() {
+        super.onStart();
+        ((MainActivity) context).changeDrawer(!inAPost);
+    }
 
     private void setupToolbar() {
         //在A区帖子中，改变toolbar的样式
@@ -303,7 +307,9 @@ public class CustomPictureFragment extends PictureFragment {
     @Override
     protected void initData() {
         super.initData();
-        ((MainActivity) context).changeDrawer(!inAPost);
+        setupToolbar();
+//        recyclerView.animate().alpha(1)
+//                .setStartDelay(200).start();
         images.addChangeListener(new RealmChangeListener<RealmResults<Image>>() {
             int before;
 
