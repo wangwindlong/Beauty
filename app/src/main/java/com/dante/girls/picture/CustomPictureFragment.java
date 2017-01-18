@@ -102,6 +102,7 @@ public class CustomPictureFragment extends PictureFragment {
     @Override
     public void fetch() {
         if (isFetching) {
+            Log.e(TAG, "fetch: isFetching. return");
             return;
         }
         firstPage = page <= 1;
