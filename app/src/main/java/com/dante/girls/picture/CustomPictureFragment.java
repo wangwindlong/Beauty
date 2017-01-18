@@ -262,6 +262,7 @@ public class CustomPictureFragment extends PictureFragment {
         super.onDestroyView();
     }
 
+
     @Override
     public void onHiddenChanged(boolean hidden) {
         super.onHiddenChanged(hidden);//fragment被show或者hide时调用
