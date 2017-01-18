@@ -2,6 +2,7 @@ package com.dante.girls;
 
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
+import android.animation.ObjectAnimator;
 import android.animation.ValueAnimator;
 import android.annotation.TargetApi;
 import android.app.AlertDialog;
@@ -21,7 +22,6 @@ import android.support.v4.content.ContextCompat;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
-import android.util.Log;
 import android.util.SparseArray;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -45,8 +45,6 @@ import com.dante.girls.utils.SpUtil;
 import com.dante.girls.utils.UiUtils;
 import com.mikepenz.google_material_typeface_library.GoogleMaterial;
 import com.mikepenz.iconics.IconicsDrawable;
-
-import org.polaric.colorful.Colorful;
 
 import java.util.Random;
 
@@ -103,7 +101,6 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
         updater.check();
         setupDrawer();
         initNavigationView();
-        initFab();
         initFragments(savedInstanceState);
     }
 
@@ -112,6 +109,7 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
             ViewGroup.LayoutParams layoutParams = toolbar.getLayoutParams();
             layoutParams.height = BarUtils.getActionBarHeight(this);
             toolbar.setLayoutParams(layoutParams);
+            initFab();
             return;
         }
         toolbar.getViewTreeObserver().addOnPreDrawListener(
@@ -130,7 +128,11 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
     }
 
     private void collapseToolbar() {
-        Log.i(TAG, "collapseToolbar: " + BarUtils.getActionBarHeight(this));
+        ObjectAnimator objectAnimator = ObjectAnimator.ofInt(toolbar, "height", placeHolderHeight, BarUtils.getActionBarHeight(this));
+        objectAnimator.setDuration(3000);
+        objectAnimator.start();
+//        toolbar.requestLayout();
+
         ValueAnimator animator = ValueAnimator.ofInt(placeHolderHeight, BarUtils.getActionBarHeight(this));
         animator.addUpdateListener(animation -> {
             ViewGroup.LayoutParams layoutParams = toolbar.getLayoutParams();
@@ -142,6 +144,7 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
             @Override
             public void onAnimationEnd(Animator animation) {
                 super.onAnimationEnd(animation);
+                initFab();
             }
         });
         animator.start();
@@ -149,9 +152,10 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
 
     private void initFab() {
         if (SpUtil.getBoolean(SettingFragment.SECRET_MODE)) {
-            fab.setVisibility(View.GONE);
             return;
         }
+        fab.animate().setStartDelay(500)
+                .setDuration(400).scaleY(1).scaleX(1).start();
         if (android.os.Build.VERSION.SDK_INT < android.os.Build.VERSION_CODES.LOLLIPOP) {
             fab.setOnClickListener(v -> {
                 AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
@@ -271,9 +275,9 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
 
     @TargetApi(Build.VERSION_CODES.M)
     private void initNavigationView() {
-        Colorful.config(this)
-                .translucent(true)
-                .apply();
+//        Colorful.config(this)
+//                .translucent(true)
+//                .apply();
 
         //load headerView's image
         Imager.load(this, R.drawable.head, (ImageView) navView.getHeaderView(0).findViewById(R.id.headImage));
@@ -329,6 +333,7 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
 
 
     public void changeNavigator(boolean enable) {
+        if (toggle == null) return;
         if (enable) {
             toggle.setDrawerIndicatorEnabled(true);
         } else {

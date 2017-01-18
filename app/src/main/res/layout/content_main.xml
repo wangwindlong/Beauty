@@ -39,6 +39,8 @@
         android:layout_height="wrap_content"
         android:layout_gravity="top|start"
         android:layout_margin="@dimen/fab_margin"
+        android:scaleX="0"
+        android:scaleY="0"
         android:src="@drawable/ic_favorite_white_24dp"
         app:layout_anchor="@+id/container"
         app:layout_anchorGravity="bottom|right"/>
