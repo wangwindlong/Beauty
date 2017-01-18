@@ -3,8 +3,6 @@
 **五次元妹子** 是一款看妹子的APP ([获取apk](https://github.com/DanteAndroid/Beauty/releases)）
 ---
 
-Update:
-- 添加了**动漫**栏目。
 
 ## Feature
 0. 它是我另一个库 [Knowledge](https://github.com/DanteAndroid/Knowledge) 的 Rxjava &精简版
