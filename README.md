@@ -1,4 +1,4 @@
-##Android 红包问答群 459232356
+Android 红包问答群 459232356
 
 **五次元妹子** 是一款看妹子的APP ([获取apk](https://github.com/DanteAndroid/Beauty/releases)）
 ---
@@ -15,9 +15,10 @@
 <a href="./art/screenshot_main.png"><img src="./art/screenshot_main.png" width="40%"/></a><img height="0" width="8px"/><a href="./art/screenshot_menu.png"><img src="./art/screenshot_menu.png" width="40%"/></a>
 
 ## Q&A
-- Q: 我不会Rxjava，怎么办？
+- Q: 我不会Rxjava，怎么办？<br>
 A: 我建议你了解下[Rxjava](http://gank.io/post/560e15be2dca930e00da1083)，它很好用，而且Google也出了[类似的库](https://github.com/google/agera)，以后必然是发展趋势。
-- Q: 为啥返回的时候没有SharedElement的动画效果？
+
+- Q: 为啥返回的时候没有SharedElement的动画效果？<br>
 A: 我研究过[这样的效果](http://stackoverflow.com/questions/27304834/viewpager-fragments-shared-element-transitions)，但是最终即使是照搬别的项目的代码还是失败了。请知道怎么写的务必教教我。
 
 ## Support
