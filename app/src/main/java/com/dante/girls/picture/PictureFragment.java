@@ -52,10 +52,6 @@ public abstract class PictureFragment extends RecyclerFragment {
     public void onDestroyView() {
         super.onDestroyView();
         context = null;
-        if (adapter != null) {
-            adapter.destroy();
-            adapter = null;
-        }
     }
 
     @Override

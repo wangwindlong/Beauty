@@ -111,6 +111,7 @@ public abstract class BaseActivity extends AppCompatActivity {
     protected void onDestroy() {
         super.onDestroy();
         realm.close();
+        currentFragment = null;
     }
 
     public void setToolbarTitle(String title) {
