@@ -22,13 +22,9 @@ import android.support.v4.content.ContextCompat;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
-<<<<<<< HEAD
 import android.support.v7.widget.Toolbar;
 import android.util.SparseArray;
 import android.view.Gravity;
-=======
-import android.util.SparseArray;
->>>>>>> f4cc4ff091ba094e874d383f7abd07531356866f
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -36,10 +32,7 @@ import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
-<<<<<<< HEAD
 import android.widget.TextView;
-=======
->>>>>>> f4cc4ff091ba094e874d383f7abd07531356866f
 
 import com.blankj.utilcode.utils.BarUtils;
 import com.dante.girls.base.BaseActivity;
@@ -92,17 +85,11 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
     @BindView(R.id.reveal)
     FrameLayout revealView;
     private boolean backPressed;
-<<<<<<< HEAD
     private Handler mHandler = new Handler();
     private Runnable mRunnable = ()->backPressed = false;
     private MenuItem currentMenu;
     private SparseArray<Fragment> fragmentSparseArray;
 //    private Updater updater;
-=======
-    private MenuItem currentMenu;
-    private SparseArray<Fragment> fragmentSparseArray;
-    private Updater updater;
->>>>>>> f4cc4ff091ba094e874d383f7abd07531356866f
     private boolean isFirst = true;
     private int placeHolderHeight;
 
@@ -115,7 +102,6 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
     protected void initViews(@Nullable Bundle savedInstanceState) {
         super.initViews(savedInstanceState);
         initToolbar();
-<<<<<<< HEAD
 //        updater = Updater.getInstance(this);
 //        updater.check();
         setupDrawer();
@@ -136,16 +122,6 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
 //            getSupportActionBar().setDisplayUseLogoEnabled(true);
         }
         toolbar.findViewById(R.id.leftImage).setOnClickListener(view -> drawerLayout.openDrawer(Gravity.LEFT));
-=======
-        updater = Updater.getInstance(this);
-        updater.check();
-        setupDrawer();
-        initNavigationView();
-        initFragments(savedInstanceState);
-    }
-
-    private void initToolbar() {
->>>>>>> f4cc4ff091ba094e874d383f7abd07531356866f
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
             ViewGroup.LayoutParams layoutParams = toolbar.getLayoutParams();
             layoutParams.height = BarUtils.getActionBarHeight(this);
@@ -287,12 +263,9 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
     private void setupDrawer() {
         toggle = new ActionBarDrawerToggle(
                 this, drawerLayout, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
-<<<<<<< HEAD
 //        toggle = new ActionBarDrawerToggle(this, drawerLayout, toolbar,
 //                R.drawable.btg_icon_account, R.drawable.btg_icon_account);
         toggle.setDrawerIndicatorEnabled(false); //disable "hamburger to arrow" drawable
-=======
->>>>>>> f4cc4ff091ba094e874d383f7abd07531356866f
         drawerLayout.addDrawerListener(toggle);
         toggle.syncState();
     }
@@ -312,20 +285,13 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
 
     private void doublePressBackToQuit() {
         if (backPressed) {
-<<<<<<< HEAD
             mHandler.removeCallbacks(mRunnable);
-=======
->>>>>>> f4cc4ff091ba094e874d383f7abd07531356866f
             super.onBackPressed();
             return;
         }
         backPressed = true;
         UiUtils.showSnack(fab, R.string.leave_app);
-<<<<<<< HEAD
         mHandler.postDelayed(mRunnable, 2000);
-=======
-        new Handler().postDelayed(() -> backPressed = false, 2000);
->>>>>>> f4cc4ff091ba094e874d383f7abd07531356866f
     }
 
     @TargetApi(Build.VERSION_CODES.M)
@@ -390,13 +356,9 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
     public void changeNavigator(boolean enable) {
         if (toggle == null) return;
         if (enable) {
-<<<<<<< HEAD
             //去掉汉堡包图标
 //            toggle.setDrawerIndicatorEnabled(true);
             toggle.setDrawerIndicatorEnabled(false);
-=======
-            toggle.setDrawerIndicatorEnabled(true);
->>>>>>> f4cc4ff091ba094e874d383f7abd07531356866f
         } else {
             toggle.setDrawerIndicatorEnabled(false);
             toggle.setToolbarNavigationClickListener(v -> onBackPressed());
@@ -422,11 +384,7 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
 
     @Override
     protected void onDestroy() {
-<<<<<<< HEAD
 //        updater.release();
-=======
-        updater.release();
->>>>>>> f4cc4ff091ba094e874d383f7abd07531356866f
         super.onDestroy();
     }
 

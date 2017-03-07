@@ -1,10 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<<<<<<< HEAD
-<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
-=======
 <android.support.design.widget.CoordinatorLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
->>>>>>> f4cc4ff091ba094e874d383f7abd07531356866f
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -16,7 +12,6 @@
         android:layout_height="wrap_content"
         android:theme="@style/AppTheme.AppBarOverlay">
 
-<<<<<<< HEAD
         <!--<android.support.v7.widget.Toolbar-->
             <!--android:id="@+id/toolbar"-->
             <!--android:layout_width="match_parent"-->
@@ -38,17 +33,7 @@
         <include layout="@layout/toolbar_main"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"/>
-=======
-        <android.support.v7.widget.Toolbar
-            android:id="@+id/toolbar"
-            android:layout_width="match_parent"
-            android:layout_height="96dp"
-            android:background="?attr/colorPrimary"
-            android:minHeight="48dp"
-            app:layout_scrollFlags="scroll|enterAlwaysCollapsed"
-            app:popupTheme="@style/AppTheme.PopupOverlay"/>
 
->>>>>>> f4cc4ff091ba094e874d383f7abd07531356866f
     </android.support.design.widget.AppBarLayout>
 
     <FrameLayout
@@ -57,16 +42,10 @@
         android:layout_height="match_parent"
         android:background="@android:color/white"
         app:layout_behavior="@string/appbar_scrolling_view_behavior">
-<<<<<<< HEAD
 
     </FrameLayout>
 
     <include layout="@layout/reveal_donate" />
-=======
-    </FrameLayout>
-
-    <include layout="@layout/reveal_donate"/>
->>>>>>> f4cc4ff091ba094e874d383f7abd07531356866f
 
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/fab"
@@ -76,15 +55,8 @@
         android:layout_margin="@dimen/fab_margin"
         android:scaleX="0"
         android:scaleY="0"
-<<<<<<< HEAD
         app:layout_anchor="@+id/container"
         app:layout_anchorGravity="bottom|right" />
     <!--android:src="@drawable/ic_favorite_white_24dp"-->
-
-=======
-        android:src="@drawable/ic_favorite_white_24dp"
-        app:layout_anchor="@+id/container"
-        app:layout_anchorGravity="bottom|right"/>
->>>>>>> f4cc4ff091ba094e874d383f7abd07531356866f
 
 </android.support.design.widget.CoordinatorLayout>
