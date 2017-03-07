@@ -42,6 +42,12 @@
             android:name=".ui.AboutActivity"
             android:label="@string/about"
             android:parentActivityName=".MainActivity"/>
+        <activity
+            android:name=".ui.DummyActivity"
+            android:label="@string/about"
+            android:parentActivityName=".MainActivity"
+            android:theme="@style/AppTheme.Transparent"
+            android:screenOrientation="portrait"/>
         <activity android:name=".lib.PopupDialogActivity"
                   android:theme="@style/Translucent"/>
         <provider

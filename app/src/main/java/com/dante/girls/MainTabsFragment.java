@@ -3,6 +3,8 @@ package com.dante.girls;
 import android.os.Bundle;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.TabLayout;
+import android.support.design.widget.TabLayout.Tab;
+import android.support.design.widget.TabLayout.OnTabSelectedListener;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
@@ -34,6 +36,8 @@ public class MainTabsFragment extends BaseFragment {
     TabLayout tabs;
     @BindView(R.id.appBarLayout)
     AppBarLayout appBarLayout;
+
+    private OnTabSelectedListener mTabSelectedListener;
     private List<RecyclerFragment> fragments = new ArrayList<>();
     private TabPagerAdapter adapter;
 
@@ -64,6 +68,34 @@ public class MainTabsFragment extends BaseFragment {
     }
 
     @Override
+    protected void onCreateView() {
+        super.onCreateView();
+        mTabSelectedListener = new OnTabSelectedListener() {
+            @Override
+            public void onTabSelected(Tab tab) {
+                pager.setCurrentItem(tab.getPosition());
+            }
+
+            @Override
+            public void onTabUnselected(Tab tab) {
+
+            }
+
+            @Override
+            public void onTabReselected(Tab tab) {
+                scrollToTop(fragments.get(tab.getPosition()).getRecyclerView());
+            }
+        };
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        mTabSelectedListener = null;
+
+    }
+
+    @Override
     protected void initViews() {
         adapter = new TabPagerAdapter(getChildFragmentManager());
         initFragments();
@@ -72,26 +104,13 @@ public class MainTabsFragment extends BaseFragment {
         tabs.setupWithViewPager(pager);
     }
 
+
+
     @Override
     protected void initData() {
         appBarLayout.animate().alpha(1)
                 .setStartDelay(200).start();
-        tabs.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
-            @Override
-            public void onTabSelected(TabLayout.Tab tab) {
-                pager.setCurrentItem(tab.getPosition());
-            }
-
-            @Override
-            public void onTabUnselected(TabLayout.Tab tab) {
-
-            }
-
-            @Override
-            public void onTabReselected(TabLayout.Tab tab) {
-                scrollToTop(fragments.get(tab.getPosition()).getRecyclerView());
-            }
-        });
+        tabs.addOnTabSelectedListener(mTabSelectedListener);
 //        setExitSharedElementCallback(new SharedElementCallback() {
 //            @Override
 //            public void onMapSharedElements(List<String> names, Map<String, View> sharedElements) {

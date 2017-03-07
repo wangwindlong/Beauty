@@ -40,6 +40,7 @@ import com.dante.girls.helper.RevealHelper;
 import com.dante.girls.helper.Updater;
 import com.dante.girls.lib.PopupDialogActivity;
 import com.dante.girls.picture.FavoriteFragment;
+import com.dante.girls.ui.DummyActivity;
 import com.dante.girls.ui.SettingFragment;
 import com.dante.girls.ui.SettingsActivity;
 import com.dante.girls.utils.Imager;

@@ -68,11 +68,7 @@ public class ViewerActivity extends BaseActivity implements RealmChangeListener 
 
         type = getIntent().getStringExtra(Constants.TYPE);
         images = DataBase.findImages(realm, type);
-
-        for (int i = 0; i < images.size(); i++) {
-            fragments.add(ViewerFragment.newInstance(images.get(i).url));
-        }
-        adapter = new DetailPagerAdapter(getSupportFragmentManager(), fragments);
+        adapter = new DetailPagerAdapter(getSupportFragmentManager(), images);
         pager.setAdapter(adapter);
         pager.setCurrentItem(position);
         pager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
@@ -94,6 +90,11 @@ public class ViewerActivity extends BaseActivity implements RealmChangeListener 
 
     }
 
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        adapter = null;
+    }
 
     @Override
     public void onBackPressed() {
@@ -158,21 +159,23 @@ public class ViewerActivity extends BaseActivity implements RealmChangeListener 
 
 
     private static class DetailPagerAdapter extends FragmentStatePagerAdapter {
-        private List<Fragment> fragments;
+        private List<Image> images;
 
-        DetailPagerAdapter(FragmentManager fm, List<Fragment> fragments) {
+        DetailPagerAdapter(FragmentManager fm, List<Image> images) {
             super(fm);
-            this.fragments = fragments;
+            this.images = images;
         }
 
         @Override
         public Fragment getItem(int position) {
-            return fragments.get(position);
+            if (images == null || images.size() <= position) return null;
+            return ViewerFragment.newInstance(images.get(position).url);
+//            return fragments.get(position);
         }
 
         @Override
         public int getCount() {
-            return fragments.size();
+            return images == null ? 0 : images.size();
         }
 //
 //        ViewerFragment getCurrent() {

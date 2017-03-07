@@ -1,5 +1,6 @@
 package com.dante.girls.base;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.Nullable;
@@ -16,6 +17,7 @@ import android.widget.TextView;
 import com.bugtags.library.Bugtags;
 import com.dante.girls.MainActivity;
 import com.dante.girls.R;
+import com.dante.girls.ui.DummyActivity;
 
 import butterknife.ButterKnife;
 import io.realm.Realm;
@@ -54,6 +56,13 @@ public abstract class BaseActivity extends AppCompatActivity {
 
     }
 
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        startActivity(new Intent(this, DummyActivity.class));
+        finish();
+    }
 
     public void initAppBar() {
         toolbar = (Toolbar) findViewById(R.id.toolbar);

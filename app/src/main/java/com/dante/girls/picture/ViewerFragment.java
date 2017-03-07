@@ -236,6 +236,9 @@ public class ViewerFragment extends BaseFragment implements View.OnLongClickList
     public void onDestroyView() {
         super.onDestroyView();
         tasks.unsubscribe();
+        imageView.setOnClickListener(null);
+        imageView.setOnLongClickListener(null);
+        likeBtn.setOnLikeListener(null);
     }
 
 }
