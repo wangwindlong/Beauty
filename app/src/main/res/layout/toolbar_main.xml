@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v7.widget.Toolbar xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/toolbar"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="?attr/colorPrimary"
+    android:minHeight="?attr/actionBarSize"
+    android:theme="@style/ToolbarTheme"
+    app:layout_scrollFlags="scroll|enterAlwaysCollapsed"
+    app:popupTheme="@style/AppTheme.PopupOverlay"
+    app:titleTextAppearance="@style/Toolbar.TitleText"
+    app:contentInsetLeft="0dp"
+    app:contentInsetStart="0dp">
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        >
+        <TextView
+            style="@style/TextAppearance.AppCompat.Widget.ActionBar.Title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:maxLines="1"
+            android:layout_marginLeft="60dp"
+            android:layout_marginRight="60dp"
+            android:layout_gravity="center"
+            android:id="@+id/title_tv"
+            android:text="@string/app_name" />
+        <ImageView
+            android:id="@+id/leftImage"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:padding="10dp"
+            android:layout_marginLeft="10dp"
+            android:src="@mipmap/icon_account"
+            android:layout_gravity="center_vertical"
+            />
+        <ImageView
+            android:id="@+id/rightImage"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:padding="10dp"
+            android:layout_marginRight="10dp"
+            android:src="@mipmap/icon_notify"
+            android:layout_gravity="right|center_vertical"
+
+            />
+    </FrameLayout>
+
+
+
+</android.support.v7.widget.Toolbar>
