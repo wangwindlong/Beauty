@@ -83,7 +83,4 @@ class PictureAdapter extends BaseQuickAdapter<Image, BaseViewHolder> {
 
     }
 
-    public void destroy() {
-        context = null;
-    }
 }

@@ -69,6 +69,7 @@ public abstract class PictureFragment extends RecyclerFragment {
         initFab();
         //baseType is for base url
         baseType = getArguments() == null ? "" : getArguments().getString(Constants.TYPE);
+
         layoutManager = new WrapContentLinearLayoutManager(2, StaggeredGridLayoutManager.VERTICAL);
         recyclerView.setLayoutManager(layoutManager);
 
