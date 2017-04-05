@@ -9,7 +9,7 @@ import static com.bumptech.glide.gifdecoder.GifHeaderParser.TAG;
 /**
  * Util to show hint such as snackBar or dialog.
  */
-public class UiUtils {
+public class UiUtils{
 
     public static void showSnack(View rootView, int textId) {
         if (null != rootView) {
@@ -32,6 +32,11 @@ public class UiUtils {
     public static void showSnackLong(View rootView, int textId, int actionTextId, View.OnClickListener onClickListener) {
         if (null != rootView) {
             Snackbar.make(rootView, textId, Snackbar.LENGTH_LONG).setAction(actionTextId, onClickListener).show();
+        }
+    }
+    public static void showSnackLong(View rootView, String text, int actionTextId, View.OnClickListener onClickListener) {
+        if (null != rootView) {
+            Snackbar.make(rootView, text, Snackbar.LENGTH_LONG).setAction(actionTextId, onClickListener).show();
         }
     }
 

@@ -46,19 +46,12 @@ public class Image extends RealmObject {
         this.id = id;
     }
 
-    public static Image getFixedImage(Fragment context, Image image, String type, int page) {
+    public static Image getFixedImage(Fragment context, Image image, String type) throws ExecutionException, InterruptedException {
         image.setType(type);
         Bitmap bitmap;
-        try {
-            bitmap = getBitmap(context, image.url);
-            image.setWidth(bitmap.getWidth());
-            image.setHeight(bitmap.getHeight());
-        } catch (InterruptedException | ExecutionException e) {
-            e.printStackTrace();
-        }
-//        if (image.id == 0) {
-//            image.id = page + image.width + image.height;
-//        }
+        bitmap = getBitmap(context, image.url);
+        image.setWidth(bitmap.getWidth());
+        image.setHeight(bitmap.getHeight());
         return image;
     }
 
@@ -78,6 +71,7 @@ public class Image extends RealmObject {
                 .into(Target.SIZE_ORIGINAL, Target.SIZE_ORIGINAL)
                 .get();
     }
+
 
     public void setTitle(String title) {
         this.title = title;

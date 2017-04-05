@@ -8,11 +8,9 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.SparseArray;
-import android.view.MotionEvent;
 import android.view.animation.AccelerateInterpolator;
 import android.view.animation.DecelerateInterpolator;
 
-import com.bugtags.library.Bugtags;
 import com.dante.girls.MainActivity;
 import com.dante.girls.R;
 
@@ -43,12 +41,12 @@ public abstract class BaseActivity extends AppCompatActivity {
     protected void initViews(@Nullable Bundle savedInstanceState) {
         setContentView(initLayoutId());
         ButterKnife.bind(this);
-        realm = Realm.getDefaultInstance();
         initAppBar();
         initSDK();
     }
 
     private void initSDK() {
+        realm = Realm.getDefaultInstance();
 
     }
 
@@ -92,18 +90,18 @@ public abstract class BaseActivity extends AppCompatActivity {
         }
     }
 
-    @Override
-    protected void onResume() {
-        super.onResume();
-        Bugtags.onResume(this);
-    }
-
-    @Override
-    protected void onPause() {
-        super.onPause();
-        Bugtags.onPause(this);
-    }
-
+//    @Override
+//    protected void onResume() {
+//        super.onResume();
+//        Bugtags.onResume(this);
+//    }
+//
+//    @Override
+//    protected void onPause() {
+//        super.onPause();
+//        Bugtags.onPause(this);
+//    }
+//
     @Override
     protected void onDestroy() {
         super.onDestroy();
@@ -115,12 +113,12 @@ public abstract class BaseActivity extends AppCompatActivity {
             toolbar.setTitle(title);
         }
     }
-
-    @Override
-    public boolean dispatchTouchEvent(MotionEvent ev) {
-        Bugtags.onDispatchTouchEvent(this, ev);
-        return super.dispatchTouchEvent(ev);
-    }
+//
+//    @Override
+//    public boolean dispatchTouchEvent(MotionEvent ev) {
+//        Bugtags.onDispatchTouchEvent(this, ev);
+//        return super.dispatchTouchEvent(ev);
+//    }
 
     public void setMainFragment(int id, SparseArray<Fragment> array, boolean first) {
         Fragment fragment = array.get(id);

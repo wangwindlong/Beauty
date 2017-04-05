@@ -7,7 +7,6 @@ import android.app.Activity;
 import android.os.Build;
 import android.view.View;
 import android.view.ViewAnimationUtils;
-import android.view.ViewTreeObserver;
 import android.view.animation.DecelerateInterpolator;
 
 import static android.view.ViewAnimationUtils.createCircularReveal;
@@ -30,15 +29,14 @@ public class RevealHelper {
     private Animator.AnimatorListener onRevealEnd;
     private Animator.AnimatorListener onUnrevealEnd;
     private int hypotenuse;
+    private int duration;
 
-    public RevealHelper(Activity activity) {
+    private RevealHelper(Activity activity) {
         this.activity = activity;
     }
 
-    public RevealHelper(Activity activity, View revealView) {
-        reveal(revealView);
-        this.activity = activity;
-        pixelDensity = activity.getResources().getDisplayMetrics().density;
+    public static  RevealHelper with(Activity activity) {
+        return new RevealHelper(activity);
     }
 
     public RevealHelper button(final View startButton) {
@@ -47,7 +45,16 @@ public class RevealHelper {
     }
 
     public RevealHelper reveal(View revealView) {
+        if (activity == null) {
+            throw new NullPointerException("Activity cannot be null, call with(Activity) first");
+        }
         this.revealView = revealView;
+        pixelDensity = activity.getResources().getDisplayMetrics().density;
+        return this;
+    }
+
+    public RevealHelper revealDuration(int duration) {
+        this.duration = duration;
         return this;
     }
 
@@ -55,39 +62,33 @@ public class RevealHelper {
         if (revealView == null) {
             throw new NullPointerException("Reveal view cannot be null, call reveal(View) first");
         }
-        revealView.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
-            @Override
-            public void onGlobalLayout() {
-                revealX = revealView.getWidth() / 2;
-                revealY = revealView.getHeight() / 2;
-                hypotenuse = (int) Math.hypot(revealX, revealY);
-            }
+        revealView.getViewTreeObserver().addOnGlobalLayoutListener(() -> {
+            revealX = revealView.getWidth() / 2;
+            revealY = revealView.getHeight() / 2;
+            hypotenuse = (int) Math.hypot(revealX, revealY);
         });
         if (startButton == null) {
             //if no button, just reveal the revealView from center
             revealFromCenter();
             return this;
         }
-        startButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-         /*
-         MARGIN = 16dp
-         FAB_BUTTON_RADIUS = 28 dp
-         */
-                startButton.animate()
-                        .translationX(-(revealX - (16 + 28) * pixelDensity))
-                        .translationY(-(revealY - (16 + 28) * pixelDensity))
+        startButton.setOnClickListener(view -> {
+     /*
+     MARGIN = 16dp
+     FAB_BUTTON_RADIUS = 28 dp
+     */
+            startButton.animate()
+                    .translationX(-(revealX - (16 + 28) * pixelDensity))
+                    .translationY(-(revealY - (16 + 28) * pixelDensity))
 //                        .setInterpolator(new DecelerateInterpolator())
-                        .setDuration(BUTTON_TRANSITION_DURATION)
-                        .setListener(new AnimatorListenerAdapter() {
-                            @Override
-                            public void onAnimationEnd(Animator animation) {
-                                revealFromCenter();
-                            }
-                        });
+                    .setDuration(BUTTON_TRANSITION_DURATION)
+                    .setListener(new AnimatorListenerAdapter() {
+                        @Override
+                        public void onAnimationEnd(Animator animation) {
+                            revealFromCenter();
+                        }
+                    });
 
-            }
         });
         return this;
     }
@@ -110,7 +111,7 @@ public class RevealHelper {
     @TargetApi(Build.VERSION_CODES.LOLLIPOP)
     public void revealFromCenter() {
         Animator reveal = createCircularReveal(revealView, revealX, revealY, 28 * pixelDensity, hypotenuse);
-        reveal.setDuration(REVEAL_DURATION)
+        reveal.setDuration(duration > 0 ? duration : REVEAL_DURATION)
                 .addListener(new AnimatorListenerAdapter() {
                     @Override
                     public void onAnimationEnd(Animator animation) {

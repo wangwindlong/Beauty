@@ -6,6 +6,7 @@ import android.app.AlertDialog;
 import android.app.WallpaperManager;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.view.ViewCompat;
@@ -96,12 +97,20 @@ public class ViewerFragment extends BaseFragment implements View.OnLongClickList
 
     private void load(String url) {
         Imager.loadDefer(this, url, new SimpleTarget<Bitmap>() {
+
+            @Override
+            public void onLoadFailed(Exception e, Drawable errorDrawable) {
+                imageView.setImageResource(R.drawable.error_holder);
+                UiUtils.showSnackLong(imageView, R.string.picture_load_fail, R.string.retry,
+                            v -> load(url));
+            }
+
             @Override
             public void onResourceReady(Bitmap b, GlideAnimation<? super Bitmap> arg1) {
                 bitmap = b;
                 imageView.setImageBitmap(b);
                 context.supportStartPostponedEnterTransition();
-                likeBtn.setVisibility(View.VISIBLE);
+                likeBtn.animate().setDuration(400).scaleY(1).scaleX(1).start();
             }
         });
     }

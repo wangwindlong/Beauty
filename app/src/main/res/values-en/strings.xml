@@ -107,4 +107,5 @@
     <string name="net_error_detail">Learn more</string>
     <string name="is_loading">Loading now, go have a drink</string>
     <string name="dont_hint">No more hint</string>
+    <string name="retry">retry</string>
 </resources>

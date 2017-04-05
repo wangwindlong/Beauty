@@ -21,7 +21,6 @@
     </style>
     <style name="ViewerTheme.TransNav">
         <item name="android:windowTranslucentNavigation">true</item>
-
     </style>
 
 </resources>

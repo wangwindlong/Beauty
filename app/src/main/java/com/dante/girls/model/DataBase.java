@@ -39,13 +39,6 @@ public class DataBase {
         return realm.where(realmObjectClass).findAll();
     }
 
-    public static <T extends RealmObject> void clear(Realm realm, Class<T> realmObjectClass) {
-        realm.beginTransaction();
-        findAll(realm, realmObjectClass).deleteAllFromRealm();
-        realm.commitTransaction();
-    }
-
-
     public static void save(Realm realm, RealmObject realmObject) {
         if (realmObject == null) {
             return;
@@ -90,6 +83,8 @@ public class DataBase {
 
     public static void clearAllImages() {
         Realm realm = Realm.getDefaultInstance();
-        clear(realm, Image.class);
+        realm.beginTransaction();
+        realm.delete(Image.class);
+        realm.commitTransaction();
     }
 }

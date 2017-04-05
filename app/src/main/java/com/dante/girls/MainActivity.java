@@ -96,10 +96,10 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
     @Override
     protected void initViews(@Nullable Bundle savedInstanceState) {
         super.initViews(savedInstanceState);
+        setupDrawer();
         initToolbar();
         updater = Updater.getInstance(this);
         updater.check();
-        setupDrawer();
         initNavigationView();
         initFragments(savedInstanceState);
     }
@@ -154,7 +154,7 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
         if (SpUtil.getBoolean(SettingFragment.SECRET_MODE)) {
             return;
         }
-        fab.animate().setStartDelay(500)
+        fab.animate().setStartDelay(0)
                 .setDuration(400).scaleY(1).scaleX(1).start();
         if (android.os.Build.VERSION.SDK_INT < android.os.Build.VERSION_CODES.LOLLIPOP) {
             fab.setOnClickListener(v -> {
@@ -179,7 +179,8 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
             });
         } else {
             //Reveal animation
-            final RevealHelper helper = new RevealHelper(this, revealView)
+            final RevealHelper helper = RevealHelper.with(this)
+                    .reveal(revealView)
                     .hide(container)
                     .button(fab)
                     .onRevealEnd(new AnimatorListenerAdapter() {
@@ -257,7 +258,7 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
             return;
         }
         if (getSupportFragmentManager().getBackStackEntryCount() > 0) {
-            super.onBackPressed();
+            getSupportFragmentManager().popBackStack();
             return;
         }
         doublePressBackToQuit();

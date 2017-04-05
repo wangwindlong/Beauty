@@ -15,13 +15,14 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 public class NetService {
     private static NetService instance;
+    private Retrofit retrofit;
+    private String baseUrl;
     private OkHttpClient client;
+
     private GankApi gankApi;
     private DBApi dbApi;
     private AApi aApi;
     private AppApi appApi;
-    private Retrofit retrofit;
-    private String baseUrl;
 
     public static NetService getInstance(String baseUrl) {
         if (instance == null) {

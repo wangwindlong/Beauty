@@ -1,6 +1,7 @@
 package com.dante.girls.picture;
 
 import android.content.Intent;
+import android.os.Handler;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.ActivityOptionsCompat;
@@ -18,6 +19,7 @@ import com.dante.girls.base.BaseActivity;
 import com.dante.girls.base.Constants;
 import com.dante.girls.model.DataBase;
 import com.dante.girls.model.Image;
+import com.dante.girls.net.API;
 import com.dante.girls.ui.SettingFragment;
 import com.dante.girls.utils.SpUtil;
 import com.dante.girls.utils.UiUtils;
@@ -145,8 +147,8 @@ public abstract class PictureFragment extends RecyclerFragment {
     protected void initData() {
         images = DataBase.findImages(realm, imageType);
         imageList = realm.copyFromRealm(images);
-
-        adapter.setNewData(images);
+        //优化启动动画
+        new Handler().postDelayed(() -> adapter.setNewData(images), baseType.equals(API.TYPE_GANK) ? 300 : 0);
     }
 
     private void initFab() {
