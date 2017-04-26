@@ -108,4 +108,5 @@
     <string name="is_loading">Loading now, go have a drink</string>
     <string name="dont_hint">No more hint</string>
     <string name="retry">retry</string>
+    <string name="picture_load_fail">Can\'t load the picture</string>
 </resources>

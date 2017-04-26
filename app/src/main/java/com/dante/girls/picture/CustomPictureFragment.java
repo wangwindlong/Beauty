@@ -17,6 +17,7 @@ import com.dante.girls.net.DataFetcher;
 import com.dante.girls.utils.SpUtil;
 import com.dante.girls.utils.UiUtils;
 
+import java.util.Date;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
@@ -54,6 +55,7 @@ public class CustomPictureFragment extends PictureFragment implements OrderedRea
     private int size;
     private int old;
     private int error;
+    private boolean isGank;
 
     public static CustomPictureFragment newInstance(String type) {
         Bundle args = new Bundle();
@@ -134,6 +136,7 @@ public class CustomPictureFragment extends PictureFragment implements OrderedRea
 
             default://imageType = 0, 代表GANK
                 url = API.GANK;
+                isGank = true;
                 if (firstPage) {
                     LOAD_COUNT = LOAD_COUNT_LARGE;
                 }
@@ -160,20 +163,14 @@ public class CustomPictureFragment extends PictureFragment implements OrderedRea
                         //不是A区，需要预加载
                         try {
                             image = Image.getFixedImage(this, image, imageType);
+                            if (!isGank) {
+                                image.setPublishedAt(new Date());
+                            }
                         } catch (ExecutionException | InterruptedException e) {
                             e.printStackTrace();
                         }
                     }
                     return image;
-                })
-                .doOnNext(image -> {
-                    if (page <= 1) {
-                        if (imageList.size() > 0) {
-                            int firstId = imageList.get(0).id;
-                            image.setId(firstId - 1);
-                            imageList.add(0, image);
-                        }
-                    }
                 })
                 .compose(applySchedulers())
                 .subscribe(new Subscriber<Image>() {
@@ -305,16 +302,17 @@ public class CustomPictureFragment extends PictureFragment implements OrderedRea
             adapter.notifyDataSetChanged();
             return;
         }
-//        // For deletions, the adapter has to be notified in reverse order.
+        // For deletions, the adapter has to be notified in reverse order.
 //        OrderedCollectionChangeSet.Range[] deletions = changeSet.getDeletionRanges();
 //        for (int i = deletions.length - 1; i >= 0; i--) {
 //            OrderedCollectionChangeSet.Range range = deletions[i];
-//            log("no notifyItemRangeRemoved " + range.startIndex+" to "+range.length);
+//            log("notifyItemRangeRemoved from: " + range.startIndex + " length: " + range.length);
 //            adapter.notifyItemRangeRemoved(range.startIndex, range.length);
 //        }
+
         OrderedCollectionChangeSet.Range[] insertions = changeSet.getInsertionRanges();
         for (OrderedCollectionChangeSet.Range range : insertions) {
-            log("no notifyItemRangeInserted " + range.startIndex + " to " + range.length);
+            log("notifyItemRangeInserted from: " + range.startIndex + " length: " + range.length);
             adapter.notifyItemRangeInserted(range.startIndex, range.length);
             if (page == 1) {
                 recyclerView.scrollToPosition(0);

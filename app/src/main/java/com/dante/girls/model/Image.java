@@ -8,6 +8,7 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.request.target.Target;
 
+import java.util.Date;
 import java.util.concurrent.ExecutionException;
 
 import io.realm.RealmObject;
@@ -19,7 +20,7 @@ import io.realm.annotations.PrimaryKey;
 public class Image extends RealmObject {
     public int id;
     public String type;//Gank or DB
-    public String publishedAt;
+    public Date publishedAt;
     public String info;
     public String title;
     @PrimaryKey
@@ -72,6 +73,13 @@ public class Image extends RealmObject {
                 .get();
     }
 
+    public Date getPublishedAt() {
+        return publishedAt;
+    }
+
+    public void setPublishedAt(Date publishedAt) {
+        this.publishedAt = publishedAt;
+    }
 
     public void setTitle(String title) {
         this.title = title;

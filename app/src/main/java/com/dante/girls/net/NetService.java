@@ -1,6 +1,8 @@
 package com.dante.girls.net;
 
 import com.dante.girls.BuildConfig;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
@@ -15,10 +17,23 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 public class NetService {
     private static NetService instance;
+    private final Gson gson = new GsonBuilder()
+            .setDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")
+//            .setExclusionStrategies(new ExclusionStrategy() {
+//                @Override
+//                public boolean shouldSkipField(FieldAttributes f) {
+//                    return f.getDeclaringClass().equals(RealmObject.class);
+//                }
+//
+//                @Override
+//                public boolean shouldSkipClass(Class<?> clazz) {
+//                    return false;
+//                }
+//            })
+            .create();
     private Retrofit retrofit;
     private String baseUrl;
     private OkHttpClient client;
-
     private GankApi gankApi;
     private DBApi dbApi;
     private AApi aApi;
@@ -37,7 +52,6 @@ public class NetService {
                                 .header("User-Agent", "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_3) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/55.0.2883.95 Safari/537.36")
                                 .method(original.method(), original.body())
                                 .build();
-
                         return chain.proceed(request);
                     })
                     .addInterceptor(logging).build();
@@ -85,10 +99,8 @@ public class NetService {
                 .baseUrl(baseUrl)
                 .client(client)
                 .addCallAdapterFactory(RxJavaCallAdapterFactory.create())
-                .addConverterFactory(GsonConverterFactory.create())
+                .addConverterFactory(GsonConverterFactory.create(gson))
                 .build();
         return retrofit.create(className);
     }
-
-
 }

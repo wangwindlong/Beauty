@@ -24,8 +24,6 @@ import com.dante.girls.ui.SettingFragment;
 import com.dante.girls.utils.SpUtil;
 import com.dante.girls.utils.UiUtils;
 
-import java.util.List;
-
 import io.realm.RealmResults;
 
 /**
@@ -48,7 +46,6 @@ public abstract class PictureFragment extends RecyclerFragment {
     StaggeredGridLayoutManager layoutManager;
     PictureAdapter adapter;
     RealmResults<Image> images;
-    List<Image> imageList;
 
     @Override
     public void onDestroyView() {
@@ -146,7 +143,6 @@ public abstract class PictureFragment extends RecyclerFragment {
     @Override
     protected void initData() {
         images = DataBase.findImages(realm, imageType);
-        imageList = realm.copyFromRealm(images);
         //优化启动动画
         new Handler().postDelayed(() -> adapter.setNewData(images), baseType.equals(API.TYPE_GANK) ? 300 : 0);
     }
