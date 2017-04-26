@@ -1,6 +1,6 @@
 {
 	"lastest_version": "v1.0.3",
-	"lastest_version_code": 6,
+	"lastest_version_code": 7,
 	"former_version": "v1.0.2",
 	"forceUpdate": true,
 	"message": " - Fix nullpointer bug;\n  - Code optimized.",
