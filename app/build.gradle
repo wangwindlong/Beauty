@@ -58,8 +58,6 @@ dependencies {
     })
     compile 'com.android.support:appcompat-v7:25.0.1'
     testCompile 'junit:junit:4.12'
-    releaseCompile 'com.squareup.leakcanary:leakcanary-android-no-op:1.5'
-    debugCompile 'com.squareup.leakcanary:leakcanary-android:1.5'
 
     //common libs
     compile 'com.android.support:design:25.0.1'

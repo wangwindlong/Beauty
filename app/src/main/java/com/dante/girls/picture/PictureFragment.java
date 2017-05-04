@@ -73,6 +73,7 @@ public abstract class PictureFragment extends RecyclerFragment {
 
         adapter = new PictureAdapter(initAdapterLayout(), this);
         adapter.openLoadAnimation(BaseQuickAdapter.SCALEIN);
+        adapter.disableLoadMoreIfNotFullPage(recyclerView);
         recyclerView.setAdapter(adapter);
         RecyclerView.ItemAnimator animator = recyclerView.getItemAnimator();
         if (animator instanceof SimpleItemAnimator) {

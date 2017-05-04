@@ -224,7 +224,9 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
             String[] titles, types;
             fragmentSparseArray = new SparseArray<>();
             String[] all = getResources().getStringArray(R.array.db_titles);
-            if (SpUtil.getBoolean(SettingFragment.SECRET_MODE)) {
+            boolean secretMode = SpUtil.getBoolean(SettingFragment.SECRET_MODE);
+            secretMode = true;
+            if (secretMode) {
                 //Gank & Douban
                 titles = all;
                 types = new String[]{TYPE_GANK, TYPE_DB_RANK, TYPE_DB_BREAST, TYPE_DB_BUTT, TYPE_DB_LEG, TYPE_DB_SILK};

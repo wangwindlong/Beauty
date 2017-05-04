@@ -23,6 +23,7 @@ import java.util.concurrent.ExecutionException;
 
 import io.realm.OrderedCollectionChangeSet;
 import io.realm.OrderedRealmCollectionChangeListener;
+import io.realm.Realm;
 import io.realm.RealmResults;
 import rx.Observable;
 import rx.Subscriber;
@@ -163,8 +164,11 @@ public class CustomPictureFragment extends PictureFragment implements OrderedRea
                         //不是A区，需要预加载
                         try {
                             image = Image.getFixedImage(this, image, imageType);
-                            if (!isGank) {
-                                image.setPublishedAt(new Date());
+                            if (!isGank && page <= 1) {
+                                if (Realm.getDefaultInstance().
+                                        where(Image.class).equalTo(Constants.URL, url).findFirst() == null) {
+                                    image.setPublishedAt(new Date());
+                                }
                             }
                         } catch (ExecutionException | InterruptedException e) {
                             e.printStackTrace();
@@ -303,12 +307,12 @@ public class CustomPictureFragment extends PictureFragment implements OrderedRea
             return;
         }
         // For deletions, the adapter has to be notified in reverse order.
-//        OrderedCollectionChangeSet.Range[] deletions = changeSet.getDeletionRanges();
-//        for (int i = deletions.length - 1; i >= 0; i--) {
-//            OrderedCollectionChangeSet.Range range = deletions[i];
-//            log("notifyItemRangeRemoved from: " + range.startIndex + " length: " + range.length);
-//            adapter.notifyItemRangeRemoved(range.startIndex, range.length);
-//        }
+        OrderedCollectionChangeSet.Range[] deletions = changeSet.getDeletionRanges();
+        for (int i = deletions.length - 1; i >= 0; i--) {
+            OrderedCollectionChangeSet.Range range = deletions[i];
+            log("notifyItemRangeRemoved from: " + range.startIndex + " length: " + range.length);
+            adapter.notifyItemRangeRemoved(range.startIndex, range.length);
+        }
 
         OrderedCollectionChangeSet.Range[] insertions = changeSet.getInsertionRanges();
         for (OrderedCollectionChangeSet.Range range : insertions) {

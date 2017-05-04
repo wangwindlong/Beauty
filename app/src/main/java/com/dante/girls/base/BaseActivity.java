@@ -11,6 +11,7 @@ import android.util.SparseArray;
 import android.view.animation.AccelerateInterpolator;
 import android.view.animation.DecelerateInterpolator;
 
+import com.bugtags.library.Bugtags;
 import com.dante.girls.MainActivity;
 import com.dante.girls.R;
 
@@ -90,18 +91,18 @@ public abstract class BaseActivity extends AppCompatActivity {
         }
     }
 
-//    @Override
-//    protected void onResume() {
-//        super.onResume();
-//        Bugtags.onResume(this);
-//    }
-//
-//    @Override
-//    protected void onPause() {
-//        super.onPause();
-//        Bugtags.onPause(this);
-//    }
-//
+    @Override
+    protected void onResume() {
+        super.onResume();
+        Bugtags.onResume(this);
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        Bugtags.onPause(this);
+    }
+
     @Override
     protected void onDestroy() {
         super.onDestroy();

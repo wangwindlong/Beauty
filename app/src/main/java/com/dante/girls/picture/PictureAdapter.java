@@ -30,7 +30,7 @@ class PictureAdapter extends BaseQuickAdapter<Image, BaseViewHolder> {
     PictureAdapter(int layoutId, Fragment context) {
         super(layoutId, null);
         this.context = context;
-        setHasStableIds(true);
+//        setHasStableIds(true);
     }
 
     public static String optimizeTitle(String title) {

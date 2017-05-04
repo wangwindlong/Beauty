@@ -10,7 +10,6 @@ import java.util.List;
 import io.realm.Realm;
 import io.realm.RealmObject;
 import io.realm.RealmResults;
-import io.realm.Sort;
 
 /**
  * Deals with cache, data
@@ -72,7 +71,7 @@ public class DataBase {
         }
         return realm.where(Image.class)
                 .equalTo(Constants.TYPE, type)
-                .findAllSorted("publishedAt", Sort.DESCENDING);
+                .findAll();
     }
 
     public static RealmResults<Image> findFavoriteImages(Realm realm) {
