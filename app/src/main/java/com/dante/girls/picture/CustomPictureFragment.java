@@ -17,9 +17,13 @@ import com.dante.girls.net.DataFetcher;
 import com.dante.girls.utils.SpUtil;
 import com.dante.girls.utils.UiUtils;
 
+import java.util.Date;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 
-import io.realm.RealmChangeListener;
+import io.realm.OrderedCollectionChangeSet;
+import io.realm.OrderedRealmCollectionChangeListener;
+import io.realm.Realm;
 import io.realm.RealmResults;
 import rx.Observable;
 import rx.Subscriber;
@@ -43,15 +47,16 @@ import static com.dante.girls.net.API.TYPE_DB_SILK;
  * Custom appearance of picture list fragment
  */
 
-public class CustomPictureFragment extends PictureFragment {
+public class CustomPictureFragment extends PictureFragment implements OrderedRealmCollectionChangeListener<RealmResults<Image>> {
     private static final String TAG = "CustomPictureFragment";
     private static final int BUFFER_SIZE = 2;
     boolean inAPost;
     boolean isA;
     private boolean firstPage;
     private int size;
-    private int oldSize;
+    private int old;
     private int error;
+    private boolean isGank;
 
     public static CustomPictureFragment newInstance(String type) {
         Bundle args = new Bundle();
@@ -132,6 +137,7 @@ public class CustomPictureFragment extends PictureFragment {
 
             default://imageType = 0, 代表GANK
                 url = API.GANK;
+                isGank = true;
                 if (firstPage) {
                     LOAD_COUNT = LOAD_COUNT_LARGE;
                 }
@@ -156,48 +162,35 @@ public class CustomPictureFragment extends PictureFragment {
                 .map(image -> {
                     if (!isA || inAPost) {
                         //不是A区，需要预加载
-                        return Image.getFixedImage(this, image, imageType, page);
+                        try {
+                            image = Image.getFixedImage(this, image, imageType);
+                            if (!isGank && page <= 1) {
+                                if (Realm.getDefaultInstance().
+                                        where(Image.class).equalTo(Constants.URL, url).findFirst() == null) {
+                                    image.setPublishedAt(new Date());
+                                }
+                            }
+                        } catch (ExecutionException | InterruptedException e) {
+                            e.printStackTrace();
+                        }
                     }
                     return image;
                 })
-                .doOnNext(image -> {
-                    if (page <= 1) {
-                        if (imageList.size() > 0) {
-                            int firstId = imageList.get(0).id;
-                            image.setId(firstId - 1);
-                            imageList.add(0, image);
-                        }
-                    }
-                })
                 .compose(applySchedulers())
                 .subscribe(new Subscriber<Image>() {
+                    int oldSize;
 
                     @Override
                     public void onStart() {
                         oldSize = images.size();
-                        log("old size", oldSize);
                     }
 
                     @Override
                     public void onCompleted() {
                         changeState(false);
-                        if (!adapter.isLoadMoreEnable()) {
-                            adapter.setEnableLoadMore(true);
-                        }
-                        size = DataBase.findImages(realm, imageType).size();
-                        int add = size - oldSize;
-                        if (add == 0) {
-                            log("onCompleted: old new size are the same");
-                            if (inAPost) adapter.loadMoreEnd(true);
-                            if (!firstPage) {
-                                adapter.loadMoreFail();
-                                page++;
-                            }
-                        } else {
-                            firstFetch = false;
+                        if (adapter.isLoading()) {
                             adapter.loadMoreComplete();
                         }
-                        Log.i(TAG, "onCompleted: page " + page + ", size: " + size);
                         if (!firstPage) {
                             SpUtil.save(imageType + Constants.PAGE, page);
                         }
@@ -207,7 +200,6 @@ public class CustomPictureFragment extends PictureFragment {
                     public void onError(Throwable e) {
                         changeState(false);
                         adapter.loadMoreFail();
-                        log("onError" + page);
                         error++;
                         if (error > 3) {
                             UiUtils.showSnackLong(rootView, R.string.net_error);
@@ -223,29 +215,6 @@ public class CustomPictureFragment extends PictureFragment {
                     }
                 });
         compositeSubscription.add(subscription);
-    }
-
-    private void sortData(final int added) {
-        if (imageList.size() == 0) {
-            return;
-        }
-        Log.i(TAG, "execute: before sort " + images.first().url);
-        realm.executeTransactionAsync(realm -> {
-            for (int i = 0; i < imageList.size(); i++) {
-                Image image = imageList.get(i);
-                Image data = realm.where(Image.class).equalTo(Constants.URL, image.url).findFirst();
-                if (data != null) {
-                    data.setId(i);//id作为序号: 1, 2, 3 ...
-                    Log.i(TAG, "sortData: id: " + i + "   url:" + data.url);
-                }
-            }
-        }, () -> {
-            images.sort(Constants.ID);
-            adapter.notifyItemRangeInserted(0, added);
-            Log.i(TAG, "execute: after sort " + images.first().url);
-            Log.i(TAG, "onSuccess: sortData " + added + " inserted");
-            imageList = null;
-        });
     }
 
     @Override
@@ -266,7 +235,7 @@ public class CustomPictureFragment extends PictureFragment {
     @Override
     public void onHiddenChanged(boolean hidden) {
         super.onHiddenChanged(hidden);//fragment被show或者hide时调用
-        if (!hidden) {
+        if (!hidden && context != null) {
             setupToolbar();
             ((MainActivity) context).changeDrawer(!inAPost);
         }
@@ -312,39 +281,52 @@ public class CustomPictureFragment extends PictureFragment {
         setupToolbar();
 //        recyclerView.animate().alpha(1)
 //                .setStartDelay(200).start();
-        images.addChangeListener(new RealmChangeListener<RealmResults<Image>>() {
-            int before;
+        images.addChangeListener(this);
 
-            @Override
-            public void onChange(RealmResults<Image> element) {
-                if (before == 0) {
-                    before = oldSize;
-                }
-                size = element.size();
-                int add = size - before;
-                if (!firstPage || firstFetch || inAPost || !isFetching) {
-                    adapter.notifyItemRangeInserted(before, add);
-                } else {
-                    before = 0;//刷新首页，新数据插入到开头位置
-                    adapter.notifyItemRangeInserted(before, add);
-                    recyclerView.smoothScrollToPosition(0);
-                }
-                before = size;
-            }
-        });
         adapter.setOnLoadMoreListener(() -> {
-
             page = SpUtil.getInt(imageType + Constants.PAGE, 1);
             page++;
             log("load more ", page);
             fetch();
-        });
+        }, recyclerView);
+        adapter.disableLoadMoreIfNotFullPage();
+
         if (images.isEmpty()) {
-            adapter.setEnableLoadMore(false);
             firstFetch = true;
             fetch();
             changeState(true);
         }
     }
 
+    @Override
+    public void onChange(RealmResults<Image> collection, OrderedCollectionChangeSet changeSet) {
+        // `null`  means the async query returns the first time.
+        if (changeSet == null) {
+            log("no change");
+            adapter.notifyDataSetChanged();
+            return;
+        }
+        // For deletions, the adapter has to be notified in reverse order.
+        OrderedCollectionChangeSet.Range[] deletions = changeSet.getDeletionRanges();
+        for (int i = deletions.length - 1; i >= 0; i--) {
+            OrderedCollectionChangeSet.Range range = deletions[i];
+            log("notifyItemRangeRemoved from: " + range.startIndex + " length: " + range.length);
+            adapter.notifyItemRangeRemoved(range.startIndex, range.length);
+        }
+
+        OrderedCollectionChangeSet.Range[] insertions = changeSet.getInsertionRanges();
+        for (OrderedCollectionChangeSet.Range range : insertions) {
+            log("notifyItemRangeInserted from: " + range.startIndex + " length: " + range.length);
+            adapter.notifyItemRangeInserted(range.startIndex, range.length);
+            if (page == 1) {
+                recyclerView.scrollToPosition(0);
+            }
+        }
+
+//        OrderedCollectionChangeSet.Range[] modifications = changeSet.getChangeRanges();
+//        for (OrderedCollectionChangeSet.Range range : modifications) {
+//            log("no notifyItemRangeChanged " + range.startIndex + " to " + range.length);
+//            adapter.notifyItemRangeChanged(range.startIndex, range.length);
+//        }
+    }
 }

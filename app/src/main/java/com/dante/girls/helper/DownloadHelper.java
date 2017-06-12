@@ -91,6 +91,7 @@ public class DownloadHelper {
         request.setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, apkName);
         request.setDescription(context.getResources().getString(R.string.downloading));
         taskId = manager.enqueue(request);
+
     }
 
     private void registerInstall() {

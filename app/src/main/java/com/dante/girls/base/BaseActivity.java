@@ -9,7 +9,6 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.SparseArray;
-import android.view.MotionEvent;
 import android.view.animation.AccelerateInterpolator;
 import android.view.animation.DecelerateInterpolator;
 import android.widget.TextView;
@@ -47,12 +46,12 @@ public abstract class BaseActivity extends AppCompatActivity {
     protected void initViews(@Nullable Bundle savedInstanceState) {
         setContentView(initLayoutId());
         ButterKnife.bind(this);
-        realm = Realm.getDefaultInstance();
         initAppBar();
         initSDK();
     }
 
     private void initSDK() {
+        realm = Realm.getDefaultInstance();
 
     }
 
@@ -128,12 +127,12 @@ public abstract class BaseActivity extends AppCompatActivity {
             titleTv.setText(title);
         }
     }
-
-    @Override
-    public boolean dispatchTouchEvent(MotionEvent ev) {
-        Bugtags.onDispatchTouchEvent(this, ev);
-        return super.dispatchTouchEvent(ev);
-    }
+//
+//    @Override
+//    public boolean dispatchTouchEvent(MotionEvent ev) {
+//        Bugtags.onDispatchTouchEvent(this, ev);
+//        return super.dispatchTouchEvent(ev);
+//    }
 
     public void setMainFragment(int id, SparseArray<Fragment> array, boolean first) {
         Fragment fragment = array.get(id);

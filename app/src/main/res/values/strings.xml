@@ -5,7 +5,7 @@
     <string name="title_activity_main" translatable="false">Main</string>
     <string name="menu_settings">设置</string>
     <string name="about">关于</string>
-    <string name="load_fail">网络被外星人切断，稍后再试吧</string>
+    <string name="load_fail">网络被神秘力量劫持，稍后再试试看？</string>
     <string name="share_title" translatable="false">shared_title</string>
     <string name="shared_img" translatable="false">shared_img</string>
     <string name="activity_settings">设置</string>
@@ -111,6 +111,8 @@
     <string name="set_wallpaper_failed">设置壁纸失败</string>
     <string name="is_loading">正在加载，先喝杯茶吧~</string>
     <string name="dont_hint">不再提示</string>
+    <string name="retry">不信邪</string>
+    <string name="picture_load_fail">图片被封印了，无法加载</string>
 
 
 </resources>
