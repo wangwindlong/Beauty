@@ -50,8 +50,8 @@ public abstract class RecyclerFragment extends BaseFragment implements SwipeRefr
 
     @Override
     public void onDestroy() {
-        super.onDestroy();
         compositeSubscription.unsubscribe();
+        super.onDestroy();
     }
 
     @Override
@@ -76,7 +76,6 @@ public abstract class RecyclerFragment extends BaseFragment implements SwipeRefr
             recyclerView.scrollToPosition(viewPosition);
             SpUtil.remove(imageType + Constants.VIEW_POSITION);
         }
-
     }
 
     public void changeRefresh(final boolean refreshState) {

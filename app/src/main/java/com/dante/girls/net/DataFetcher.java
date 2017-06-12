@@ -50,6 +50,8 @@ public class DataFetcher {
                             listResult.results) {
                         if (!DataBase.hasImage(null, image.url)) {
                             data.add(image);
+                        } else {
+
                         }
                     }
                     return data;
@@ -149,7 +151,6 @@ public class DataFetcher {
 //                                Log.i(TAG, "getPicturesOfPost: find saved image!");
 //                                return null;
 //                            }
-                        Log.d(TAG, "getPicturesOfPost: size" + size);
                         for (int i = 0; i < size; i++) {
                             String src = elements.get(i).attr("src").trim();
                             if (DataBase.hasImage(null, src)) {

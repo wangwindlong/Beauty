@@ -8,6 +8,7 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.request.target.Target;
 
+import java.util.Date;
 import java.util.concurrent.ExecutionException;
 
 import io.realm.RealmObject;
@@ -19,7 +20,7 @@ import io.realm.annotations.PrimaryKey;
 public class Image extends RealmObject {
     public int id;
     public String type;//Gank or DB
-    public String publishedAt;
+    public Date publishedAt;
     public String info;
     public String title;
     @PrimaryKey
@@ -46,19 +47,12 @@ public class Image extends RealmObject {
         this.id = id;
     }
 
-    public static Image getFixedImage(Fragment context, Image image, String type, int page) {
+    public static Image getFixedImage(Fragment context, Image image, String type) throws ExecutionException, InterruptedException {
         image.setType(type);
         Bitmap bitmap;
-        try {
-            bitmap = getBitmap(context, image.url);
-            image.setWidth(bitmap.getWidth());
-            image.setHeight(bitmap.getHeight());
-        } catch (InterruptedException | ExecutionException e) {
-            e.printStackTrace();
-        }
-//        if (image.id == 0) {
-//            image.id = page + image.width + image.height;
-//        }
+        bitmap = getBitmap(context, image.url);
+        image.setWidth(bitmap.getWidth());
+        image.setHeight(bitmap.getHeight());
         return image;
     }
 
@@ -77,6 +71,14 @@ public class Image extends RealmObject {
                 .diskCacheStrategy(DiskCacheStrategy.SOURCE)
                 .into(Target.SIZE_ORIGINAL, Target.SIZE_ORIGINAL)
                 .get();
+    }
+
+    public Date getPublishedAt() {
+        return publishedAt;
+    }
+
+    public void setPublishedAt(Date publishedAt) {
+        this.publishedAt = publishedAt;
     }
 
     public void setTitle(String title) {

@@ -17,6 +17,7 @@ import com.dante.girls.R;
 import com.dante.girls.lib.RatioImageView;
 import com.dante.girls.model.Image;
 import com.dante.girls.utils.Imager;
+import com.dante.girls.utils.UiUtils;
 
 /**
  * Adapter of picture list.
@@ -29,18 +30,35 @@ class PictureAdapter extends BaseQuickAdapter<Image, BaseViewHolder> {
     PictureAdapter(int layoutId, Fragment context) {
         super(layoutId, null);
         this.context = context;
-        setHasStableIds(true);
+//        setHasStableIds(true);
+    }
+
+    public static String optimizeTitle(String title) {
+        return title.replace("A区：", "")
+                .replace("APIC.IN", "")
+                .replace("-A区", "")
+                .replace("APIC-IN", "")
+                .replace("下载", "")
+                .replace("动漫", "")
+                .replace("壁纸", "")
+                .replace("图片", "")
+                .trim();
     }
 
     @Override
     public long getItemId(int position) {
-        return super.getItemId(position) + 87;
+        try {
+            return getItem(position).hashCode();
+        } catch (ArrayIndexOutOfBoundsException e) {
+            return position;
+        }
     }
 
     @Override
     protected void convert(final BaseViewHolder holder, final Image image) {
         final ImageView imageView = holder.getView(R.id.picture);
-        if (imageView instanceof RatioImageView && image.width != 0) {
+        if (imageView instanceof RatioImageView
+                && image.width != 0) {
             ((RatioImageView) imageView).setOriginalSize(image.width, image.height);
         }
         ViewCompat.setTransitionName(imageView, image.url);
@@ -48,39 +66,34 @@ class PictureAdapter extends BaseQuickAdapter<Image, BaseViewHolder> {
         final View post = holder.getView(R.id.post);
         final TextView title = holder.getView(R.id.title);
         if (post != null) {
-            String text = image.title
-                    .replace("A区：", "")
-                    .replace("APIC.IN", "")
-                    .replace("-A区", "")
-                    .replace("APIC-IN", "")
-                    .replace("下载", "")
-                    .replace("动漫", "")
-                    .replace("壁纸", "")
-                    .replace("图片", "")
-                    .trim();
-            title.setText(text);
-            title.setSelected(true);
+            title.setText(optimizeTitle(image.title));
         }
-        Imager.load(context, image.url, imageView, new RequestListener<String, Bitmap>() {
+        RequestListener<String, Bitmap> listener = new RequestListener<String, Bitmap>() {
             @Override
             public boolean onException(Exception e, String model, Target<Bitmap> target, boolean isFirstResource) {
+                if (e != null) {
+                    UiUtils.showSnackLong(imageView.getRootView(), e.getMessage(), R.string.retry,
+                            v -> Imager.load(context, image.url, imageView));
+                }
+
                 return false;
             }
 
             @Override
             public boolean onResourceReady(Bitmap resource, String model, Target<Bitmap> target, boolean isFromMemoryCache, boolean isFirstResource) {
-                Palette.from(resource).generate(palette -> {
-                    int color = palette.getDarkMutedColor(ContextCompat.getColor(mContext, R.color.cardview_dark_background));
-                    if (post != null) {
+                if (post != null) {
+                    Palette.from(resource).generate(palette -> {
+                        int color = palette.getDarkMutedColor(ContextCompat.getColor(mContext, R.color.cardview_dark_background));
                         title.setBackgroundColor(color);
                         title.setVisibility(View.VISIBLE);
-
-                    }
-                });
+                    });
+                }
                 return false;
             }
-        });
+        };
+        Imager.load(context, image.url, imageView, listener);
 
     }
+
 
 }
