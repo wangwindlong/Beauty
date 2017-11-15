@@ -1,8 +1,6 @@
 package com.dante.girls.model;
 
 
-import android.support.annotation.Nullable;
-
 import com.dante.girls.base.Constants;
 
 import java.util.List;
@@ -10,6 +8,7 @@ import java.util.List;
 import io.realm.Realm;
 import io.realm.RealmObject;
 import io.realm.RealmResults;
+import io.realm.Sort;
 
 /**
  * Deals with cache, data
@@ -54,8 +53,8 @@ public class DataBase {
         return getById(realm, id, Image.class);
     }
 
-    public static boolean hasImage(@Nullable Realm realm, String url) {
-        return getByUrl(realm, url) != null;
+    public static boolean hasImage(String url) {
+        return getByUrl(null, url) != null;
     }
 
 
@@ -71,7 +70,7 @@ public class DataBase {
         }
         return realm.where(Image.class)
                 .equalTo(Constants.TYPE, type)
-                .findAll();
+                .findAllSorted("publishedAt", Sort.DESCENDING);
     }
 
     public static RealmResults<Image> findFavoriteImages(Realm realm) {

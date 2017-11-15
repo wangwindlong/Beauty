@@ -48,7 +48,7 @@ public class DataFetcher {
                     List<Image> data = new ArrayList<>();
                     for (Image image :
                             listResult.results) {
-                        if (!DataBase.hasImage(null, image.url)) {
+                        if (!DataBase.hasImage(image.url)) {
                             data.add(image);
                         } else {
 
@@ -76,7 +76,7 @@ public class DataFetcher {
                         final int size = elements.size();
                         for (int i = 0; i < size; i++) {
                             String src = elements.get(i).attr("src").trim();
-                            if (DataBase.hasImage(null, src)) {
+                            if (DataBase.hasImage(src)) {
                                 continue;
                             }
                             images.add(new Image(src, type));
@@ -110,18 +110,23 @@ public class DataFetcher {
                             Element link = elements.get(i);
                             String postUrl = link.attr("href").replace(API.A_BASE, "");
                             String title = link.attr("title");
-                            String src = link.select("img").first().attr("src").trim();
+                            if (link.select("img").size() > 0) {
+                                String src = link.select("img").first().attr("src").trim();
+                                Log.d(TAG, "getAPosts: " + src);
 //                                if (src.endsWith("!thumb")) {
 //                                    Log.i(TAG, "load image: thumb url " + src);
 //                                    src = src.replace("!thumb", "");
 //                                }
-                            if (DataBase.hasImage(null, src)) {
-                                continue;
+
+                                if (DataBase.hasImage(src)) {
+                                    continue;
+                                }
+                                Image image = new Image(src, type);
+                                image.setInfo(postUrl);
+                                image.setTitle(title);
+                                images.add(image);
                             }
-                            Image image = new Image(src, type);
-                            image.setInfo(postUrl);
-                            image.setTitle(title);
-                            images.add(image);
+
                         }
 
                     } catch (IOException e) {
@@ -142,10 +147,10 @@ public class DataFetcher {
                     List<Image> images = new ArrayList<>();
                     try {
                         Document document = Jsoup.parse(responseBody.string());
-                        Elements elements = document.select("div[class=post] p img");
-                        Elements test = document.select("div[class=post] > p > a > img");
+                        Elements elements = document.select("article.article-content > p > img");
+                        Elements test = document.select("div[class=article-content] > p > a > img");
                         final int size = elements.size();
-                        Log.d(TAG, "call: test " + test.size());
+                        Log.d(TAG, "call: test " + elements.size());
 //                            String url = elements.last().attr("src");
 //                            if (DataBase.getByUrl(url) != null) {
 //                                Log.i(TAG, "getPicturesOfPost: find saved image!");
@@ -153,7 +158,18 @@ public class DataFetcher {
 //                            }
                         for (int i = 0; i < size; i++) {
                             String src = elements.get(i).attr("src").trim();
-                            if (DataBase.hasImage(null, src)) {
+                            Log.d(TAG, "getAPosts: src " + src);
+                            if (src.endsWith("!orgin")) {
+                                src = src.replace("!orgin", "");
+                            } else if (!src.endsWith(".jpg") && !src.endsWith("png")) {
+                                if (src.contains(".jpg")) {
+                                    src = src.substring(0, src.lastIndexOf(".jpg") + 4);
+                                } else if (src.contains(".png")) {
+                                    src = src.substring(0, src.lastIndexOf(".png") + 4);
+                                }
+                            }
+                            Log.d(TAG, "getAPosts: detail " + src);
+                            if (DataBase.hasImage(src)) {
                                 continue;
                             }
                             Image image = new Image(src, type);

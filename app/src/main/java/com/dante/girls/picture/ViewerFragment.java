@@ -95,6 +95,7 @@ public class ViewerFragment extends BaseFragment implements View.OnLongClickList
         });
     }
 
+
     private void load(String url) {
         Imager.loadDefer(this, url, new SimpleTarget<Bitmap>() {
 
