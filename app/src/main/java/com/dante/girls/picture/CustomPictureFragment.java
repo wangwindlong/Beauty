@@ -191,6 +191,9 @@ public class CustomPictureFragment extends PictureFragment implements OrderedRea
                         if (adapter.isLoading()) {
                             adapter.loadMoreComplete();
                         }
+                        if (images.size() <= oldSize) {
+                            adapter.loadMoreEnd();
+                        }
                         if (!firstPage) {
                             SpUtil.save(imageType + Constants.PAGE, page);
                         }
@@ -199,12 +202,16 @@ public class CustomPictureFragment extends PictureFragment implements OrderedRea
                     @Override
                     public void onError(Throwable e) {
                         changeState(false);
-                        adapter.loadMoreFail();
                         error++;
-                        if (error > 3) {
-                            UiUtils.showSnackLong(rootView, R.string.net_error);
+                        if (images.size() > 3) {
+                            adapter.loadMoreEnd(true);
                         } else {
-                            UiUtils.showSnack(rootView, R.string.load_fail);
+                            adapter.loadMoreFail();
+                            if (error > 2) {
+                                UiUtils.showSnackLong(rootView, R.string.net_error);
+                            } else {
+                                UiUtils.showSnack(rootView, R.string.load_fail);
+                            }
                         }
                         e.printStackTrace();
                     }
