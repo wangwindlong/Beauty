@@ -1,6 +1,6 @@
 {
 	"lastest_version": "v1.6",
-	"lastest_version_code": 16,
+	"lastest_version_code": 17,
 	"former_version": "v1.5",
 	"forceUpdate": true,
 	"message": " - Update jsoup rules;\n  - Code optimized.",
