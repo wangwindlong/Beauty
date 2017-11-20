@@ -1,9 +1,9 @@
 {
-	"lastest_version": "v1.6",
-	"lastest_version_code": 17,
-	"former_version": "v1.5",
+	"lastest_version": "v1.6.1",
+	"lastest_version_code": 18,
+	"former_version": "v1.6",
 	"forceUpdate": true,
-	"message": " - Update jsoup rules;\n  - Code optimized.",
+	"message": " - Fix bugs;\n  - Code optimized.",
 	"share_app_description": "这个软件不错，图片适合做壁纸。",
 	"apk_name":"app-armeabi-v7a-release.apk",
 	"vip":[ "67B6DF845280BEFA66729AAE3760D0CA", "75BF6E246958460F2F81E943B38E1EE7", "Taobao" ]
