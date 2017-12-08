@@ -1,9 +1,9 @@
 {
-	"lastest_version": "v1.0",
-	"lastest_version_code": 1,
+	"lastest_version": "v1.0.1",
+	"lastest_version_code": 2,
 	"former_version": "v1.0",
-	"forceUpdate": true,
-  	"message": " - 解决动漫大图不能显示的问题;\n  - 优化代码.",
+	"forceUpdate": false,
+ 	"message": " - 优化体积;\n  - 优化细节.",
 	"share_app_description": "这个软件不错，图片适合做壁纸。",
 	"apk_name":"app-armeabi-v7a-release.apk",
 	"vip":[ "67B6DF845280BEFA66729AAE3760D0CA", "75BF6E246958460F2F81E943B38E1EE7", "6579ECEFB2E8072093AA89EAE86D95A5"
