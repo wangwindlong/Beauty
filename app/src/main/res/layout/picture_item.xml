@@ -6,7 +6,7 @@
              android:layout_margin="@dimen/item_margin"
              android:foreground="?attr/selectableItemBackgroundBorderless">
 
-    <com.dante.girls.lib.RatioImageView
+    <com.dante.girl.lib.RatioImageView
         android:id="@+id/picture"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

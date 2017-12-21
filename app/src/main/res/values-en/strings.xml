@@ -31,8 +31,8 @@
     <string name="clear_cache_success">Cache cleared.</string>
     <string name="set_original_splash">Use orignial splash instead of getting from net</string>
     <string name="about_me">About author</string>
-    <string name="share_app_description">This android repository is nice :)
-        https://github.com/DanteAndroid/Beauty/
+    <string name="share_app_description">This picture app is nice :)
+        https://www.coolapk.com/apk/com.dante.girl
     </string>
     <string name="share_app">Share App</string>
     <string name="tips">Tips</string>
@@ -67,28 +67,11 @@
     <string name="donate">Donate</string>
     <string name="nav_a_zone">Anime</string>
     <string name="nav_beauty">Beauties</string>
-    <string-array name="db_titles">
-        <item name="gank">Gank</item>
-        <item name="db_rank">Rank</item>
-        <item name="db_breast">Breast</item>
-        <item name="db_butt">Butt</item>
-        <item name="db_leg">Leg</item>
-        <item name="db_silk">Silk</item>
-    </string-array>
-    <string-array name="a_titles">
-        <item name="a_anime">Anime</item>
-        <item name="a_fuli">Fuli</item>
-        <item name="a_hentai">Hentai</item>
-        <item name="a_uniform">Uniform</item>
-        <item name="a_zatu">Zatu</item>
-    </string-array>
+
     <string name="empty_content">Nothing here :P</string>
     <string name="favorite">My Collections</string>
     <string name="images_empty">Hmm, no content here, go like something :)</string>
     <string name="set_like_download">Save picture when like it</string>
-    <string name="thanks_for_donation">You can open secret pictures section after donation! (please
-        send email to 502273376@qq.com then)
-    </string>
     <string name="theme_choose">Choose color you like</string>
     <string name="theme_color">Theme color</string>
     <string name="update_message">Update log：\n\n%s</string>
@@ -109,4 +92,13 @@
     <string name="dont_hint">No more hint</string>
     <string name="retry">retry</string>
     <string name="picture_load_fail">Can\'t load the picture</string>
+    <string name="copy">Click to copy then send to author to open secret mode</string>
+    <string name="deviceid">DeviceId</string>
+    <string name="permission_statement">Phone permission required to open secret mode</string>
+    <string name="device_id_copied">Device Id copied</string>
+    <string name="thanks_for_donation">Join in VIP to open secret picture section!
+    </string>
+    <string name="go_market">Go App Store</string>
+    <string name="thanks_for_feedback">Thanks for your feedback</string>
+    <string name="you_are_vip">You are VIP already, thanks again!</string>
 </resources>
