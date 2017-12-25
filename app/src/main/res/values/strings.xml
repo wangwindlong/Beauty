@@ -87,7 +87,7 @@
     <string name="downloading">可劲下载中…</string>
     <string name="new_version">发现新版本</string>
     <string name="install_hint">当前是debug版本，由于正式版签名不同更新会失败。卸载重装即可</string>
-    <string name="alipay_not_found">您没有安装支付宝，请加作者微信赞助，微信号已经复制到粘贴板~</string>
+    <string name="alipay_not_found">您没有安装支付宝，请添加作者微信赞助: lightear</string>
     <string name="wechat" translatable="false">lightear</string>
     <string name="update">立即更新</string>
     <string name="net_error">失败次数过多，可能是您的网络运营商限制，无法访问此数据源。(如移动4G)</string>

@@ -7,7 +7,6 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 
@@ -36,7 +35,7 @@ public class SplashActivity extends AppCompatActivity {
 
     public static void updateSplash(String type, boolean force) {
         Date now = new Date();
-        boolean needUpdate = (now.getTime() - SpUtil.getLong(Constants.DATE)) > 60 * 60 * 1000;
+        boolean needUpdate = (now.getTime() - SpUtil.getLong(Constants.DATE)) > 10 * 60 * 1000;
         if (needUpdate || force) {
             String url = DataBase.getRandomImage(type);
             if (TextUtils.isEmpty(url)) {
@@ -76,8 +75,11 @@ public class SplashActivity extends AppCompatActivity {
             startAppDelay(SPLASH_DURATION_SHORT);
         } else {
             Image image = DataBase.findImageByUrl(url);
-            Log.d(TAG, "loadImage: " + image.url + ", " + image.referer);
-            Imager.loadWithHeader(this, image, splash);
+            if (image == null) {
+                Glide.with(this).load(R.drawable.splash).crossFade().into(splash);
+            } else {
+                Imager.loadWithHeader(this, image, splash);
+            }
             startAppDelay(SPLASH_DURATION_SHORT);
         }
     }

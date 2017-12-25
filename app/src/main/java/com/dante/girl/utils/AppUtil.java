@@ -60,7 +60,6 @@ public class AppUtil {
             new Handler().postDelayed(() -> AlipayZeroSdk.startAlipayClient(activity, Constants.ALI_PAY), 500);
         } else {
             ToastUtils.showShortToast(R.string.alipay_not_found);
-            ClipboardUtils.copyText(activity.getString(R.string.wechat));
         }
     }
 }
