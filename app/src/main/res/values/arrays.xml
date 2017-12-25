@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="image_type">
+        <item name="original">原始启动图</item>
+        <item name="gank">Gank</item>
+        <item name="db">豆瓣美女</item>
+        <item name="anime">动漫图</item>
+    </string-array>
+    <string-array
+        name="image_type_value">
+        <item name="original">origin</item>
+        <item name="gank">0</item>
+        <item name="db">5</item>
+        <item name="anime">anime</item>
+    </string-array>
+
+    <string-array name="db_titles">
+        <item name="gank">Gank</item>
+        <item name="db_rank">热门</item>
+        <item name="db_breast">波涛胸涌</item>
+        <item name="db_butt">悬崖翘臂</item>
+        <item name="db_leg">美腿</item>
+        <item name="db_silk">黑丝控</item>
+    </string-array>
+    <string-array name="a_titles">
+        <item name="a_anime">动漫</item>
+        <item name="a_fuli">福利</item>
+        <item name="a_hentai">绅士</item>
+        <item name="a_uniform">制服控</item>
+        <item name="a_zatu">杂图</item>
+    </string-array>
+
+</resources>
