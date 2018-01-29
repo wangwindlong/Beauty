@@ -193,7 +193,6 @@ public class CustomPictureFragment extends PictureFragment {
                         adapter.loadMoreComplete();
                         images = DataBase.findImages(realm, imageType);
                         int add = images.size() - oldSize;
-                        log("onCompleted add" + add);
                         if (add > 0) {
                             if (page == 1) {
                                 adapter.setNewData(images);

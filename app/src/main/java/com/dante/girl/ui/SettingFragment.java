@@ -60,8 +60,6 @@ public class SettingFragment extends PreferenceFragment implements Preference.On
     private long startTime;
     private boolean first = true;
     private int secretIndex;
-    private Preference theme;
-
 
     @Override
     public void onCreate(Bundle savedInstanceState) {

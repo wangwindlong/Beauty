@@ -88,9 +88,8 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
     private MenuItem currentMenu;
     private SparseArray<Fragment> fragmentSparseArray;
     private Updater updater;
-    private boolean isFirst = true;
-    private int placeHolderHeight;
     private boolean secretMode;
+    private int placeHolderHeight;
 
     @Override
     protected int initLayoutId() {

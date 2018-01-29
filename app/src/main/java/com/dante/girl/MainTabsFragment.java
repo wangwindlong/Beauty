@@ -52,18 +52,6 @@ public class MainTabsFragment extends BaseFragment {
     }
 
     @Override
-    public void onStart() {
-        super.onStart();
-//        EventBus.getDefault().register(this);
-    }
-
-    @Override
-    public void onStop() {
-        super.onStop();
-//        EventBus.getDefault().unregister(this);
-    }
-
-    @Override
     protected void initViews() {
         adapter = new TabPagerAdapter(getChildFragmentManager());
         initFragments();

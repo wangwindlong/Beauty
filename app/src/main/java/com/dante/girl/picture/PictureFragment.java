@@ -29,10 +29,7 @@ import io.realm.RealmResults;
  */
 public abstract class PictureFragment extends RecyclerFragment {
     public static final int REQUEST_VIEW = 1;
-    private static final String TAG = "PictureFragment";
     public static int LOAD_COUNT = 10;
-    private static int PRELOAD_COUNT = 10;
-
     String url;
     boolean isFetching;
     String title;
@@ -128,12 +125,6 @@ public abstract class PictureFragment extends RecyclerFragment {
         changeState(false);
     }
 
-    @Override
-    protected void onCreateView() {
-        super.onCreateView();
-        log("onCreateView: ", imageType);
-    }
-
     protected void setTitle(String title) {
         this.title = title;
     }
@@ -141,7 +132,6 @@ public abstract class PictureFragment extends RecyclerFragment {
     @Override
     protected void initData() {
         images = DataBase.findImages(realm, imageType);
-        log("imagetype" + imageType);
         adapter.setNewData(images);
         recyclerView.animate().alpha(1)
                 .setStartDelay(200).start();
@@ -197,6 +187,5 @@ public abstract class PictureFragment extends RecyclerFragment {
             }
         }
     }
-
 
 }

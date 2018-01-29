@@ -63,7 +63,6 @@ public abstract class BaseFragment extends Fragment {
     protected abstract int initLayoutId();
 
     protected void onCreateView() {
-        ButterKnife.bind(this, rootView);
         realm = ((BaseActivity) getActivity()).realm;
         toolbar = ((BaseActivity) getActivity()).toolbar;
     }
