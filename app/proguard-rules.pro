@@ -17,7 +17,7 @@
 #}
 
 ## bugtags
-  -keepattributes LineNumberTable,SourceFile
+  -keepattributes LineNumberTable,SourceFile,Exceptions,InnerClasses
   -keep class com.bugtags.library.** {*;}
   -dontwarn com.bugtags.library.**
   -keep class io.bugtags.** {*;}
@@ -82,9 +82,9 @@
 ##End: configuration for Gson
 
 ## Solove NullPointerException by Gson
--keep class com.dante.girls.model.** { *; }
+-keep class com.dante.girl.model.** { *; }
 -keep class android.support.v7.widget.ShareActionProvider { *; }
--keep class com.dante.girls.net.** { *; }
+-keep class com.dante.girl.net.** { *; }
 
 ## retrolambda
 -dontwarn java.lang.invoke.*

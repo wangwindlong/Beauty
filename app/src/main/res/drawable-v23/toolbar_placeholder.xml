@@ -10,7 +10,7 @@
     </item>
     <!-- fake toolbar (56+40dp + 24 dp ) -->
     <item
-        android:height="176dp"
+        android:height="128dp"
         android:gravity="top" tools:targetApi="m">
         <shape android:shape="rectangle">
             <solid android:color="?colorPrimary"/>

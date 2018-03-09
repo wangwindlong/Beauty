@@ -8,7 +8,7 @@
                                     android:layout_margin="3dp"
                                     android:foreground="?attr/selectableItemBackground"
                                     android:visibility="visible"
-                                    app:cardBackgroundColor="@color/black_back"
+                                    app:cardBackgroundColor="@color/cardview_dark_background"
                                     app:cardCornerRadius="4dp"
                                     tools:visibility="visible">
 
@@ -18,7 +18,7 @@
         <ImageView
             android:id="@+id/picture"
             android:layout_width="match_parent"
-            android:layout_height="270dp"
+            android:layout_height="200dp"
             android:scaleType="centerCrop"
             tools:ignore="ContentDescription"/>
         <TextView

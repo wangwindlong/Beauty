@@ -6,9 +6,13 @@
         <item name="android:windowContentTransitions">true</item>
         <item name="android:windowDrawsSystemBarBackgrounds">true</item>
         <item name="android:statusBarColor">@android:color/transparent</item>
-        <item name="android:windowBackground">@drawable/toolbar_placeholder</item>
+        <!--<item name="android:windowBackground">@drawable/toolbar_placeholder</item>-->
     </style>
+    、
 
+    <style name="AppTheme.NoActionBar.TranslucentBar">
+        <item name="android:navigationBarColor">@android:color/black</item>
+    </style>
     <style name="AppTheme.NoActionBar.Default">
         <item name="android:statusBarColor">@color/colorPrimaryDark</item>
     </style>

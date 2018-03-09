@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="image_type">
+        <item name="original">Original Splash</item>
+        <item name="gank">Gank</item>
+        <item name="db">Douban Beauty</item>
+        <item name="anime">Anime</item>
+    </string-array>
+    <string-array
+        name="image_type_value">
+        <item name="original">origin</item>
+        <item name="gank">0</item>
+        <item name="db">5</item>
+        <item name="anime">anime</item>
+    </string-array>
+
+    <string-array name="db_titles">
+        <item name="gank">Gank</item>
+        <item name="db_rank">Rank</item>
+        <item name="db_breast">Boobs</item>
+        <item name="db_butt">Butts</item>
+        <item name="db_leg">Legs</item>
+        <item name="db_silk">Silk Socks</item>
+    </string-array>
+    <string-array name="a_titles">
+        <item name="a_anime">Anime</item>
+        <item name="a_fuli">Fuli</item>
+        <item name="a_hentai">Hentai</item>
+        <item name="a_uniform">Uniform</item>
+        <item name="a_zatu">Zatu</item>
+    </string-array>
+
+</resources>
